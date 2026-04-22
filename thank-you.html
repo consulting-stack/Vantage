@@ -1,118 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Thank You | Heavenly Hands Contracting</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thank You — Vantage</title>
+  <meta name="description" content="Your message to Vantage has been received. A member of our team will respond within 24 business hours."/>
+  <meta name="author" content="Vantage · Marlowe Greene"/>
+  <meta name="theme-color" content="#0D0F14"/>
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://consulting-stack.github.io/Vantage/thank-you.html"/>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png"/>
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://consulting-stack.github.io/Vantage/thank-you.html"/>
+  <meta property="og:title" content="Message Received — Vantage"/>
+  <meta property="og:description" content="Thank you for reaching out to Vantage."/>
+  <meta property="og:image" content="https://consulting-stack.github.io/Vantage/favicon-512.png"/>
+  <meta property="og:site_name" content="Vantage"/>
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Message Received — Vantage"/>
+  <meta name="twitter:description" content="Thank you for reaching out to Vantage."/>
+  <meta name="twitter:image" content="https://consulting-stack.github.io/Vantage/favicon-512.png"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .thankyou {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .thankyou::before {
+      content:'';
+      position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 30% 30% at 80% 20%, rgba(139,31,47,0.07) 0%, transparent 60%);
+    }
+    .thankyou__inner {
+      position:relative;z-index:2;
+      max-width:600px;
+      padding:0 2rem;
+    }
+    .thankyou__check {
+      width:72px;height:72px;
+      border:1px solid var(--gold);
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto 32px;
+      animation:pop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes pop {
+      from { transform:scale(0);opacity:0; }
+      to   { transform:scale(1);opacity:1; }
+    }
+    .thankyou__check svg { color:var(--gold); }
+    .thankyou h1 {
+      font-family:var(--font-display);
+      font-size:clamp(2.5rem,5vw,4rem);
+      font-weight:300;
+      line-height:1.1;
+      margin-bottom:20px;
+      animation:fade-up 0.7s 0.3s both;
+    }
+    .thankyou h1 em { font-style:italic;color:var(--gold); }
+    @keyframes fade-up {
+      from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}
+    }
+    .thankyou p {
+      color:var(--slate-light);
+      font-size:1.05rem;
+      line-height:1.75;
+      margin-bottom:12px;
+      animation:fade-up 0.7s 0.45s both;
+    }
+    .thankyou__actions {
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-top:40px;
+      animation:fade-up 0.7s 0.6s both;
+    }
+    .thankyou__divider {
+      width:48px;height:1px;
+      background:var(--gold);
+      margin:24px auto;
+      animation:fade-up 0.7s 0.4s both;
+    }
+  </style>
 </head>
 <body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <header class="site-header">
-    <nav class="navbar">
-      <a href="index.html"><img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" /></a>
-      <button class="menu-toggle" type="button">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="portfolio.html">Portfolio</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="quote.html" class="nav-cta">Get a Quote</a></li>
-      </ul>
-    </nav>
-  </header>
+<nav class="nav scrolled" id="mainNav">
+  <a href="index.html" class="nav__logo"><img src="logo.png" alt="Vantage"/></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a>
+  <a href="portfolio.html">Portfolio</a><a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
 
-  <div class="page-hero" style="text-align:center;padding:160px 5% 80px;">
-    <div class="page-hero-content" style="max-width:680px;margin:0 auto;">
-      <div style="width:80px;height:80px;border-radius:50%;background:rgba(201,168,76,0.12);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 28px;font-size:2rem;">✓</div>
-      <div class="section-label" style="justify-content:center;">Request Received</div>
-      <h1 style="font-size:clamp(2rem,5vw,3.2rem);margin-bottom:20px;">We've Got Your Request,<br /><span style="color:var(--gold-light);">We'll Be in Touch Soon.</span></h1>
-      <p style="color:var(--gray);font-size:1.05rem;line-height:1.8;margin-bottom:40px;">Thank you for reaching out to Heavenly Hands Contracting. Our team will review your project details and follow up within <strong style="color:var(--white);">1 business day</strong> with pricing and next steps.<br /><br />Check your inbox — a confirmation email is on its way to you now.</p>
-      <a href="index.html" class="btn-primary">Back to Home</a>
+<div class="grid-bg"></div>
+<section class="thankyou">
+  <div class="thankyou__inner">
+    <div class="thankyou__check">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1>Message <em>Received.</em></h1>
+    <div class="thankyou__divider"></div>
+    <p>Thank you for reaching out to Vantage. Your request has been received and a member of our team will respond within 24 business hours.</p>
+    <p>In the meantime, explore our service divisions or review our capabilities deck.</p>
+    <div class="thankyou__actions">
+      <a href="index.html" class="btn btn--gold">Back to Home
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="services.html" class="btn btn--outline">View Services</a>
     </div>
   </div>
+</section>
 
-  <section class="bg-dots">
-    <div class="container" style="text-align:center;">
-      <div class="section-label" style="justify-content:center;">What Happens Next</div>
-      <h2 class="section-title">Here's What to Expect</h2>
-      <p class="section-sub" style="margin:0 auto 56px;">We keep every project moving with a clear, simple process.</p>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;" class="thankyou-steps">
-        <div class="service-card" style="text-align:center;"><span class="service-icon">📋</span><h3>We Review</h3><p>Your request lands with our team and gets reviewed within 1 business day.</p></div>
-        <div class="service-card" style="text-align:center;"><span class="service-icon">💬</span><h3>We Follow Up</h3><p>We reach out with pricing, options, and our recommended approach for your project.</p></div>
-        <div class="service-card" style="text-align:center;"><span class="service-icon">✏️</span><h3>We Design</h3><p>Once approved, we build your concept and walk you through every detail.</p></div>
-        <div class="service-card" style="text-align:center;"><span class="service-icon">🚛</span><h3>We Deliver</h3><p>Professional execution, quality check, and delivery. Done right every time.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-band">
-    <h2>Need to Reach Us Sooner?</h2>
-    <p>Give us a call directly and we'll get you taken care of right away.</p>
-    <a href="contact.html" class="btn-primary">Contact Us</a>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" />
-        <p>Building Dreams · Delivering Excellence since 1992.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="quote.html">Get a Quote</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p>Email: info@heavenlyhandscustomdesigns.com</p>
-      </div>
-    </div>
-    <div class="footer-bottom"><p>© 2026 Heavenly Hands Contracting. All rights reserved.</p></div>
-  </footer>
-
-  <a href="quote.html" class="mobile-cta">Get a Free Quote →</a>
-
-  <!--Start of Tawk.to Script-->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  Tawk_API.onLoad = function() {
-    Tawk_API.customStyle = {
-      visibility: {
-        desktop: { position: 'br', xOffset: 20, yOffset: 20 },
-        mobile:  { position: 'br', xOffset: 10, yOffset: 65 }
-      }
-    };
-  };
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69d9dc284d80b21c34bff088/1jltg7vc4';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
-
-  <script>
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav-links');
-    if (toggle && nav) toggle.addEventListener('click', () => nav.classList.toggle('show'));
-    const header = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => {
-      header.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
-    });
-  </script>
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.classList.add('expanded');ring.classList.add('expanded');});el.addEventListener('mouseleave',()=>{cursor.classList.remove('expanded');ring.classList.remove('expanded');});});
+  const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileNav');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');});
+</script>
 </body>
 </html>

@@ -1,132 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About | Heavenly Hands Contracting</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — Vantage</title>  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── FOUNDER SECTION ── */
+    .founder {
+      padding:100px 0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:80px;
+      align-items:start;
+    }
+    .founder__photo {
+      position:relative;
+    }
+    .founder__img-wrap {
+      aspect-ratio:3/4;
+      background:var(--obsidian-3);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      position:relative;
+    }
+    .founder__img-wrap::before {
+      content:'';
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .founder__img-wrap img {
+      width:100%; height:100%;
+      object-fit:cover;
+    }
+    .founder__logo-mark {
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:24px;
+      padding:40px;
+    }
+    .founder__logo-mark img {
+      width:60%;
+      height:auto;
+      max-width:220px;
+      opacity:0.95;
+    }
+    .founder__logo-mark__tag {
+      font-family:var(--font-mono);
+      font-size:0.6rem;
+      letter-spacing:0.22em;
+      text-transform:uppercase;
+      color:var(--slate);
+      text-align:center;
+      padding-top:24px;
+      border-top:1px solid var(--border);
+      width:60%;
+      max-width:200px;
+    }
+    .founder__badge {
+      position:absolute;
+      bottom:-20px; right:-20px;
+      background:var(--gold);
+      color:var(--obsidian);
+      padding:20px 24px;
+      border-radius:var(--radius);
+      font-family:var(--font-mono);
+      font-size:0.65rem;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      font-weight:700;
+      line-height:1.5;
+    }
+    .founder__info { padding-top:16px; }
+    .founder__name {
+      font-family:var(--font-display);
+      font-size:3.5rem;
+      font-weight:300;
+      line-height:1;
+      margin:16px 0 4px;
+    }
+    .founder__name em { font-style:italic; color:var(--gold); display:block; }
+    .founder__title {
+      font-family:var(--font-mono);
+      font-size:0.7rem;
+      letter-spacing:0.15em;
+      color:var(--slate);
+      text-transform:uppercase;
+      margin-bottom:32px;
+    }
+    .founder__bio p {
+      color:var(--slate-light);
+      font-size:0.98rem;
+      line-height:1.85;
+      margin-bottom:20px;
+    }
+    .founder__credentials {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:32px;
+    }
+    .cred-pill {
+      background:var(--obsidian-3);
+      border:1px solid var(--border);
+      border-radius:40px;
+      padding:8px 16px;
+      font-size:0.78rem;
+      color:var(--off-white);
+      transition:border-color var(--transition), color var(--transition);
+    }
+    .cred-pill:hover { border-color:var(--gold); color:var(--gold); }
+
+    /* ── TIMELINE ── */
+    .timeline { padding:100px 0; }
+    .timeline__line {
+      position:relative;
+      padding-left:60px;
+      max-width:700px;
+    }
+    .timeline__line::before {
+      content:'';
+      position:absolute;
+      left:16px; top:8px; bottom:8px;
+      width:1px;
+      background:linear-gradient(to bottom, var(--gold), var(--crimson), transparent);
+    }
+    .timeline__item {
+      position:relative;
+      margin-bottom:48px;
+    }
+    .timeline__item::before {
+      content:'';
+      position:absolute;
+      left:-48px; top:6px;
+      width:10px; height:10px;
+      border-radius:50%;
+      background:var(--gold);
+      box-shadow:0 0 0 4px rgba(201,168,76,0.15);
+    }
+    .timeline__year {
+      font-family:var(--font-mono);
+      font-size:0.65rem;
+      letter-spacing:0.18em;
+      color:var(--gold);
+      margin-bottom:8px;
+    }
+    .timeline__item h3 {
+      font-family:var(--font-display);
+      font-size:1.3rem;
+      font-weight:400;
+      margin-bottom:8px;
+    }
+    .timeline__item p {
+      font-size:0.9rem;
+      color:var(--slate-light);
+      line-height:1.7;
+    }
+
+    /* ── VALUES ── */
+    .values-grid {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:1px;
+      background:var(--border);
+    }
+    .value-item {
+      background:var(--obsidian-2);
+      padding:48px 40px;
+    }
+    .value-item h3 {
+      font-family:var(--font-display);
+      font-size:1.5rem;
+      font-weight:400;
+      margin:16px 0 12px;
+    }
+    .value-item h3 em { font-style:italic; color:var(--gold); }
+    .value-item p {
+      font-size:0.9rem;
+      color:var(--slate-light);
+      line-height:1.75;
+    }
+
+    @media(max-width:900px) {
+      .founder { grid-template-columns:1fr; gap:48px; }
+      .founder__badge { bottom:-12px; right:-8px; }
+      .values-grid { grid-template-columns:1fr; }
+    }
+  </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <nav class="navbar">
-      <a href="index.html"><img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" /></a>
-      <button class="menu-toggle" type="button">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html" class="active">About</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="portfolio.html">Portfolio</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="quote.html" class="nav-cta">Get a Quote</a></li>
-      </ul>
-    </nav>
-  </header>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <div class="page-hero">
-    <div class="page-hero-content">
-      <div class="section-label">About Us</div>
-      <h1>30+ Years of Building<br />Dreams from the Ground Up</h1>
-      <p>Since 1992, Heavenly Hands has helped businesses stand out — through precision design, expert builds, and contracting work that delivers every time.</p>
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__logo"><img src="logo.png" alt="Vantage"/></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a>
+  <a href="portfolio.html">Portfolio</a><a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="grid-bg"></div>
+  <div class="container">
+    <span class="label reveal">Who We Are</span>
+    <h1 class="reveal reveal--delay-1">The Vantage <em>Story.</em></h1>
+    <p class="reveal reveal--delay-2">Built from 30 years of experience across disciplines most firms wouldn't attempt to combine. This is the origin of a different kind of firm.</p>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="section section--darker">
+  <div class="container">
+    <div class="founder">
+      <div class="founder__photo reveal">
+        <div class="founder__img-wrap">
+          <div class="founder__logo-mark">
+            <img src="mark.png" alt="Vantage Mark"/>
+            <div class="founder__logo-mark__tag">Founder Portrait<br>Coming Soon</div>
+          </div>
+        </div>
+        <div class="founder__badge">Founder &amp;<br>Principal</div>
+      </div>
+      <div class="founder__info reveal reveal--delay-2">
+        <span class="label">The Founder</span>
+        <h2 class="founder__name">Marlowe<em>Greene.</em></h2>
+        <p class="founder__title">Founder & Principal · Vantage</p>
+        <div class="founder__bio">
+          <p>Marlowe Greene is not a generalist. He is a cross-domain specialist — a distinction that separates Vantage from every other firm in the market.</p>
+          <p>With more than two decades of master contracting experience and over a decade of dedicated work in business development, credit strategy, and entrepreneurial consulting, Marlowe has built a career defined by one operating principle: the customer's outcome is the only outcome that matters.</p>
+          <p>As a serial entrepreneur, Marlowe has launched and scaled multiple ventures across construction, design, and professional services. He brings the perspective of an owner — not an employee — to every client engagement.</p>
+          <p>Vantage is the culmination of that experience: a firm architectured to deliver the full spectrum of what growth-oriented clients need, without forcing them to manage five different vendors with five different standards.</p>
+        </div>
+        <div class="founder__credentials">
+          <span class="cred-pill">20+ Years Master Contracting</span>
+          <span class="cred-pill">10+ Years Business Development</span>
+          <span class="cred-pill">Credit Restoration Expert</span>
+          <span class="cred-pill">Serial Entrepreneur</span>
+          <span class="cred-pill">Software & Tech Builder</span>
+          <span class="cred-pill">National Footprint</span>
+        </div>
+      </div>
     </div>
   </div>
+</section>
 
-  <section class="bg-glow">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-text">
-          <div class="section-label">Who We Are</div>
-          <h2 class="section-title">More Than a Contractor.<br />More Than a Wrap Shop.</h2>
-          <p>Heavenly Hands Contracting is a full-service operation built around one idea — that every business deserves work done right. We started in custom vehicle design in 1992 and have expanded into general contracting, mobile business builds, food truck construction, fleet branding, and equipment services.</p>
-          <p>We don't hand off your project to someone else. Our team handles every phase in-house, from the first design concept to final delivery.</p>
-          <a href="quote.html" class="btn-primary" style="margin-top:16px;display:inline-block;">Start Your Project</a>
-        </div>
-        <div class="about-img"><img src="van-2.jpg" alt="Heavenly Hands work" /></div>
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item reveal"><div class="stat-item__num" data-count="20">0</div><div class="stat-item__label">Years Contracting</div></div>
+  <div class="stat-item reveal reveal--delay-1"><div class="stat-item__num" data-count="10">0</div><div class="stat-item__label">Years Business Dev</div></div>
+  <div class="stat-item reveal reveal--delay-2"><div class="stat-item__num" data-count="6">0</div><div class="stat-item__label">Divisions</div></div>
+  <div class="stat-item reveal reveal--delay-3"><div class="stat-item__num" data-count="1">0</div><div class="stat-item__label">Standard of Excellence</div></div>
+</div>
+
+<!-- TIMELINE -->
+<section class="section section--dark timeline">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="label">The Journey</span>
+      <div class="gold-rule"></div>
+      <h2>Built Over <em>Decades.</em></h2>
+    </div>
+    <div class="timeline__line">
+      <div class="timeline__item reveal">
+        <div class="timeline__year">Early Career</div>
+        <h3>The Foundation</h3>
+        <p>Marlowe begins his contracting career, developing the hands-on expertise and relentless standards that would define Vantage's Build division. Zero shortcuts from day one.</p>
+      </div>
+      <div class="timeline__item reveal reveal--delay-1">
+        <div class="timeline__year">10+ Years In</div>
+        <h3>Expanding the Mandate</h3>
+        <p>Recognizing that clients needed more than construction — they needed strategy, credit positioning, and business systems — Marlowe expands his expertise into business development and financial consulting.</p>
+      </div>
+      <div class="timeline__item reveal reveal--delay-2">
+        <div class="timeline__year">The Evolution</div>
+        <h3>Serial Entrepreneurship</h3>
+        <p>Multiple ventures launched and scaled across contracting, design, and professional services. Each one refining the model of cross-domain expertise and owner-operator accountability.</p>
+      </div>
+      <div class="timeline__item reveal reveal--delay-3">
+        <div class="timeline__year">Today</div>
+        <h3>Vantage — Engineered for Results</h3>
+        <p>All disciplines unified under one firm. Six divisions. One standard. A national footprint with the personal investment of a boutique practice on every engagement.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <hr class="gold-divider" />
-
-  <section class="bg-dots">
-    <div class="container">
-      <div class="section-label">Our Values</div>
-      <h2 class="section-title">How We Work</h2>
-      <p class="section-sub">The same standards that built our reputation in 1992 guide every project we take on today.</p>
-      <div class="values-grid">
-        <div class="value-card"><span class="icon">🎯</span><h3>Precision</h3><p>Every measurement, cut, and design decision is intentional. We don't cut corners — ever.</p></div>
-        <div class="value-card"><span class="icon">🤝</span><h3>Integrity</h3><p>We tell you exactly what your project needs and deliver exactly what we promise.</p></div>
-        <div class="value-card"><span class="icon">⚡</span><h3>Impact</h3><p>Everything we build is designed to create a real, visible result for your business.</p></div>
+<!-- VALUES -->
+<section class="section section--darker">
+  <div class="container--wide">
+    <div class="section-head reveal">
+      <span class="label">How We Operate</span>
+      <div class="gold-rule"></div>
+      <h2>Core <em>Values.</em></h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-item reveal">
+        <span class="label">01</span>
+        <h3>Confident, <em>Not Arrogant.</em></h3>
+        <p>We speak from results, not promises. Every claim we make is backed by a track record — and we let that record do the talking.</p>
+      </div>
+      <div class="value-item reveal reveal--delay-1">
+        <span class="label">02</span>
+        <h3>Precise, <em>Not Cold.</em></h3>
+        <p>Expertise delivered with genuine investment in each client's outcome. We care about the result because we understand what it means to you.</p>
+      </div>
+      <div class="value-item reveal reveal--delay-2">
+        <span class="label">03</span>
+        <h3>Elevated, <em>Not Exclusive.</em></h3>
+        <p>Premium standards applied to every engagement regardless of scope. The smallest project receives the same standard as the largest.</p>
+      </div>
+      <div class="value-item reveal reveal--delay-3">
+        <span class="label">04</span>
+        <h3>Direct, <em>Not Dismissive.</em></h3>
+        <p>We say what we mean. Our clients' time is our most valued resource. No bureaucracy. No runaround. Clear communication from first call to final delivery.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="cta-band">
-    <h2>Built on Three Decades of Excellence</h2>
-    <p>Experience you can trust. Work that speaks for itself.</p>
-    <a href="quote.html" class="btn-primary">Work With Us</a>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" />
-        <p>Building Dreams · Delivering Excellence since 1992.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="quote.html">Get a Quote</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p>Email: info@heavenlyhandscustomdesigns.com</p>
-      </div>
+<!-- CTA -->
+<section class="cta-band">
+  <div class="container">
+    <span class="label reveal">Work With Us</span>
+    <h2 class="reveal reveal--delay-1">Ready to Take Your <em>Vantage?</em></h2>
+    <p class="reveal reveal--delay-2">Schedule a strategy consultation and discover how Vantage can optimize your outcomes across every relevant discipline.</p>
+    <div class="cta-band__actions reveal reveal--delay-3">
+      <a href="quote.html" class="btn btn--gold">Request a Consultation
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="services.html" class="btn btn--outline">View Services</a>
     </div>
-    <div class="footer-bottom"><p>© 2026 Heavenly Hands Contracting. All rights reserved.</p></div>
-  </footer>
+  </div>
+</section>
 
-  <a href="quote.html" class="mobile-cta">Get a Free Quote →</a>
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand"><img src="logo.png" alt="Vantage"/><p>A full-spectrum firm delivering integrated results across construction, design, credit, business strategy, and technology.</p></div>
+      <div class="footer__col"><h5>Navigation</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="contact.html">Contact</a></li><li><a href="quote.html">Get a Quote</a></li></ul></div>
+      <div class="footer__col"><h5>Divisions</h5><ul><li><a href="services.html#build">Vantage Build</a></li><li><a href="services.html#interiors">Vantage Interiors</a></li><li><a href="services.html#credit">Vantage Credit</a></li><li><a href="services.html#ventures">Vantage Ventures</a></li><li><a href="services.html#design">Vantage Design</a></li><li><a href="services.html#tech">Vantage Tech</a></li></ul></div>
+      <div class="footer__col"><h5>Contact</h5><ul><li><a href="tel:0000000000">(000) 000-0000</a></li><li><a href="mailto:info@vantage.co">info@vantage.co</a></li></ul></div>
+    </div>
+    <div class="footer__bottom"><span>© 2025 Vantage. All rights reserved.</span><span>Engineered for <span>Results.</span></span></div>
+  </div>
+</footer>
 
-  <!--Start of Tawk.to Script-->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  Tawk_API.onLoad = function() {
-    Tawk_API.customStyle = {
-      visibility: {
-        desktop: { position: 'br', xOffset: 20, yOffset: 20 },
-        mobile:  { position: 'br', xOffset: 10, yOffset: 65 }
-      }
-    };
-  };
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69d9dc284d80b21c34bff088/1jltg7vc4';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
-
-  <script>
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav-links');
-    if (toggle && nav) toggle.addEventListener('click', () => nav.classList.toggle('show'));
-    const header = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => {
-      header.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
-    });
-  </script>
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.classList.add('expanded');ring.classList.add('expanded');});el.addEventListener('mouseleave',()=>{cursor.classList.remove('expanded');ring.classList.remove('expanded');});});
+  const nav=document.getElementById('mainNav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
+  const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileNav');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');});
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+  const countObserver=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,target=parseInt(el.dataset.count),suffix=target>=20?'+':(target===1?'':'+');let s=0;const step=()=>{s+=Math.ceil(target/40);if(s>=target){el.textContent=target+suffix;return;}el.textContent=s+suffix;requestAnimationFrame(step);};step();countObserver.unobserve(el);});},{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(el=>countObserver.observe(el));
+</script>
 </body>
 </html>

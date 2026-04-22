@@ -1,133 +1,506 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Services | Heavenly Hands Contracting</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Services — Vantage | Six Divisions, One Standard</title>  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .division-full {
+      padding:100px 0;
+      border-bottom:1px solid var(--border);
+      position:relative;
+      overflow:hidden;
+    }
+    .division-full:nth-child(even) { background:var(--obsidian-2); }
+    .division-full__inner {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:80px;
+      align-items:start;
+    }
+    .division-full:nth-child(even) .division-full__inner { direction:rtl; }
+    .division-full:nth-child(even) .division-full__inner > * { direction:ltr; }
+    .division-full__num {
+      position:absolute;
+      top:40px; right:40px;
+      font-family:var(--font-display);
+      font-size:8rem;
+      font-weight:700;
+      color:rgba(201,168,76,0.04);
+      line-height:1;
+      pointer-events:none;
+    }
+    .division-full__label {
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:24px;
+    }
+    .division-full__icon {
+      width:52px; height:52px;
+      border:1px solid var(--gold);
+      border-radius:var(--radius);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .division-full h2 {
+      font-family:var(--font-display);
+      font-size:clamp(2rem,3.5vw,3rem);
+      font-weight:300;
+      line-height:1.1;
+      margin-bottom:8px;
+    }
+    .division-full h2 em { font-style:italic; color:var(--gold); }
+    .division-full__subtitle {
+      font-size:1rem;
+      color:var(--slate);
+      margin-bottom:28px;
+    }
+    .division-full p {
+      color:var(--slate-light);
+      font-size:0.98rem;
+      line-height:1.85;
+      margin-bottom:20px;
+    }
+    .division-full__list {
+      margin:28px 0 36px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .division-full__list li {
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      font-size:0.9rem;
+      color:var(--off-white);
+    }
+    .division-full__list li::before {
+      content:'';
+      flex-shrink:0;
+      width:5px; height:5px;
+      border-radius:50%;
+      background:var(--gold);
+      margin-top:7px;
+    }
+    .division-full__visual {
+      aspect-ratio:4/3;
+      border-radius:var(--radius-lg);
+      background:var(--obsidian-3);
+      border:1px solid var(--border);
+      overflow:hidden;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .division-full__visual img { width:100%;height:100%;object-fit:cover; }
+    .division-full__visual-placeholder {
+      text-align:center;
+      color:var(--slate);
+    }
+    .division-full__visual-placeholder svg { margin:0 auto 12px; color:var(--gold); opacity:0.25; }
+    .division-full__visual-placeholder span {
+      font-family:var(--font-mono);
+      font-size:0.62rem;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+    }
+    .division-full__visual-overlay {
+      position:absolute;
+      bottom:0; left:0; right:0;
+      padding:24px;
+      background:linear-gradient(to top, rgba(13,15,20,0.9), transparent);
+    }
+    .division-full__visual-overlay .label { margin-bottom:4px; }
+
+    /* Services index at top */
+    .services-index {
+      padding:60px 0 0;
+      background:var(--obsidian-2);
+      border-bottom:1px solid var(--border);
+    }
+    .services-index__grid {
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:1px;
+      background:var(--border);
+    }
+    .services-index__item {
+      background:var(--obsidian-2);
+      padding:28px 20px;
+      text-align:center;
+      text-decoration:none;
+      transition:background var(--transition);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+    }
+    .services-index__item:hover { background:var(--obsidian-3); }
+    .services-index__item svg { color:var(--gold); }
+    .services-index__item span {
+      font-family:var(--font-mono);
+      font-size:0.6rem;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      color:var(--slate-light);
+    }
+
+    @media(max-width:900px) {
+      .division-full__inner { grid-template-columns:1fr; gap:40px; }
+      .division-full:nth-child(even) .division-full__inner { direction:ltr; }
+      .services-index__grid { grid-template-columns:repeat(3,1fr); }
+    }
+    @media(max-width:480px) {
+      .services-index__grid { grid-template-columns:repeat(2,1fr); }
+    }
+  </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <nav class="navbar">
-      <a href="index.html"><img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" /></a>
-      <button class="menu-toggle" type="button">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="services.html" class="active">Services</a></li>
-        <li><a href="portfolio.html">Portfolio</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="quote.html" class="nav-cta">Get a Quote</a></li>
-      </ul>
-    </nav>
-  </header>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <div class="page-hero">
-    <div class="page-hero-content">
-      <div class="section-label">Our Services</div>
-      <h1>Everything You Need.<br />One Team. One Standard.</h1>
-      <p>From the first design sketch to the final build — Heavenly Hands Contracting delivers across every category we serve.</p>
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__logo"><img src="logo.png" alt="Vantage"/></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html" class="active">Services</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a>
+  <a href="portfolio.html">Portfolio</a><a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
+
+<section class="page-hero">
+  <div class="grid-bg"></div>
+  <div class="container">
+    <span class="label reveal">What We Deliver</span>
+    <h1 class="reveal reveal--delay-1">Six Divisions.<br><em>One Standard.</em></h1>
+    <p class="reveal reveal--delay-2">Every Vantage division operates under the same commitment: optimal results, every engagement, regardless of scope or complexity.</p>
+  </div>
+</section>
+
+<!-- QUICK NAV -->
+<div class="services-index">
+  <div class="container--wide">
+    <div class="services-index__grid">
+      <a href="#build" class="services-index__item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V12h6v9"/></svg>
+        <span>Build</span>
+      </a>
+      <a href="#interiors" class="services-index__item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <span>Interiors</span>
+      </a>
+      <a href="#credit" class="services-index__item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Credit</span>
+      </a>
+      <a href="#ventures" class="services-index__item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <span>Ventures</span>
+      </a>
+      <a href="#design" class="services-index__item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        <span>Design</span>
+      </a>
+      <a href="#tech" class="services-index__item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        <span>Tech</span>
+      </a>
     </div>
   </div>
+</div>
 
-  <section class="bg-dots">
-    <div class="container">
-      <div class="section-label">Custom Design</div>
-      <h2 class="section-title">Vehicle Branding & Builds</h2>
-      <p class="section-sub">Mobile businesses that look as good as they perform. Every wrap, build, and graphic is designed to get your brand noticed.</p>
-      <div class="services-grid">
-        <div class="service-card"><span class="service-icon">🎨</span><h3>Vehicle Wraps & Graphics</h3><p>Custom full and partial wraps that make every vehicle a moving advertisement. Designed to turn heads and build brand recognition.</p></div>
-        <div class="service-card"><span class="service-icon">🚚</span><h3>Food Truck Design & Builds</h3><p>End-to-end food truck design and construction — concept, interior layout, exterior branding, and everything in between.</p></div>
-        <div class="service-card"><span class="service-icon">🏗️</span><h3>Mobile Business Builds</h3><p>Complete mobile showrooms, service vehicles, and trade rigs built for maximum function and professional presence.</p></div>
-        <div class="service-card"><span class="service-icon">📐</span><h3>Interior Layout Design</h3><p>Precision interior planning that organizes your workspace for peak efficiency — no wasted space, no guesswork.</p></div>
-        <div class="service-card"><span class="service-icon">🚛</span><h3>Fleet Branding</h3><p>Consistent, unified branding across your entire fleet. From single vehicles to 50+ unit operations — we scale with you.</p></div>
-        <div class="service-card"><span class="service-icon">💡</span><h3>Custom Design Concepts</h3><p>Have a vision that doesn't fit a standard service? We build it. Bring the idea — we handle the rest.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <hr class="gold-divider" />
-
-  <section class="bg-glow">
-    <div class="container">
-      <div class="section-label">Contracting</div>
-      <h2 class="section-title">Construction & Heavy Services</h2>
-      <p class="section-sub">The same discipline that goes into every wrap and build extends to full-scale contracting work.</p>
-      <div class="services-grid">
-        <div class="service-card"><span class="service-icon">🔨</span><h3>General Contracting</h3><p>Full-scope construction management and contracting services delivered on time and to spec.</p></div>
-        <div class="service-card"><span class="service-icon">🚜</span><h3>Equipment Operation & Hauling</h3><p>Heavy equipment operation and material hauling to support your project at every phase.</p></div>
-        <div class="service-card"><span class="service-icon">📋</span><h3>Project Management</h3><p>End-to-end project oversight so your build stays on schedule, on budget, and done right the first time.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-band">
-    <h2>Not Sure Which Service You Need?</h2>
-    <p>Tell us what you're trying to accomplish — we'll recommend the right approach.</p>
-    <a href="quote.html" class="btn-primary">Request a Free Quote</a>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" />
-        <p>Building Dreams · Delivering Excellence since 1992.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="quote.html">Get a Quote</a></li>
+<!-- 01 BUILD -->
+<section class="division-full" id="build">
+  <span class="division-full__num">01</span>
+  <div class="container">
+    <div class="division-full__inner">
+      <div class="reveal">
+        <div class="division-full__label">
+          <div class="division-full__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V12h6v9"/></svg>
+          </div>
+          <span class="label">Vantage Build</span>
+        </div>
+        <h2>Contracting &<br><em>Construction.</em></h2>
+        <p class="division-full__subtitle">Ground-up builds · Commercial renovation · Residential projects</p>
+        <p>Vantage Build brings 20+ years of master contracting expertise to every project. We manage scope, timelines, and quality with zero tolerance for shortcuts — delivering structures built to last and spaces designed to perform.</p>
+        <p>From commercial build-outs to full residential renovations, our project management methodology ensures every milestone is hit on time and every square foot is executed to spec.</p>
+        <ul class="division-full__list">
+          <li>Commercial ground-up construction</li>
+          <li>Full residential and commercial renovations</li>
+          <li>Project management and contractor oversight</li>
+          <li>Permit acquisition and regulatory compliance</li>
+          <li>Site assessment and feasibility analysis</li>
+          <li>Subcontractor sourcing and quality control</li>
         </ul>
+        <a href="quote.html" class="btn btn--gold">Request a Build Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
       </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p>Email: info@heavenlyhandscustomdesigns.com</p>
+      <div class="division-full__visual reveal reveal--delay-2">
+        <div class="division-full__visual-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V12h6v9"/></svg>
+          <span>Portfolio imagery coming soon</span>
+        </div>
+        <div class="division-full__visual-overlay">
+          <span class="label">Vantage Build</span>
+        </div>
       </div>
     </div>
-    <div class="footer-bottom"><p>© 2026 Heavenly Hands Contracting. All rights reserved.</p></div>
-  </footer>
+  </div>
+</section>
 
-  <a href="quote.html" class="mobile-cta">Get a Free Quote →</a>
+<!-- 02 INTERIORS -->
+<section class="division-full" id="interiors">
+  <span class="division-full__num">02</span>
+  <div class="container">
+    <div class="division-full__inner">
+      <div class="reveal">
+        <div class="division-full__label">
+          <div class="division-full__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <span class="label">Vantage Interiors</span>
+        </div>
+        <h2>Interior Planning &<br><em>Decorating.</em></h2>
+        <p class="division-full__subtitle">Residential · Commercial · Hospitality</p>
+        <p>Space transforms behavior, mood, and perception. Vantage Interiors engineers environments that reflect our clients' identities — with award-recognized design precision applied to every square foot.</p>
+        <p>Whether you're designing a flagship office, a luxury residence, or a hospitality environment, our approach combines functional planning with aesthetic intelligence to create spaces that work as beautifully as they look.</p>
+        <ul class="division-full__list">
+          <li>Full interior planning and space programming</li>
+          <li>Residential and commercial decorating</li>
+          <li>Furniture selection, sourcing, and procurement</li>
+          <li>Lighting design and atmosphere engineering</li>
+          <li>Color consultation and material specification</li>
+          <li>Staging and styling for residential sales</li>
+        </ul>
+        <a href="quote.html" class="btn btn--gold">Request an Interiors Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <div class="division-full__visual reveal reveal--delay-2">
+        <div class="division-full__visual-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <span>Portfolio imagery coming soon</span>
+        </div>
+        <div class="division-full__visual-overlay">
+          <span class="label">Vantage Interiors</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!--Start of Tawk.to Script-->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  Tawk_API.onLoad = function() {
-    Tawk_API.customStyle = {
-      visibility: {
-        desktop: { position: 'br', xOffset: 20, yOffset: 20 },
-        mobile:  { position: 'br', xOffset: 10, yOffset: 65 }
-      }
-    };
-  };
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69d9dc284d80b21c34bff088/1jltg7vc4';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
+<!-- 03 CREDIT -->
+<section class="division-full" id="credit">
+  <span class="division-full__num">03</span>
+  <div class="container">
+    <div class="division-full__inner">
+      <div class="reveal">
+        <div class="division-full__label">
+          <div class="division-full__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="label">Vantage Credit</span>
+        </div>
+        <h2>Credit Restoration &<br><em>Financial Strategy.</em></h2>
+        <p class="division-full__subtitle">Personal credit · Business credit · Capital positioning</p>
+        <p>Access to capital starts with your credit profile. Our 10+ year track record in credit restoration and financial positioning has helped entrepreneurs and individuals unlock the leverage they deserve — but haven't been able to access.</p>
+        <p>We don't just remove negative items. We rebuild your entire financial identity to position you for the capital access, business credit, and loan approvals that create real opportunity.</p>
+        <ul class="division-full__list">
+          <li>Comprehensive credit report audit and analysis</li>
+          <li>Dispute strategy and Metro 2 compliance review</li>
+          <li>Negative item removal and score optimization</li>
+          <li>Business credit profile development (D&B, Experian)</li>
+          <li>Capital access roadmap and lender positioning</li>
+          <li>18-month credit building strategy and milestones</li>
+        </ul>
+        <a href="quote.html" class="btn btn--gold">Request a Credit Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <div class="division-full__visual reveal reveal--delay-2">
+        <div class="division-full__visual-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Portfolio imagery coming soon</span>
+        </div>
+        <div class="division-full__visual-overlay"><span class="label">Vantage Credit</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <script>
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav-links');
-    if (toggle && nav) toggle.addEventListener('click', () => nav.classList.toggle('show'));
-    const header = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => {
-      header.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
-    });
-  </script>
+<!-- 04 VENTURES -->
+<section class="division-full" id="ventures">
+  <span class="division-full__num">04</span>
+  <div class="container">
+    <div class="division-full__inner">
+      <div class="reveal">
+        <div class="division-full__label">
+          <div class="division-full__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <span class="label">Vantage Ventures</span>
+        </div>
+        <h2>Business Development &<br><em>Management.</em></h2>
+        <p class="division-full__subtitle">Strategy · Operations · Growth infrastructure</p>
+        <p>Strategy is only as good as its execution. Vantage Ventures partners with business owners to build systems, structure operations, and develop the infrastructure that turns vision into sustainable, scalable revenue.</p>
+        <p>We bring the perspective of serial entrepreneurs — people who have built businesses with real stakes — to every engagement. No generic frameworks. No academic playbooks. Real operational expertise.</p>
+        <ul class="division-full__list">
+          <li>Business formation and entity structuring</li>
+          <li>Operations systems design and implementation</li>
+          <li>Revenue model development and optimization</li>
+          <li>Vendor negotiation and partnership development</li>
+          <li>Hiring systems and team infrastructure</li>
+          <li>Business acquisition consulting and due diligence</li>
+        </ul>
+        <a href="quote.html" class="btn btn--gold">Request a Ventures Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <div class="division-full__visual reveal reveal--delay-2">
+        <div class="division-full__visual-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span>Portfolio imagery coming soon</span>
+        </div>
+        <div class="division-full__visual-overlay"><span class="label">Vantage Ventures</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DESIGN -->
+<section class="division-full" id="design">
+  <span class="division-full__num">05</span>
+  <div class="container">
+    <div class="division-full__inner">
+      <div class="reveal">
+        <div class="division-full__label">
+          <div class="division-full__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <span class="label">Vantage Design</span>
+        </div>
+        <h2>Creative Design &<br><em>Branding.</em></h2>
+        <p class="division-full__subtitle">Brand identity · Visual systems · Collateral</p>
+        <p>Brand equity is built visually before it is earned financially. Vantage Design creates identities, collateral, and visual systems that command attention and communicate credibility at every touchpoint — from first impression to lasting relationship.</p>
+        <p>Every design decision is intentional. Every visual system is built to scale. We don't create logos — we build brand architectures that grow with your business.</p>
+        <ul class="division-full__list">
+          <li>Brand identity development and visual systems</li>
+          <li>Logo design and wordmark creation</li>
+          <li>Marketing collateral and print materials</li>
+          <li>Pitch decks and capabilities presentations</li>
+          <li>Social media visual identity and templates</li>
+          <li>Brand guidelines documentation</li>
+        </ul>
+        <a href="quote.html" class="btn btn--gold">Request a Design Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <div class="division-full__visual reveal reveal--delay-2">
+        <div class="division-full__visual-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+          <span>Portfolio imagery coming soon</span>
+        </div>
+        <div class="division-full__visual-overlay"><span class="label">Vantage Design</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 TECH -->
+<section class="division-full" id="tech">
+  <span class="division-full__num">06</span>
+  <div class="container">
+    <div class="division-full__inner">
+      <div class="reveal">
+        <div class="division-full__label">
+          <div class="division-full__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          </div>
+          <span class="label">Vantage Tech</span>
+        </div>
+        <h2>Software & App<br><em>Development.</em></h2>
+        <p class="division-full__subtitle">Custom software · Web apps · Digital platforms</p>
+        <p>Technology is infrastructure. Vantage Tech builds custom software, applications, and digital platforms that automate operations, serve customers, and create competitive advantages that competitors cannot easily replicate.</p>
+        <p>We don't sell templates or off-the-shelf solutions. Every platform we build is engineered specifically for your business model, your users, and your growth trajectory.</p>
+        <ul class="division-full__list">
+          <li>Custom web application development</li>
+          <li>Mobile app design and development (iOS & Android)</li>
+          <li>Business automation systems and workflows</li>
+          <li>CRM and client management platforms</li>
+          <li>E-commerce and payment infrastructure</li>
+          <li>API integrations and third-party connectivity</li>
+        </ul>
+        <a href="quote.html" class="btn btn--gold">Request a Tech Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <div class="division-full__visual reveal reveal--delay-2">
+        <div class="division-full__visual-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          <span>Portfolio imagery coming soon</span>
+        </div>
+        <div class="division-full__visual-overlay"><span class="label">Vantage Tech</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <div class="container">
+    <span class="label reveal">Start Here</span>
+    <h2 class="reveal reveal--delay-1">Not sure which division<br>you <em>need most?</em></h2>
+    <p class="reveal reveal--delay-2">That's exactly what a Vantage strategy consultation is for. We'll assess your current position and map a clear path across every relevant division.</p>
+    <div class="cta-band__actions reveal reveal--delay-3">
+      <a href="quote.html" class="btn btn--gold">Book a Free Consultation
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="contact.html" class="btn btn--outline">Send a Message</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand"><img src="logo.png" alt="Vantage"/><p>A full-spectrum firm delivering integrated results across construction, design, credit, business strategy, and technology.</p></div>
+      <div class="footer__col"><h5>Navigation</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="contact.html">Contact</a></li><li><a href="quote.html">Get a Quote</a></li></ul></div>
+      <div class="footer__col"><h5>Divisions</h5><ul><li><a href="#build">Vantage Build</a></li><li><a href="#interiors">Vantage Interiors</a></li><li><a href="#credit">Vantage Credit</a></li><li><a href="#ventures">Vantage Ventures</a></li><li><a href="#design">Vantage Design</a></li><li><a href="#tech">Vantage Tech</a></li></ul></div>
+      <div class="footer__col"><h5>Contact</h5><ul><li><a href="tel:0000000000">(000) 000-0000</a></li><li><a href="mailto:info@vantage.co">info@vantage.co</a></li></ul></div>
+    </div>
+    <div class="footer__bottom"><span>© 2025 Vantage. All rights reserved.</span><span>Engineered for <span>Results.</span></span></div>
+  </div>
+</footer>
+
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.classList.add('expanded');ring.classList.add('expanded');});el.addEventListener('mouseleave',()=>{cursor.classList.remove('expanded');ring.classList.remove('expanded');});});
+  const nav=document.getElementById('mainNav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
+  const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileNav');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');});
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
 </body>
 </html>

@@ -1,277 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact | Heavenly Hands Contracting</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — Vantage</title>
+  <meta name="description" content="Get in touch with Vantage. We respond to every inquiry within 24 business hours. No automated runaround — direct access to senior expertise."/>
+  <meta name="author" content="Vantage · Marlowe Greene"/>
+  <meta name="theme-color" content="#0D0F14"/>
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://consulting-stack.github.io/Vantage/contact.html"/>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png"/>
+
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://consulting-stack.github.io/Vantage/contact.html"/>
+  <meta property="og:title" content="Contact Vantage — Start a Conversation"/>
+  <meta property="og:description" content="We respond to every inquiry within 24 business hours. Direct access, senior expertise."/>
+  <meta property="og:image" content="https://consulting-stack.github.io/Vantage/favicon-512.png"/>
+  <meta property="og:site_name" content="Vantage"/>
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Contact Vantage — Start a Conversation"/>
+  <meta name="twitter:description" content="We respond to every inquiry within 24 business hours. Direct access, senior expertise."/>
+  <meta name="twitter:image" content="https://consulting-stack.github.io/Vantage/favicon-512.png"/>
+  <link rel="stylesheet" href="style.css"/>
   <style>
-    #service-map { height:480px; width:100%; border-radius:16px; border:1px solid rgba(201,168,76,0.25); z-index:1; }
-    .map-section { padding:90px 0; background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,.06) 0%,transparent 60%),#0a0a0a; }
-    .city-ticker { display:flex; align-items:center; gap:12px; margin-top:20px; flex-wrap:wrap; }
-    .city-ticker-label { font-family:'Poppins',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); }
-    .city-pill { font-family:'Poppins',sans-serif; font-size:0.75rem; font-weight:600; padding:5px 14px; border-radius:100px; border:1px solid rgba(201,168,76,0.25); color:var(--gray); letter-spacing:0.05em; transition:all 0.3s ease; cursor:pointer; }
-    .city-pill.active { background:rgba(201,168,76,0.12); border-color:var(--gold); color:var(--gold-light); }
-    .leaflet-popup-content-wrapper { background:#161616 !important; border:1px solid rgba(201,168,76,0.35) !important; border-radius:10px !important; box-shadow:0 8px 32px rgba(0,0,0,0.5) !important; color:#F8F8F8 !important; }
-    .leaflet-popup-tip { background:#161616 !important; }
-    .leaflet-popup-content { margin:14px 18px !important; }
-    .map-popup-title { font-family:'Poppins',sans-serif; font-size:0.9rem; font-weight:700; color:#C9A84C; margin:0 0 4px; }
-    .map-popup-sub { font-size:0.78rem; color:#9CA3AF; margin:0; }
-    .leaflet-control-attribution { background:rgba(10,10,10,0.8) !important; color:#555 !important; }
-    .leaflet-control-attribution a { color:#777 !important; }
-    .leaflet-control-zoom a { background:#161616 !important; color:#C9A84C !important; border-color:rgba(201,168,76,0.25) !important; }
-    .leaflet-control-zoom a:hover { background:#222 !important; }
+    .contact-grid {
+      display:grid;
+      grid-template-columns:1fr 1.6fr;
+      gap:80px;
+      padding:100px 0;
+      align-items:start;
+    }
+    .contact-info h2 {
+      font-family:var(--font-display);
+      font-size:clamp(2rem,3vw,2.8rem);
+      font-weight:300;
+      line-height:1.1;
+      margin:16px 0 24px;
+    }
+    .contact-info h2 em { font-style:italic;color:var(--gold); }
+    .contact-info p { color:var(--slate-light);font-size:0.95rem;line-height:1.8;margin-bottom:40px; }
+    .contact-detail {
+      display:flex;
+      align-items:flex-start;
+      gap:16px;
+      margin-bottom:28px;
+    }
+    .contact-detail__icon {
+      width:40px;height:40px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+    }
+    .contact-detail__icon svg { color:var(--gold); }
+    .contact-detail__text strong {
+      display:block;
+      font-family:var(--font-mono);
+      font-size:0.62rem;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-bottom:4px;
+    }
+    .contact-detail__text a, .contact-detail__text span {
+      font-size:0.95rem;
+      color:var(--off-white);
+      transition:color var(--transition);
+    }
+    .contact-detail__text a:hover { color:var(--gold); }
+    .contact-form-wrap {
+      background:var(--obsidian-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:48px;
+      position:relative;
+      overflow:hidden;
+    }
+    .contact-form-wrap::before {
+      content:'';
+      position:absolute;
+      top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--gold),var(--crimson));
+    }
+    .contact-form-wrap h3 {
+      font-family:var(--font-display);
+      font-size:1.6rem;
+      font-weight:300;
+      margin-bottom:8px;
+    }
+    .contact-form-wrap p {
+      color:var(--slate);
+      font-size:0.88rem;
+      margin-bottom:32px;
+    }
+    @media(max-width:900px){.contact-grid{grid-template-columns:1fr;gap:48px;}}
+    @media(max-width:560px){.contact-form-wrap{padding:28px;}}
   </style>
 </head>
 <body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__logo"><img src="logo.png" alt="Vantage"/></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a>
+  <a href="portfolio.html">Portfolio</a><a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
 
-  <header class="site-header">
-    <nav class="navbar">
-      <a href="index.html"><img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" /></a>
-      <button class="menu-toggle" type="button">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="portfolio.html">Portfolio</a></li>
-        <li><a href="contact.html" class="active">Contact</a></li>
-        <li><a href="quote.html" class="nav-cta">Get a Quote</a></li>
-      </ul>
-    </nav>
-  </header>
+<section class="page-hero">
+  <div class="grid-bg"></div>
+  <div class="container">
+    <span class="label reveal">Get in Touch</span>
+    <h1 class="reveal reveal--delay-1">Let's Start a <em>Conversation.</em></h1>
+    <p class="reveal reveal--delay-2">Whether you have a specific project in mind or need help identifying which division can move the needle most — we want to hear from you.</p>
+  </div>
+</section>
 
-  <div class="page-hero">
-    <div class="page-hero-content">
-      <div class="section-label">Contact Us</div>
-      <h1>Let's Talk About<br />Your Project</h1>
-      <p>Reach out with questions, project details, or to get the conversation started. We'll follow up quickly.</p>
+<section class="section section--darker">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <span class="label">Reach Vantage</span>
+        <div class="gold-rule"></div>
+        <h2>We respond<br>to every <em>inquiry.</em></h2>
+        <p>No automated runaround. No junior intake team. When you contact Vantage, your message reaches someone who can actually help you move forward.</p>
+
+        <div class="contact-detail">
+          <div class="contact-detail__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 011 1.18 2 2 0 012.96 1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div class="contact-detail__text">
+            <strong>Phone</strong>
+            <a href="tel:0000000000">(000) 000-0000</a>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="contact-detail__text">
+            <strong>Email</strong>
+            <a href="mailto:info@vantage.co">info@vantage.co</a>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="contact-detail__text">
+            <strong>Response Time</strong>
+            <span>Within 24 business hours</span>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="contact-detail__text">
+            <strong>Coverage</strong>
+            <span>National — Available Everywhere</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap reveal reveal--delay-2">
+        <h3>Send a Message</h3>
+        <p>Tell us what you're working on and we'll be in touch within 24 hours.</p>
+        <form action="https://formspree.io/f/REPLACE_WITH_FORM_ID" method="POST" id="contactForm">
+          <input type="hidden" name="_next" value="thank-you.html"/>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" id="fname" name="first_name" placeholder="Marlowe" required/>
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name</label>
+              <input type="text" id="lname" name="last_name" placeholder="Greene" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="you@company.com" required/>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(000) 000-0000"/>
+          </div>
+          <div class="form-group">
+            <label for="division">Which Division?</label>
+            <select id="division" name="division">
+              <option value="">Select a division (or General Inquiry)</option>
+              <option>Vantage Build — Contracting & Construction</option>
+              <option>Vantage Interiors — Interior Planning & Decorating</option>
+              <option>Vantage Credit — Credit Restoration</option>
+              <option>Vantage Ventures — Business Development</option>
+              <option>Vantage Design — Creative Design & Branding</option>
+              <option>Vantage Tech — Software & App Development</option>
+              <option>Multiple Divisions / General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us about your project or what you're trying to achieve..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn--gold" style="width:100%;justify-content:center;">
+            Send Message
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <p style="margin-top:16px;font-size:0.75rem;color:var(--slate);text-align:center;">We respond to every inquiry within 24 business hours.</p>
+        </form>
+      </div>
     </div>
   </div>
+</section>
 
-  <section class="bg-dots">
-    <div class="container">
-      <div class="contact-layout">
-        <div class="form-card">
-          <h2>Send a Message</h2>
-          <p>Fill out the form and we'll get back to you with next steps.</p>
-          <form id="contact-form" action="https://formspree.io/f/mkoplagk" method="POST">
-            <input type="hidden" name="_subject" value="New Contact — Heavenly Hands Contracting" />
-            <input type="hidden" name="_next" value="https://consulting-stack.github.io/Heavenly-Hands/thank-you.html" />
-            <label>Full Name</label>
-            <input type="text" name="name" placeholder="Your full name" autocomplete="name" required />
-            <label>Email Address</label>
-            <input type="email" name="email" placeholder="your@email.com" autocomplete="email" required />
-            <label>Phone Number</label>
-            <input type="tel" name="phone" placeholder="(000) 000-0000" autocomplete="tel" />
-            <label>Service Needed</label>
-            <select name="service" required>
-              <option value="">Select a service</option>
-              <option>Vehicle Wraps & Graphics</option>
-              <option>Food Truck Design & Builds</option>
-              <option>Mobile Business Builds</option>
-              <option>Interior Layout Design</option>
-              <option>Fleet Branding</option>
-              <option>General Contracting</option>
-              <option>Equipment Operation & Hauling</option>
-              <option>Custom Design Concepts</option>
-            </select>
-            <label>Message</label>
-            <textarea name="message" rows="5" placeholder="Tell us about your project..." required></textarea>
-            <button type="submit">Send Message</button>
-          </form>
-        </div>
-
-        <div class="contact-card">
-          <h2>Contact Information</h2>
-          <p>We're ready to help. Reach out directly or use the form.</p>
-          <div class="contact-detail"><span class="icon">📞</span><div><strong>Phone</strong><span>Coming Soon</span></div></div>
-          <div class="contact-detail"><span class="icon">✉️</span><div><strong>Email</strong><span>info@heavenlyhandscustomdesigns.com</span></div></div>
-          <div class="contact-detail"><span class="icon">🕐</span><div><strong>Response Time</strong><span>We typically respond within 1 business day</span></div></div>
-          <div class="contact-detail"><span class="icon">📍</span><div><strong>Service Area</strong><span>Texas & Mississippi — serving major metro and surrounding areas</span></div></div>
-        </div>
-      </div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand"><img src="logo.png" alt="Vantage"/><p>A full-spectrum firm delivering integrated results across construction, design, credit, business strategy, and technology.</p></div>
+      <div class="footer__col"><h5>Navigation</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="contact.html">Contact</a></li><li><a href="quote.html">Get a Quote</a></li></ul></div>
+      <div class="footer__col"><h5>Divisions</h5><ul><li><a href="services.html#build">Vantage Build</a></li><li><a href="services.html#interiors">Vantage Interiors</a></li><li><a href="services.html#credit">Vantage Credit</a></li><li><a href="services.html#ventures">Vantage Ventures</a></li><li><a href="services.html#design">Vantage Design</a></li><li><a href="services.html#tech">Vantage Tech</a></li></ul></div>
+      <div class="footer__col"><h5>Contact</h5><ul><li><a href="tel:0000000000">(000) 000-0000</a></li><li><a href="mailto:info@vantage.co">info@vantage.co</a></li></ul></div>
     </div>
-  </section>
-
-  <section class="map-section">
-    <div class="container">
-      <div class="section-label">Service Area</div>
-      <h2 class="section-title">Where We Work</h2>
-      <p class="section-sub" style="margin-bottom:24px;">We serve businesses across Texas and Mississippi. If you're in or near any of these cities — we've got you covered.</p>
-      <div class="city-ticker" id="city-ticker"><span class="city-ticker-label">Now Viewing:</span></div>
-      <div style="margin-top:20px;"><div id="service-map"></div></div>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" />
-        <p>Building Dreams · Delivering Excellence since 1992.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="quote.html">Get a Quote</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p>Email: info@heavenlyhandscustomdesigns.com</p>
-      </div>
-    </div>
-    <div class="footer-bottom"><p>© 2026 Heavenly Hands Contracting. All rights reserved.</p></div>
-  </footer>
-
-  <a href="quote.html" class="mobile-cta">Get a Free Quote →</a>
-
-  <!--Start of Tawk.to Script-->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  Tawk_API.onLoad = function() {
-    Tawk_API.customStyle = {
-      visibility: {
-        desktop: { position: 'br', xOffset: 20, yOffset: 20 },
-        mobile:  { position: 'br', xOffset: 10, yOffset: 65 }
-      }
-    };
-  };
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69d9dc284d80b21c34bff088/1jltg7vc4';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>
-  window.addEventListener('load', function() {
-    const serviceAreas = [
-      { name:'Houston, TX',        lat:29.7604, lng:-95.3698, zoom:11 },
-      { name:'Dallas, TX',         lat:32.7767, lng:-96.7970, zoom:11 },
-      { name:'San Antonio, TX',    lat:29.4241, lng:-98.4936, zoom:11 },
-      { name:'Austin, TX',         lat:30.2672, lng:-97.7431, zoom:11 },
-      { name:'Fort Worth, TX',     lat:32.7555, lng:-97.3308, zoom:11 },
-      { name:'Beaumont, TX',       lat:30.0802, lng:-94.1266, zoom:12 },
-      { name:'Corpus Christi, TX', lat:27.8006, lng:-97.3964, zoom:11 },
-      { name:'Tyler, TX',          lat:32.3513, lng:-95.3011, zoom:12 },
-      { name:'Port Arthur, TX',    lat:29.8849, lng:-93.9399, zoom:12 },
-      { name:'Nacogdoches, TX',    lat:31.6035, lng:-94.6552, zoom:12 },
-      { name:'Jackson, MS',        lat:32.2988, lng:-90.1848, zoom:11 },
-      { name:'Gulfport, MS',       lat:30.3674, lng:-89.0928, zoom:12 },
-      { name:'Biloxi, MS',         lat:30.3960, lng:-88.8853, zoom:12 },
-      { name:'Hattiesburg, MS',    lat:31.3271, lng:-89.2903, zoom:12 },
-      { name:'Pascagoula, MS',     lat:30.3457, lng:-88.5562, zoom:12 },
-      { name:'Meridian, MS',       lat:32.3643, lng:-88.7037, zoom:12 },
-    ];
-
-    const map = L.map('service-map', { center:[31.0,-94.5], zoom:6, zoomControl:true, scrollWheelZoom:false });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
-      subdomains:'abcd', maxZoom:19
-    }).addTo(map);
-
-    const goldIcon = L.divIcon({
-      className:'',
-      html:`<div style="width:14px;height:14px;background:#C9A84C;border:2px solid #F0C040;border-radius:50%;box-shadow:0 0 10px rgba(201,168,76,0.7);"></div>`,
-      iconSize:[14,14], iconAnchor:[7,7], popupAnchor:[0,-10]
-    });
-
-    const markers = serviceAreas.map(city => {
-      const m = L.marker([city.lat, city.lng], { icon:goldIcon }).addTo(map);
-      m.bindPopup(`<p class="map-popup-title">${city.name}</p><p class="map-popup-sub">Heavenly Hands serves this area</p>`);
-      return m;
-    });
-
-    const ticker = document.getElementById('city-ticker');
-    serviceAreas.forEach((city, i) => {
-      const pill = document.createElement('span');
-      pill.className = 'city-pill';
-      pill.id = `pill-${i}`;
-      pill.textContent = city.name;
-      ticker.appendChild(pill);
-    });
-
-    let currentIndex = 0;
-    let paused = false;
-
-    function flyToCity(index) {
-      document.querySelectorAll('.city-pill').forEach(p => p.classList.remove('active'));
-      const pill = document.getElementById(`pill-${index}`);
-      if (pill) pill.classList.add('active');
-      const city = serviceAreas[index];
-      map.closePopup();
-      map.flyTo([city.lat, city.lng], city.zoom, { duration:1.6, easeLinearity:0.35 });
-      setTimeout(() => { if (!paused) markers[index].openPopup(); }, 1700);
-    }
-
-    setTimeout(() => flyToCity(0), 500);
-
-    setInterval(() => {
-      if (paused) return;
-      currentIndex = (currentIndex + 1) % serviceAreas.length;
-      if (currentIndex === 0) {
-        map.flyTo([31.0,-94.5], 6, { duration:2 });
-        setTimeout(() => { if (!paused) flyToCity(0); }, 2500);
-      } else {
-        flyToCity(currentIndex);
-      }
-    }, 4500);
-
-    map.on('dragstart', () => { paused = true; });
-
-    document.querySelectorAll('.city-pill').forEach((pill, i) => {
-      pill.addEventListener('click', () => { paused = false; currentIndex = i; flyToCity(i); });
-    });
-
-    emailjs.init('ooyUlSfr3d2-5lQBk');
-    const form = document.getElementById('contact-form');
-    if (form) {
-      form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = form.querySelector('button[type="submit"]');
-        btn.textContent = 'Sending...';
-        btn.disabled = true;
-        try {
-          const formRes = await fetch(form.action, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} });
-          if (!formRes.ok) throw new Error('Formspree failed');
-          await emailjs.send('service_xn6jpzv', 'template_ypf56ch', {
-            to_name: form.querySelector('[name="name"]').value,
-            to_email: form.querySelector('[name="email"]').value,
-            service_type: form.querySelector('[name="service"]').value || 'General Inquiry',
-            vehicle_type: 'N/A',
-          });
-          window.location.href = 'https://consulting-stack.github.io/Heavenly-Hands/thank-you.html';
-        } catch(err) {
-          alert('Something went wrong. Please try again or email us directly.');
-          btn.textContent = 'Send Message';
-          btn.disabled = false;
-        }
-      });
-    }
-
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav-links');
-    if (toggle && nav) toggle.addEventListener('click', () => nav.classList.toggle('show'));
-    const header = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => {
-      header.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
-    });
+    <div class="footer__bottom"><span>© 2025 Vantage. All rights reserved.</span><span>Engineered for <span>Results.</span></span></div>
+  </div>
+</footer>
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.classList.add('expanded');ring.classList.add('expanded');});el.addEventListener('mouseleave',()=>{cursor.classList.remove('expanded');ring.classList.remove('expanded');});});
+  const nav=document.getElementById('mainNav');window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
+  const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileNav');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');});
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+  document.getElementById('contactForm').addEventListener('submit',async function(e){
+    e.preventDefault();
+    const btn=this.querySelector('button[type=submit]');
+    btn.textContent='Sending...';btn.disabled=true;
+    const res=await fetch(this.action,{method:'POST',body:new FormData(this),headers:{Accept:'application/json'}});
+    if(res.ok){window.location.href='thank-you.html';}
+    else{btn.textContent='Send Message';btn.disabled=false;alert('Something went wrong. Please try again.');}
   });
-  </script>
+</script>
 </body>
 </html>

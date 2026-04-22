@@ -1,138 +1,433 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio | Heavenly Hands Contracting</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio — Vantage | Selected Work</title>
+  <meta name="description" content="A curated selection of Vantage project work across all six divisions — construction, interiors, credit, ventures, design, and tech. Results you can see."/>
+  <meta name="author" content="Vantage · Marlowe Greene"/>
+  <meta name="theme-color" content="#0D0F14"/>
+  <link rel="canonical" href="https://consulting-stack.github.io/Vantage/portfolio.html"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://consulting-stack.github.io/Vantage/portfolio.html"/>
+  <meta property="og:title" content="Vantage Portfolio — Selected Work"/>
+  <meta property="og:description" content="Project work across six disciplines, delivered to a single standard of excellence."/>
+  <meta property="og:image" content="https://consulting-stack.github.io/Vantage/favicon-512.png"/>
+  <meta property="og:site_name" content="Vantage"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Vantage Portfolio — Selected Work"/>
+  <meta name="twitter:description" content="Project work across six disciplines, delivered to a single standard of excellence."/>
+  <meta name="twitter:image" content="https://consulting-stack.github.io/Vantage/favicon-512.png"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .filter-bar {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:64px;
+    }
+    .filter-btn {
+      padding:10px 22px;
+      border-radius:40px;
+      border:1px solid var(--border);
+      background:transparent;
+      color:var(--slate-light);
+      font-family:var(--font-mono);
+      font-size:0.65rem;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      transition:var(--transition);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color:var(--gold);
+      color:var(--gold);
+      background:var(--gold-dim);
+    }
+    .case-grid {
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:24px;
+    }
+    .case-card {
+      background:var(--obsidian-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:40px;
+      position:relative;
+      overflow:hidden;
+      transition:border-color var(--transition), transform var(--transition);
+      display:flex;
+      flex-direction:column;
+      min-height:340px;
+    }
+    .case-card:hover {
+      border-color:var(--border-hover);
+      transform:translateY(-4px);
+    }
+    .case-card::before {
+      content:'';
+      position:absolute;
+      top:0; left:0; right:0;
+      height:2px;
+      background:var(--gold);
+      transform:scaleX(0);
+      transform-origin:left;
+      transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    .case-card:hover::before { transform:scaleX(1); }
+    .case-card__division {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:24px;
+    }
+    .case-card__division-icon {
+      width:36px; height:36px;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+    }
+    .case-card__division-icon svg { color:var(--gold); }
+    .case-card__division-label {
+      font-family:var(--font-mono);
+      font-size:0.62rem;
+      letter-spacing:0.16em;
+      text-transform:uppercase;
+      color:var(--gold);
+    }
+    .case-card__number {
+      margin-left:auto;
+      font-family:var(--font-mono);
+      font-size:0.62rem;
+      color:var(--slate);
+      letter-spacing:0.1em;
+    }
+    .case-card h3 {
+      font-family:var(--font-display);
+      font-size:1.7rem;
+      font-weight:400;
+      line-height:1.15;
+      margin-bottom:12px;
+    }
+    .case-card h3 em { font-style:italic; color:var(--gold); }
+    .case-card__scope {
+      font-size:0.82rem;
+      color:var(--slate);
+      margin-bottom:20px;
+      padding-bottom:20px;
+      border-bottom:1px solid var(--border);
+    }
+    .case-card__desc {
+      font-size:0.92rem;
+      color:var(--slate-light);
+      line-height:1.7;
+      margin-bottom:24px;
+      flex-grow:1;
+    }
+    .case-card__metrics {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+      padding-top:20px;
+      border-top:1px solid var(--border);
+      margin-top:auto;
+    }
+    .case-card__metric__num {
+      font-family:var(--font-display);
+      font-size:1.3rem;
+      font-weight:300;
+      color:var(--gold);
+      line-height:1;
+      margin-bottom:4px;
+    }
+    .case-card__metric__label {
+      font-family:var(--font-mono);
+      font-size:0.55rem;
+      letter-spacing:0.1em;
+      text-transform:uppercase;
+      color:var(--slate);
+      line-height:1.4;
+    }
+    .case-card__confidential {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      background:var(--crimson-dim);
+      border:1px solid rgba(139,31,47,0.3);
+      border-radius:40px;
+      font-family:var(--font-mono);
+      font-size:0.55rem;
+      letter-spacing:0.15em;
+      text-transform:uppercase;
+      color:var(--off-white);
+      margin-top:16px;
+      align-self:flex-start;
+    }
+    .case-card__confidential::before {
+      content:'';
+      width:5px; height:5px;
+      border-radius:50%;
+      background:var(--crimson);
+    }
+    .building-notice {
+      margin-top:64px;
+      padding:48px;
+      background:var(--obsidian-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .building-notice::before {
+      content:'';
+      position:absolute;
+      top:0; left:0; right:0;
+      height:2px;
+      background:linear-gradient(90deg, var(--gold), var(--crimson));
+    }
+    .building-notice h3 {
+      font-family:var(--font-display);
+      font-size:1.5rem;
+      font-weight:300;
+      margin-bottom:12px;
+    }
+    .building-notice h3 em { font-style:italic; color:var(--gold); }
+    .building-notice p {
+      color:var(--slate-light);
+      max-width:520px;
+      margin:0 auto 24px;
+      font-size:0.95rem;
+      line-height:1.7;
+    }
+    @media(max-width:900px) {
+      .case-grid { grid-template-columns:1fr; }
+    }
+    @media(max-width:560px) {
+      .case-card { padding:28px; min-height:auto; }
+      .case-card h3 { font-size:1.4rem; }
+    }
+  </style>
 </head>
 <body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <header class="site-header">
-    <nav class="navbar">
-      <a href="index.html"><img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" /></a>
-      <button class="menu-toggle" type="button">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="portfolio.html" class="active">Portfolio</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="quote.html" class="nav-cta">Get a Quote</a></li>
-      </ul>
-    </nav>
-  </header>
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__logo"><img src="logo.png" alt="Vantage"/></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a>
+  <a href="portfolio.html">Portfolio</a><a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
 
-  <div class="page-hero">
-    <div class="page-hero-content">
-      <div class="section-label">Our Work</div>
-      <h1>Built to Be Seen.<br />Designed to Last.</h1>
-      <p>Every project represents a business that decided to stop blending in. Here's what that looks like.</p>
+<section class="page-hero">
+  <div class="grid-bg"></div>
+  <div class="container">
+    <span class="label reveal">Selected Work</span>
+    <h1 class="reveal reveal--delay-1">Results You Can <em>Measure.</em></h1>
+    <p class="reveal reveal--delay-2">A curated look at projects across all six Vantage divisions. Some engagements are protected under NDA — anonymized here out of respect for our clients' confidentiality.</p>
+  </div>
+</section>
+
+<section class="section section--darker">
+  <div class="container--wide">
+    <div class="filter-bar reveal">
+      <button class="filter-btn active" data-filter="all">All Work</button>
+      <button class="filter-btn" data-filter="build">Build</button>
+      <button class="filter-btn" data-filter="interiors">Interiors</button>
+      <button class="filter-btn" data-filter="credit">Credit</button>
+      <button class="filter-btn" data-filter="ventures">Ventures</button>
+      <button class="filter-btn" data-filter="design">Design</button>
+      <button class="filter-btn" data-filter="tech">Tech</button>
+    </div>
+
+    <div class="case-grid">
+
+      <div class="case-card reveal" data-category="build">
+        <div class="case-card__division">
+          <div class="case-card__division-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V12h6v9"/></svg>
+          </div>
+          <span class="case-card__division-label">Vantage Build</span>
+          <span class="case-card__number">01</span>
+        </div>
+        <h3>Commercial Interior <em>Build-Out</em></h3>
+        <p class="case-card__scope">Full ground-up construction · Permit management · 90-day delivery</p>
+        <p class="case-card__desc">Complete commercial space transformation from shell to keys-in-hand. Coordinated permits, subcontractors, and inspections across multiple trades to hit a hard client deadline.</p>
+        <div class="case-card__metrics">
+          <div><div class="case-card__metric__num">90d</div><div class="case-card__metric__label">Delivery<br>Timeline</div></div>
+          <div><div class="case-card__metric__num">0</div><div class="case-card__metric__label">Change<br>Orders</div></div>
+          <div><div class="case-card__metric__num">100%</div><div class="case-card__metric__label">On-Time<br>Milestones</div></div>
+        </div>
+        <span class="case-card__confidential">Client Confidential</span>
+      </div>
+
+      <div class="case-card reveal reveal--delay-1" data-category="interiors">
+        <div class="case-card__division">
+          <div class="case-card__division-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <span class="case-card__division-label">Vantage Interiors</span>
+          <span class="case-card__number">02</span>
+        </div>
+        <h3>Executive Residence <em>Redesign</em></h3>
+        <p class="case-card__scope">Full-home interior · Furniture procurement · Styling & lighting</p>
+        <p class="case-card__desc">Ground-up interior redesign for a high-end residential client. Full furniture sourcing, custom lighting specifications, and complete staging — coordinated to a move-in date.</p>
+        <div class="case-card__metrics">
+          <div><div class="case-card__metric__num">12</div><div class="case-card__metric__label">Rooms<br>Designed</div></div>
+          <div><div class="case-card__metric__num">60d</div><div class="case-card__metric__label">Start to<br>Move-In</div></div>
+          <div><div class="case-card__metric__num">100%</div><div class="case-card__metric__label">Client<br>Satisfaction</div></div>
+        </div>
+        <span class="case-card__confidential">Client Confidential</span>
+      </div>
+
+      <div class="case-card reveal" data-category="credit">
+        <div class="case-card__division">
+          <div class="case-card__division-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="case-card__division-label">Vantage Credit</span>
+          <span class="case-card__number">03</span>
+        </div>
+        <h3>Entrepreneur <em>Credit Restoration</em></h3>
+        <p class="case-card__scope">Personal credit repair · Business credit development · Capital positioning</p>
+        <p class="case-card__desc">Comprehensive credit strategy for an entrepreneur seeking capital for business acquisition. Removed negative items, rebuilt profile, and positioned for lender approval.</p>
+        <div class="case-card__metrics">
+          <div><div class="case-card__metric__num">+140</div><div class="case-card__metric__label">FICO<br>Increase</div></div>
+          <div><div class="case-card__metric__num">9mo</div><div class="case-card__metric__label">To<br>Approval</div></div>
+          <div><div class="case-card__metric__num">6fig</div><div class="case-card__metric__label">Capital<br>Unlocked</div></div>
+        </div>
+        <span class="case-card__confidential">Client Confidential</span>
+      </div>
+
+      <div class="case-card reveal reveal--delay-1" data-category="ventures">
+        <div class="case-card__division">
+          <div class="case-card__division-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <span class="case-card__division-label">Vantage Ventures</span>
+          <span class="case-card__number">04</span>
+        </div>
+        <h3>Service Business <em>Launch Infrastructure</em></h3>
+        <p class="case-card__scope">Entity formation · Operations build · Revenue systems</p>
+        <p class="case-card__desc">End-to-end business development for a service firm — entity structuring, operating systems, vendor relationships, and the full infrastructure needed to reach revenue quickly.</p>
+        <div class="case-card__metrics">
+          <div><div class="case-card__metric__num">45d</div><div class="case-card__metric__label">Zero to<br>First Revenue</div></div>
+          <div><div class="case-card__metric__num">6</div><div class="case-card__metric__label">Systems<br>Built</div></div>
+          <div><div class="case-card__metric__num">1</div><div class="case-card__metric__label">Launch<br>Delivered</div></div>
+        </div>
+        <span class="case-card__confidential">Client Confidential</span>
+      </div>
+
+      <div class="case-card reveal" data-category="design">
+        <div class="case-card__division">
+          <div class="case-card__division-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+          </div>
+          <span class="case-card__division-label">Vantage Design</span>
+          <span class="case-card__number">05</span>
+        </div>
+        <h3>Full Brand <em>Identity System</em></h3>
+        <p class="case-card__scope">Naming · Logo · Capabilities deck · Brand guidelines</p>
+        <p class="case-card__desc">Complete rebrand of a multi-division firm — new name, identity architecture, capabilities deck, color system, and typography specification. Built for scale from day one.</p>
+        <div class="case-card__metrics">
+          <div><div class="case-card__metric__num">7d</div><div class="case-card__metric__label">Concept<br>to Deck</div></div>
+          <div><div class="case-card__metric__num">6</div><div class="case-card__metric__label">Divisions<br>Unified</div></div>
+          <div><div class="case-card__metric__num">1</div><div class="case-card__metric__label">Cohesive<br>Identity</div></div>
+        </div>
+        <span class="case-card__confidential">Client Confidential</span>
+      </div>
+
+      <div class="case-card reveal reveal--delay-1" data-category="tech">
+        <div class="case-card__division">
+          <div class="case-card__division-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          </div>
+          <span class="case-card__division-label">Vantage Tech</span>
+          <span class="case-card__number">06</span>
+        </div>
+        <h3>Custom <em>Business Platform</em></h3>
+        <p class="case-card__scope">Web app · CRM integration · API connectivity · Automation</p>
+        <p class="case-card__desc">Purpose-built business management platform replacing three separate subscription tools. Custom CRM logic, client portal, and automated workflows tailored to the client's operations.</p>
+        <div class="case-card__metrics">
+          <div><div class="case-card__metric__num">3→1</div><div class="case-card__metric__label">Tools<br>Consolidated</div></div>
+          <div><div class="case-card__metric__num">80%</div><div class="case-card__metric__label">Manual Work<br>Automated</div></div>
+          <div><div class="case-card__metric__num">24/7</div><div class="case-card__metric__label">Uptime<br>Delivered</div></div>
+        </div>
+        <span class="case-card__confidential">Client Confidential</span>
+      </div>
+
+    </div>
+
+    <div class="building-notice reveal">
+      <h3>Full case studies <em>in development.</em></h3>
+      <p>Detailed project breakdowns, visual portfolios, and extended client narratives are being prepared for publication. For deeper insights into a specific division's work, request a capabilities deck.</p>
+      <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+        <a href="quote.html" class="btn btn--gold">Request a Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+        <a href="contact.html" class="btn btn--outline">Send a Message</a>
+      </div>
     </div>
   </div>
+</section>
 
-  <section class="bg-dots">
-    <div class="container">
-      <div class="section-label">Portfolio</div>
-      <h2 class="section-title">Recent Projects</h2>
-      <p class="section-sub">A growing collection of vehicles, builds, and projects we've completed.</p>
-
-      <div class="portfolio-full-grid">
-        <div class="portfolio-item wide"><img src="van-1.jpg" alt="Custom van branding" /><div class="portfolio-overlay"><span>Commercial Van Full Wrap</span></div></div>
-        <div class="portfolio-item"><img src="van-3.jpg" alt="Custom van front view" /><div class="portfolio-overlay"><span>Brand Identity Wrap</span></div></div>
-        <div class="portfolio-item"><img src="van-2.jpg" alt="Custom van side view" /><div class="portfolio-overlay"><span>Fleet Vehicle Wrap</span></div></div>
-        <div class="portfolio-item wide"><img src="van-3.jpg" alt="Mobile business build" /><div class="portfolio-overlay"><span>Mobile Service Vehicle</span></div></div>
-        <div class="portfolio-coming-soon">
-          <span style="font-size:1.8rem;">📷</span>
-          <p>More projects added regularly</p>
-          <a href="quote.html">Start Your Project →</a>
-        </div>
-      </div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand"><img src="logo.png" alt="Vantage"/><p>A full-spectrum firm delivering integrated results across construction, design, credit, business strategy, and technology.</p></div>
+      <div class="footer__col"><h5>Navigation</h5><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="contact.html">Contact</a></li><li><a href="quote.html">Get a Quote</a></li></ul></div>
+      <div class="footer__col"><h5>Divisions</h5><ul><li><a href="services.html#build">Vantage Build</a></li><li><a href="services.html#interiors">Vantage Interiors</a></li><li><a href="services.html#credit">Vantage Credit</a></li><li><a href="services.html#ventures">Vantage Ventures</a></li><li><a href="services.html#design">Vantage Design</a></li><li><a href="services.html#tech">Vantage Tech</a></li></ul></div>
+      <div class="footer__col"><h5>Contact</h5><ul><li><a href="tel:0000000000">(000) 000-0000</a></li><li><a href="mailto:info@vantage.co">info@vantage.co</a></li></ul></div>
     </div>
-  </section>
-
-  <hr class="gold-divider" />
-
-  <section class="bg-glow">
-    <div class="container">
-      <div class="section-label">How It Works</div>
-      <h2 class="section-title">From Idea to Road-Ready</h2>
-      <p class="section-sub">A simple, transparent process so you always know where your project stands.</p>
-      <div class="process-grid">
-        <div class="process-step"><span class="step-number">01</span><h3>Submit Your Request</h3><p>Tell us about your vehicle, goals, and timeline through our quote form.</p></div>
-        <div class="process-step"><span class="step-number">02</span><h3>Design Consultation</h3><p>We review your project and follow up with recommendations and pricing.</p></div>
-        <div class="process-step"><span class="step-number">03</span><h3>Design & Approval</h3><p>We build the concept and walk you through revisions until it's exactly right.</p></div>
-        <div class="process-step"><span class="step-number">04</span><h3>Build & Deliver</h3><p>Professional execution and final quality check before delivery.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-band">
-    <h2>Ready to Be in This Portfolio?</h2>
-    <p>Start with a free quote and let's figure out what your project needs.</p>
-    <a href="quote.html" class="btn-primary">Request a Free Quote</a>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" />
-        <p>Building Dreams · Delivering Excellence since 1992.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="portfolio.html">Portfolio</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="quote.html">Get a Quote</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p>Email: info@heavenlyhandscustomdesigns.com</p>
-      </div>
-    </div>
-    <div class="footer-bottom"><p>© 2026 Heavenly Hands Contracting. All rights reserved.</p></div>
-  </footer>
-
-  <a href="quote.html" class="mobile-cta">Get a Free Quote →</a>
-
-  <!--Start of Tawk.to Script-->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  Tawk_API.onLoad = function() {
-    Tawk_API.customStyle = {
-      visibility: {
-        desktop: { position: 'br', xOffset: 20, yOffset: 20 },
-        mobile:  { position: 'br', xOffset: 10, yOffset: 65 }
-      }
-    };
-  };
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69d9dc284d80b21c34bff088/1jltg7vc4';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
-
-  <script>
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav-links');
-    if (toggle && nav) toggle.addEventListener('click', () => nav.classList.toggle('show'));
-    const header = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => {
-      header.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
+    <div class="footer__bottom"><span>© 2025 Vantage. All rights reserved.</span><span>Engineered for <span>Results.</span></span></div>
+  </div>
+</footer>
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.classList.add('expanded');ring.classList.add('expanded');});el.addEventListener('mouseleave',()=>{cursor.classList.remove('expanded');ring.classList.remove('expanded');});});
+  const nav=document.getElementById('mainNav');
+  window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40));
+  const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileNav');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');});
+  const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+  const filterBtns=document.querySelectorAll('.filter-btn');
+  const items=document.querySelectorAll('.case-card[data-category]');
+  filterBtns.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      filterBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const f=btn.dataset.filter;
+      items.forEach(item=>{item.style.display=(f==='all'||item.dataset.category===f)?'':'none';});
     });
-  </script>
+  });
+</script>
 </body>
 </html>

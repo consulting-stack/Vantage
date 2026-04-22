@@ -1,130 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Heavenly Hands Contracting | Building Dreams · Delivering Excellence</title>
-  <meta name="description" content="Heavenly Hands Contracting — custom vehicle branding, mobile business builds, food trucks, fleet graphics, and contracting services. Est. 1992." />
-  <meta property="og:title" content="Heavenly Hands Contracting | Building Dreams · Delivering Excellence" />
-  <meta property="og:description" content="Custom vehicle wraps, food truck builds, mobile business builds, and full-scale contracting. Est. 1992." />
-  <meta property="og:image" content="https://consulting-stack.github.io/Heavenly-Hands/logo.png" />
-  <meta property="og:url" content="https://consulting-stack.github.io/Heavenly-Hands/" />
-  <meta property="og:type" content="website" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vantage — Engineered for Results</title>  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      position:relative;
+      overflow:hidden;
+      padding-top:72px;
+    }
+    .hero__bg {
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(ellipse 70% 50% at 60% 50%, rgba(201,168,76,0.04) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(139,31,47,0.07) 0%, transparent 55%);
+    }
+    .hero__mark {
+      position:absolute;
+      top:50%; right:-8%;
+      transform:translateY(-50%);
+      width:min(55vw, 720px);
+      opacity:0.07;
+      pointer-events:none;
+      animation:mark-breath 8s ease-in-out infinite;
+    }
+    .hero__mark img { width:100%; height:auto; }
+    @keyframes mark-breath {
+      0%,100% { opacity:0.06; transform:translateY(-50%) scale(1); }
+      50%     { opacity:0.10; transform:translateY(-50%) scale(1.03); }
+    }
+    .hero__content {
+      position:relative;
+      z-index:2;
+      max-width:800px;
+    }
+    .hero__eyebrow {
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-bottom:32px;
+    }
+    .hero__eyebrow .label { margin:0; }
+    .hero__eyebrow-line {
+      width:48px; height:1px;
+      background:var(--gold);
+    }
+    .hero h1 {
+      font-family:var(--font-display);
+      font-size:clamp(3.8rem,7vw,7rem);
+      font-weight:300;
+      line-height:1.0;
+      margin-bottom:32px;
+      overflow:hidden;
+    }
+    .hero h1 .line {
+      display:block;
+      transform:translateY(100%);
+      animation:line-up 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero h1 .line:nth-child(2) { animation-delay:0.1s; }
+    .hero h1 .line:nth-child(3) { animation-delay:0.2s; }
+    .hero h1 em { font-style:italic; color:var(--gold); }
+    @keyframes line-up {
+      to { transform:translateY(0); }
+    }
+    .hero__sub {
+      font-size:1.1rem;
+      color:var(--slate-light);
+      max-width:480px;
+      line-height:1.75;
+      margin-bottom:40px;
+      opacity:0;
+      animation:fade-up 0.8s 0.5s forwards;
+    }
+    .hero__actions {
+      display:flex;
+      align-items:center;
+      gap:20px;
+      flex-wrap:wrap;
+      opacity:0;
+      animation:fade-up 0.8s 0.65s forwards;
+    }
+    @keyframes fade-up {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .hero__scroll {
+      position:absolute;
+      bottom:40px; left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      opacity:0;
+      animation:fade-up 0.8s 1s forwards;
+    }
+    .hero__scroll span {
+      font-family:var(--font-mono);
+      font-size:0.58rem;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      color:var(--slate);
+    }
+    .hero__scroll-line {
+      width:1px; height:48px;
+      background:linear-gradient(to bottom, var(--gold), transparent);
+      animation:scroll-pulse 2s 1.5s infinite;
+    }
+    @keyframes scroll-pulse {
+      0%,100% { opacity:0.3; transform:scaleY(1); }
+      50% { opacity:1; transform:scaleY(1.1); }
+    }
+
+    /* ── DIVISIONS PREVIEW ── */
+    .divisions-section { padding:0; }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      padding:100px 0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:80px;
+      align-items:center;
+    }
+    .about-strip__text h2 {
+      font-family:var(--font-display);
+      font-size:clamp(2.2rem,3.5vw,3.2rem);
+      font-weight:300;
+      line-height:1.1;
+      margin:16px 0 24px;
+    }
+    .about-strip__text h2 em { font-style:italic; color:var(--gold); }
+    .about-strip__text p {
+      color:var(--slate-light);
+      font-size:1rem;
+      line-height:1.8;
+      margin-bottom:24px;
+    }
+    .about-strip__visual {
+      position:relative;
+    }
+    .about-strip__card {
+      background:var(--obsidian-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      padding:40px;
+      position:relative;
+      overflow:hidden;
+    }
+    .about-strip__card::before {
+      content:'';
+      position:absolute;
+      top:0; left:0; right:0;
+      height:2px;
+      background:linear-gradient(90deg, var(--gold), var(--crimson));
+    }
+    .about-strip__card blockquote {
+      font-family:var(--font-display);
+      font-size:1.5rem;
+      font-weight:300;
+      font-style:italic;
+      line-height:1.4;
+      color:var(--white);
+      margin-bottom:24px;
+    }
+    .about-strip__card cite {
+      font-style:normal;
+      font-size:0.8rem;
+      color:var(--slate);
+      font-family:var(--font-mono);
+      letter-spacing:0.1em;
+    }
+    .about-strip__card cite strong { color:var(--gold); }
+
+    /* ── WHY VANTAGE ── */
+    .why-grid {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:1px;
+      background:var(--border);
+    }
+    .why-item {
+      background:var(--obsidian);
+      padding:48px 36px;
+      position:relative;
+    }
+    .why-item__num {
+      font-family:var(--font-display);
+      font-size:5rem;
+      font-weight:300;
+      color:rgba(201,168,76,0.06);
+      line-height:1;
+      position:absolute;
+      top:24px; right:24px;
+    }
+    .why-item h3 {
+      font-family:var(--font-display);
+      font-size:1.4rem;
+      font-weight:400;
+      margin:16px 0 12px;
+    }
+    .why-item p {
+      font-size:0.9rem;
+      color:var(--slate-light);
+      line-height:1.75;
+    }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background:var(--obsidian-2);
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+      padding:100px 0;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .cta-band::before {
+      content:'VANTAGE';
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      font-family:var(--font-display);
+      font-size:20vw;
+      font-weight:700;
+      color:rgba(201,168,76,0.02);
+      white-space:nowrap;
+      pointer-events:none;
+      letter-spacing:-0.02em;
+    }
+    .cta-band .label { margin-bottom:20px; }
+    .cta-band h2 {
+      font-family:var(--font-display);
+      font-size:clamp(2.5rem,4vw,4rem);
+      font-weight:300;
+      margin-bottom:16px;
+    }
+    .cta-band h2 em { font-style:italic; color:var(--gold); }
+    .cta-band p {
+      color:var(--slate-light);
+      margin-bottom:40px;
+      font-size:1.05rem;
+    }
+    .cta-band__actions {
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    @media(max-width:900px) {
+      .about-strip { grid-template-columns:1fr; gap:48px; }
+      .why-grid { grid-template-columns:1fr; }
+    }
+  </style>
 </head>
 <body>
 
-  <header class="site-header">
-    <nav class="navbar">
-      <a href="index.html">
-        <img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" />
-      </a>
-      <button class="menu-toggle" type="button" aria-label="Toggle menu">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="portfolio.html">Portfolio</a></li>
-        <li><a href="contact.html">Contact</a></li>
-        <li><a href="quote.html" class="nav-cta">Get a Quote</a></li>
-      </ul>
-    </nav>
-  </header>
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <section class="hero">
-    <div class="hero-slide active"></div>
-    <div class="hero-slide"></div>
-    <div class="hero-slide"></div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">Est. 1992 — Building Dreams · Delivering Excellence</div>
-      <h1>We Build It.<br />We Brand It.<br /><span>We Deliver It.</span></h1>
-      <p>From custom vehicle wraps and food truck builds to full-scale contracting — Heavenly Hands does the work that makes your business impossible to ignore.</p>
-      <div class="hero-btns">
-        <a href="quote.html" class="btn-primary">Start Your Project</a>
-        <a href="services.html" class="btn-outline">Explore Services</a>
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__logo">
+    <img src="logo.png" alt="Vantage"/>
+  </a>
+  <ul class="nav__links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="services.html">Services</a>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div class="hero__bg"></div>
+  <div class="hero__mark"><img src="mark.png" alt=""/></div>
+  <div class="container">
+    <div class="hero__content">
+      <div class="hero__eyebrow">
+        <span class="label">Full-Spectrum Firm</span>
+        <span class="hero__eyebrow-line"></span>
       </div>
-    </div>
-    <div class="slide-dots">
-      <button class="slide-dot active" data-index="0"></button>
-      <button class="slide-dot" data-index="1"></button>
-      <button class="slide-dot" data-index="2"></button>
-    </div>
-  </section>
-
-  <div class="stats-bar">
-    <div class="stats-grid">
-      <div><span class="stat-number">30+</span><span class="stat-label">Years in Business</span></div>
-      <div><span class="stat-number">500+</span><span class="stat-label">Projects Completed</span></div>
-      <div><span class="stat-number">100%</span><span class="stat-label">Custom Work</span></div>
-      <div><span class="stat-number">8</span><span class="stat-label">Service Categories</span></div>
+      <h1>
+        <span class="line">Engineered</span>
+        <span class="line">for <em>Results.</em></span>
+      </h1>
+      <p class="hero__sub">
+        Vantage delivers integrated solutions across six disciplines — construction,
+        interiors, credit, business strategy, design, and technology. One firm.
+        One standard. No compromises.
+      </p>
+      <div class="hero__actions">
+        <a href="services.html" class="btn btn--gold">
+          Explore Services
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+        <a href="about.html" class="btn btn--outline">Our Story</a>
+      </div>
     </div>
   </div>
+  <div class="hero__scroll">
+    <span>Scroll</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
 
-  <section class="bg-dots">
-    <div class="container">
-      <div class="section-label">What We Do</div>
-      <h2 class="section-title">One Company.<br />Every Solution.</h2>
-      <p class="section-sub">Custom design meets heavy-duty contracting. Whether it's a wrap, a build, or a full project — we handle it all under one roof.</p>
-      <div class="services-grid">
-        <div class="service-card"><span class="service-icon">🎨</span><h3>Vehicle Wraps & Graphics</h3><p>Full and partial wraps that turn every vehicle into a moving billboard for your brand.</p></div>
-        <div class="service-card"><span class="service-icon">🚚</span><h3>Food Truck Builds</h3><p>Complete food truck design and construction — from concept through street-ready delivery.</p></div>
-        <div class="service-card"><span class="service-icon">🏗️</span><h3>Mobile Business Builds</h3><p>Custom mobile showrooms, service rigs, and trade vehicles built for real-world function.</p></div>
-        <div class="service-card"><span class="service-icon">🚛</span><h3>Fleet Branding</h3><p>Unified, professional branding across your entire fleet — consistent and scalable.</p></div>
-        <div class="service-card"><span class="service-icon">🔨</span><h3>General Contracting</h3><p>Full-scope construction and contracting services delivered with the same standard of excellence.</p></div>
-        <div class="service-card"><span class="service-icon">📐</span><h3>Interior Layout Design</h3><p>Precision interior planning that maximizes space, workflow, and professionalism in every build.</p></div>
-        <div class="service-card"><span class="service-icon">🚜</span><h3>Equipment & Hauling</h3><p>Heavy equipment operation and hauling services to support your project from the ground up.</p></div>
-        <div class="service-card"><span class="service-icon">💡</span><h3>Custom Concepts</h3><p>If you can imagine it, we can build it. No template. No shortcuts. Just results.</p></div>
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__inner">
+    <!-- repeated twice for seamless loop -->
+    <span class="ticker__item">Vantage Build</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Interiors</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Credit</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Ventures</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Design</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Tech</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Build</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Interiors</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Credit</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Ventures</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Design</span><span class="ticker__dot">·</span>
+    <span class="ticker__item">Vantage Tech</span><span class="ticker__dot">·</span>
+  </div>
+</div>
+
+<!-- DIVISIONS GRID -->
+<section class="section section--dark divisions-section">
+  <div class="container--wide">
+    <div class="section-head reveal">
+      <span class="label">What We Do</span>
+      <div class="gold-rule"></div>
+      <h2>Six Divisions. <em>One Standard.</em></h2>
+      <p>Every division operates under the same commitment to excellence — optimal outcomes, every engagement.</p>
+    </div>
+    <div class="division-grid">
+
+      <div class="division-card reveal">
+        <div class="division-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V12h6v9"/></svg>
+        </div>
+        <h3>Vantage Build</h3>
+        <h4>Contracting & Construction</h4>
+        <p>20+ years of master contracting expertise. Ground-up builds, full renovations, and commercial construction with zero tolerance for shortcuts.</p>
+        <span class="division-card__num">01</span>
+      </div>
+
+      <div class="division-card reveal reveal--delay-1">
+        <div class="division-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>Vantage Interiors</h3>
+        <h4>Interior Planning & Decorating</h4>
+        <p>Spaces engineered to reflect your identity. Award-recognized design precision applied to residential and commercial environments.</p>
+        <span class="division-card__num">02</span>
+      </div>
+
+      <div class="division-card reveal reveal--delay-2">
+        <div class="division-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Vantage Credit</h3>
+        <h4>Credit Restoration & Financial Strategy</h4>
+        <p>10+ year track record restoring credit profiles and positioning clients for capital access. Your financial leverage, reclaimed.</p>
+        <span class="division-card__num">03</span>
+      </div>
+
+      <div class="division-card reveal reveal--delay-1">
+        <div class="division-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <h3>Vantage Ventures</h3>
+        <h4>Business Development & Management</h4>
+        <p>Strategy meets execution. We build systems, structure operations, and develop infrastructure that converts vision into sustainable revenue.</p>
+        <span class="division-card__num">04</span>
+      </div>
+
+      <div class="division-card reveal reveal--delay-2">
+        <div class="division-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <h3>Vantage Design</h3>
+        <h4>Creative Design & Branding</h4>
+        <p>Brand equity built visually before it is earned financially. Identities, collateral, and visual systems that command attention at every touchpoint.</p>
+        <span class="division-card__num">05</span>
+      </div>
+
+      <div class="division-card reveal reveal--delay-3">
+        <div class="division-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        </div>
+        <h3>Vantage Tech</h3>
+        <h4>Software & App Development</h4>
+        <p>Custom software, applications, and digital platforms that automate operations and create competitive advantages competitors cannot replicate.</p>
+        <span class="division-card__num">06</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item reveal">
+    <div class="stat-item__num" data-count="20">0</div>
+    <div class="stat-item__label">Years in Contracting</div>
+  </div>
+  <div class="stat-item reveal reveal--delay-1">
+    <div class="stat-item__num" data-count="10">0</div>
+    <div class="stat-item__label">Years in Business Dev</div>
+  </div>
+  <div class="stat-item reveal reveal--delay-2">
+    <div class="stat-item__num" data-count="6">0</div>
+    <div class="stat-item__label">Service Divisions</div>
+  </div>
+  <div class="stat-item reveal reveal--delay-3">
+    <div class="stat-item__num" data-count="1">0</div>
+    <div class="stat-item__label">Standard: Excellence</div>
+  </div>
+</div>
+
+<!-- ABOUT STRIP -->
+<section class="section section--darker">
+  <div class="container">
+    <div class="about-strip">
+      <div class="about-strip__text reveal">
+        <span class="label">The Founder</span>
+        <div class="gold-rule"></div>
+        <h2>Built by someone <em>who has operated</em> with real stakes.</h2>
+        <p>Marlowe Greene is not a consultant reading from a framework. He is a serial entrepreneur who has built businesses, managed crises, and delivered results across contracting, credit, design, and technology for over two decades.</p>
+        <p>That owner-operator perspective shapes every Vantage engagement — every recommendation comes with the accountability of someone who has skin in the game.</p>
+        <a href="about.html" class="btn btn--ghost">
+          Meet Marlowe
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+      <div class="about-strip__visual reveal reveal--delay-2">
+        <div class="about-strip__card">
+          <blockquote>"My goal is to make the customer's experience the best and optimize results — no matter what is asked of me."</blockquote>
+          <cite><strong>Marlowe Greene</strong> — Founder & Principal, Vantage</cite>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <hr class="gold-divider" />
-
-  <section style="padding:90px 0;background:radial-gradient(ellipse at 15% 60%,rgba(201,168,76,.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 20%,rgba(201,168,76,.05) 0%,transparent 50%),#0a0a0a;">
-    <div class="container">
-      <div class="section-label">Client Testimonials</div>
-      <h2 class="section-title">What Our Clients Say</h2>
-      <p class="section-sub">Real feedback from real businesses we've worked with.</p>
-      <div>
-        <div id='testimonialto-heavenly-hands-contracting' class='testimonialto-embed' data-lang='en' data-theme='dark' data-reviews='all'></div>
-        <script type='text/javascript' src='https://testimonial.to/js/iframeResizer.min.js'></script>
+<!-- WHY VANTAGE -->
+<section class="section section--dark">
+  <div class="container--wide">
+    <div class="section-head reveal">
+      <span class="label">Why Vantage</span>
+      <div class="gold-rule"></div>
+      <h2>The Vantage <em>Difference.</em></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-item reveal">
+        <span class="why-item__num">01</span>
+        <div class="division-card__icon" style="margin-bottom:16px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <h3>One Point of Accountability</h3>
+        <p>No finger-pointing between vendors. Vantage owns every deliverable across every division. One call closes the loop.</p>
+      </div>
+      <div class="why-item reveal reveal--delay-1">
+        <span class="why-item__num">02</span>
+        <div class="division-card__icon" style="margin-bottom:16px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>National Reach, Personal Standard</h3>
+        <p>We operate nationally while maintaining the personal investment of a boutique firm. Direct access to senior expertise on every project.</p>
+      </div>
+      <div class="why-item reveal reveal--delay-2">
+        <span class="why-item__num">03</span>
+        <div class="division-card__icon" style="margin-bottom:16px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Results as the Only Metric</h3>
+        <p>We measure success by the delta between where clients start and where they end up. That standard does not change by scope or budget.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <hr class="gold-divider" />
-
-  <section class="bg-dots">
-    <div class="container">
-      <div class="section-label">Our Work</div>
-      <h2 class="section-title">Built to Last.<br />Designed to Impress.</h2>
-      <p class="section-sub">A look at vehicles and projects we've built, wrapped, and branded.</p>
-      <div class="portfolio-grid">
-        <div class="portfolio-item"><img src="van-1.jpg" alt="Custom vehicle wrap" /><div class="portfolio-overlay"><span>Vehicle Wrap</span></div></div>
-        <div class="portfolio-item"><img src="van-2.jpg" alt="Fleet branding" /><div class="portfolio-overlay"><span>Fleet Branding</span></div></div>
-        <div class="portfolio-item"><img src="van-3.jpg" alt="Custom graphics" /><div class="portfolio-overlay"><span>Custom Graphics</span></div></div>
-      </div>
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="container">
+    <span class="label reveal">Take Your Vantage</span>
+    <h2 class="reveal reveal--delay-1">Ready to be <em>Engineered</em><br>for Results?</h2>
+    <p class="reveal reveal--delay-2">Schedule a no-obligation strategy consultation. We'll assess your needs across every relevant division and deliver a clear path forward.</p>
+    <div class="cta-band__actions reveal reveal--delay-3">
+      <a href="quote.html" class="btn btn--gold">
+        Request a Consultation
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="services.html" class="btn btn--outline">View All Services</a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="cta-band">
-    <h2>Ready to Build Something Great?</h2>
-    <p>Tell us about your project and we'll put together a plan that gets it done right.</p>
-    <a href="quote.html" class="btn-primary">Request a Free Quote</a>
-  </section>
-
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <img src="logo.png" alt="Heavenly Hands Contracting" class="logo-img" />
-        <p>Building Dreams · Delivering Excellence since 1992. Custom design, mobile builds, and full-scale contracting.</p>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <img src="logo.png" alt="Vantage"/>
+        <p>A full-spectrum firm delivering integrated results across construction, design, credit, business strategy, and technology. National footprint. Personal standard.</p>
       </div>
-      <div class="footer-col">
-        <h4>Navigation</h4>
+      <div class="footer__col">
+        <h5>Navigation</h5>
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
@@ -134,58 +544,87 @@
           <li><a href="quote.html">Get a Quote</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p>Email: info@heavenlyhandscustomdesigns.com</p>
+      <div class="footer__col">
+        <h5>Divisions</h5>
+        <ul>
+          <li><a href="services.html#build">Vantage Build</a></li>
+          <li><a href="services.html#interiors">Vantage Interiors</a></li>
+          <li><a href="services.html#credit">Vantage Credit</a></li>
+          <li><a href="services.html#ventures">Vantage Ventures</a></li>
+          <li><a href="services.html#design">Vantage Design</a></li>
+          <li><a href="services.html#tech">Vantage Tech</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="tel:0000000000">(000) 000-0000</a></li>
+          <li><a href="mailto:info@vantage.co">info@vantage.co</a></li>
+          <li><a href="#">vantage.co</a></li>
+          <li style="color:var(--slate);font-size:0.85rem;padding-top:8px;">National Coverage</a></li>
+        </ul>
       </div>
     </div>
-    <div class="footer-bottom"><p>© 2026 Heavenly Hands Contracting. All rights reserved.</p></div>
-  </footer>
+    <div class="footer__bottom">
+      <span>© 2025 Vantage. All rights reserved.</span>
+      <span>Engineered for <span>Results.</span></span>
+    </div>
+  </div>
+</footer>
 
-  <a href="quote.html" class="mobile-cta">Get a Free Quote →</a>
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  function animCursor() {
+    rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+    cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+    ring.style.left   = rx+'px'; ring.style.top  = ry+'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+  });
 
-  <!--Start of Tawk.to Script-->
-  <script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  Tawk_API.onLoad = function() {
-    Tawk_API.customStyle = {
-      visibility: {
-        desktop: { position: 'br', xOffset: 20, yOffset: 20 },
-        mobile:  { position: 'br', xOffset: 10, yOffset: 65 }
-      }
-    };
-  };
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/69d9dc284d80b21c34bff088/1jltg7vc4';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
+  // Nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
 
-  <script>
-    const slides = document.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('.slide-dot');
-    let current = 0;
-    function goTo(index) {
-      slides[current].classList.remove('active');
-      dots[current].classList.remove('active');
-      current = index;
-      slides[current].classList.add('active');
-      dots[current].classList.add('active');
-    }
-    dots.forEach(dot => dot.addEventListener('click', () => goTo(parseInt(dot.dataset.index))));
-    setInterval(() => goTo((current + 1) % slides.length), 5000);
-    const header = document.querySelector('.site-header');
-    window.addEventListener('scroll', () => {
-      header.style.background = window.scrollY > 60 ? 'rgba(10,10,10,0.98)' : 'rgba(10,10,10,0.92)';
+  // Mobile menu
+  const ham = document.getElementById('hamburger');
+  const mob = document.getElementById('mobileNav');
+  ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
+  mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { ham.classList.remove('open'); mob.classList.remove('open'); }));
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+  }, { threshold:0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Counter animation
+  const countObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseInt(el.dataset.count);
+      const suffix = target >= 20 ? '+' : (target === 1 ? '' : '+');
+      let start = 0;
+      const step = () => {
+        start += Math.ceil(target/40);
+        if(start >= target) { el.textContent = target + suffix; return; }
+        el.textContent = start + suffix;
+        requestAnimationFrame(step);
+      };
+      step();
+      countObserver.unobserve(el);
     });
-    const toggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav-links');
-    if (toggle && nav) toggle.addEventListener('click', () => nav.classList.toggle('show'));
-  </script>
+  }, { threshold:0.5 });
+  document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+</script>
 </body>
 </html>

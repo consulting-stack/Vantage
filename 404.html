@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Page Not Found — Vantage</title>
+  <meta name="description" content="The page you're looking for could not be found. Return to Vantage."/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon-180.png"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .err {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .err::before {
+      content:'404';
+      position:absolute;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      font-family:var(--font-display);
+      font-size:clamp(14rem,28vw,24rem);
+      font-weight:700;
+      color:rgba(201,168,76,0.03);
+      white-space:nowrap;
+      pointer-events:none;
+      letter-spacing:-0.04em;
+      line-height:0.85;
+    }
+    .err__inner {
+      position:relative;
+      z-index:2;
+      max-width:560px;
+      padding:0 2rem;
+    }
+    .err__code {
+      font-family:var(--font-mono);
+      font-size:0.7rem;
+      letter-spacing:0.22em;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-bottom:24px;
+    }
+    .err h1 {
+      font-family:var(--font-display);
+      font-size:clamp(2.5rem,5vw,4rem);
+      font-weight:300;
+      line-height:1.1;
+      margin-bottom:20px;
+    }
+    .err h1 em { font-style:italic; color:var(--gold); }
+    .err__divider { width:48px; height:1px; background:var(--gold); margin:24px auto; }
+    .err p {
+      color:var(--slate-light);
+      font-size:1.05rem;
+      line-height:1.75;
+      margin-bottom:40px;
+    }
+    .err__actions {
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav class="nav scrolled" id="mainNav">
+  <a href="index.html" class="nav__logo"><img src="logo.png" alt="Vantage"/></a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a>
+  <a href="portfolio.html">Portfolio</a><a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
+
+<div class="grid-bg"></div>
+<section class="err">
+  <div class="err__inner">
+    <div class="err__code">Error · Page Not Found</div>
+    <h1>You've Lost Your <em>Vantage.</em></h1>
+    <div class="err__divider"></div>
+    <p>The page you're looking for doesn't exist — or it may have moved. Let's get you back on track.</p>
+    <div class="err__actions">
+      <a href="index.html" class="btn btn--gold">Back to Home
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="services.html" class="btn btn--outline">View Services</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim);})();
+  document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.classList.add('expanded');ring.classList.add('expanded');});el.addEventListener('mouseleave',()=>{cursor.classList.remove('expanded');ring.classList.remove('expanded');});});
+  const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileNav');
+  ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');});
+</script>
+</body>
+</html>
