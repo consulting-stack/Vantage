@@ -8,6 +8,8 @@
   <link rel="icon" href="favicon.ico"/>
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="shop.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
@@ -166,6 +168,11 @@
 </footer>
 
 <script>
+// ── GSAP SETUP ─────────────────────────────────────────────
+gsap.registerPlugin(ScrollTrigger);
+const isMobile = window.matchMedia('(max-width: 767px)').matches;
+const noAnim   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // ── CURSOR ─────────────────────────────────────────────────
 const cursor = document.getElementById('cursor');
 const ring   = document.getElementById('cursorRing');
@@ -178,14 +185,17 @@ function animCursor() {
   requestAnimationFrame(animCursor);
 }
 animCursor();
-document.querySelectorAll('a,button').forEach(el => {
-  el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
-  el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
-});
+function bindCursor(root) {
+  root.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+  });
+}
+bindCursor(document);
 
 // ── NAV ────────────────────────────────────────────────────
 const nav = document.getElementById('mainNav');
-window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
 
 const ham = document.getElementById('hamburger');
 const mob = document.getElementById('mobileNav');
@@ -194,11 +204,71 @@ mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
   ham.classList.remove('open'); mob.classList.remove('open');
 }));
 
-// ── SCROLL REVEAL ──────────────────────────────────────────
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }});
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+// ── HERO ANIMATIONS ────────────────────────────────────────
+if (!noAnim) {
+  // Parallax: image moves at ~0.5x scroll speed relative to the hero
+  gsap.to('#heroGhostedImg', {
+    y: () => Math.round(document.querySelector('.shop-hero').offsetHeight * 0.25),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.shop-hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 0.8,
+      invalidateOnRefresh: true
+    }
+  });
+
+  // Text stagger: eyebrow → title → rule → subtext (150ms apart)
+  gsap.timeline({ delay: 0.2 })
+    .fromTo('.shop-hero__eyebrow',
+      { opacity: 0, y: 22 },
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }
+    )
+    .fromTo('.shop-hero__brand',
+      { opacity: 0, y: 32 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+      '-=0.55'
+    )
+    .fromTo('.shop-hero__rule',
+      { opacity: 0, scaleX: 0, transformOrigin: 'left center' },
+      { opacity: 1, scaleX: 1, duration: 0.5, ease: 'power2.out' },
+      '-=0.5'
+    )
+    .fromTo('.shop-hero__sub',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.65, ease: 'power2.out' },
+      '-=0.4'
+    );
+
+  // Filter buttons: stagger fade in on load
+  gsap.fromTo('.shop-filter-btn',
+    { opacity: 0, y: -10 },
+    { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', stagger: 0.05, delay: 0.75 }
+  );
+
+  // Intro band: scroll-triggered
+  ScrollTrigger.create({
+    trigger: '.shop-intro',
+    start: 'top 78%',
+    once: true,
+    onEnter: () => {
+      gsap.fromTo('.shop-intro__text',
+        { opacity: 0, x: isMobile ? 0 : -24, y: isMobile ? 20 : 0 },
+        { opacity: 1, x: 0, y: 0, duration: 0.7, ease: 'power2.out' }
+      );
+      gsap.fromTo('.shop-intro__stat',
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.15 }
+      );
+    }
+  });
+}
+
+// Ensure .reveal elements become visible (CSS fallback + GSAP override)
+document.querySelectorAll('.shop-hero .reveal, .shop-intro .reveal').forEach(el => {
+  el.classList.add('visible');
+});
 
 // ── PRODUCT GRID ───────────────────────────────────────────
 const grid  = document.getElementById('productGrid');
@@ -206,7 +276,6 @@ const empty = document.getElementById('gridEmpty');
 let allProducts = [];
 let activeFilter = 'all';
 
-// Check for URL-based filter on load (e.g. shop.html?filter=outdoor)
 const urlFilter = new URLSearchParams(window.location.search).get('filter');
 if (urlFilter) {
   activeFilter = urlFilter;
@@ -251,7 +320,6 @@ function buildCard(product) {
     </div>
   `;
 
-  // Whole card is clickable
   article.addEventListener('click', e => {
     if (!e.target.closest('a')) {
       window.location.href = `product-detail.html?id=${product.id}`;
@@ -266,19 +334,14 @@ function applyFilter(category) {
   const cards = grid.querySelectorAll('.product-card');
   let visible = 0;
 
-  // Fade-out then hide
   cards.forEach(card => {
     const match = category === 'all' || card.dataset.category === category;
     if (!match) {
       card.classList.add('fading-out');
-      setTimeout(() => {
-        card.classList.add('hidden');
-        card.classList.remove('fading-out');
-      }, 200);
+      setTimeout(() => { card.classList.add('hidden'); card.classList.remove('fading-out'); }, 200);
     }
   });
 
-  // Show matching with fade-in
   setTimeout(() => {
     cards.forEach(card => {
       const match = category === 'all' || card.dataset.category === category;
@@ -293,38 +356,36 @@ function applyFilter(category) {
   }, 220);
 }
 
-// Fetch and render products
+function animateCards() {
+  if (noAnim) return;
+  const cards = grid.querySelectorAll('.product-card');
+  gsap.set(cards, { opacity: 0, y: isMobile ? 20 : 40 });
+  ScrollTrigger.batch(cards, {
+    start: 'top 80%',
+    onEnter: batch => gsap.to(batch, {
+      opacity: 1, y: 0,
+      duration: isMobile ? 0.4 : 0.65,
+      stagger: isMobile ? 0.04 : 0.08,
+      ease: 'power2.out',
+      overwrite: true
+    }),
+    once: true
+  });
+}
+
 fetch('shop-data.json')
   .then(r => r.json())
   .then(data => {
     allProducts = data.products;
-    allProducts.forEach(product => {
-      const card = buildCard(product);
-      grid.appendChild(card);
-    });
+    allProducts.forEach(product => grid.appendChild(buildCard(product)));
 
-    // Apply URL filter if present
-    if (activeFilter !== 'all') {
-      applyFilter(activeFilter);
-    }
+    if (activeFilter !== 'all') applyFilter(activeFilter);
 
-    // Staggered reveal for cards
-    const cards = grid.querySelectorAll('.product-card');
-    cards.forEach((card, i) => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(24px)';
-      card.style.transition = `opacity 0.6s ease ${i * 0.08}s, transform 0.6s ease ${i * 0.08}s`;
-      setTimeout(() => {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-      }, 100);
-    });
+    // GSAP scroll-triggered card reveal (replaces old setTimeout stagger)
+    animateCards();
 
-    // Update cursor hover for dynamically added cards
-    cards.forEach(card => {
-      card.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
-      card.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
-    });
+    // Bind cursor to dynamically created cards
+    bindCursor(grid);
   })
   .catch(err => {
     console.error('Failed to load shop-data.json:', err);
@@ -335,6 +396,9 @@ fetch('shop-data.json')
 // ── FILTER BUTTONS ─────────────────────────────────────────
 document.querySelectorAll('.shop-filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    // Scale pulse via GSAP
+    if (!noAnim) gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+
     document.querySelectorAll('.shop-filter-btn').forEach(b => {
       b.classList.remove('active');
       b.setAttribute('aria-pressed', 'false');
