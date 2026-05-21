@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Celebrity Interiors — Curated Luxury Furniture | Vantage</title>
+  <meta name="description" content="Celebrity Interiors, presented by Vantage — premium curated furniture for home staging, new builds, and luxury residential. Shop the collection."/>
+  <link rel="icon" href="favicon.ico"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="shop.css"/>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <a href="index.html" class="nav__logo">
+    <img src="logo.png" alt="Vantage"/>
+  </a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li class="nav__dropdown">
+      <a href="services.html#interiors">Vantage Interiors
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <ul class="nav__dropdown-menu">
+        <li><a href="services.html#interiors">Interior Services</a></li>
+        <li><a href="shop.html" class="active">Shop</a></li>
+      </ul>
+    </li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="services.html">Services</a>
+  <div class="nav__mobile-sub">
+    <a href="services.html#interiors">Interior Services</a>
+    <a href="shop.html" style="color:var(--gold)">Shop</a>
+  </div>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
+
+<!-- SHOP HERO -->
+<section class="shop-hero">
+  <div class="shop-hero__image" aria-hidden="true">
+    <!-- ghosted hero image — replaced with first featured product on load -->
+    <img id="heroGhostedImg" src="images/products/outdoor-lounge-chair-hero.png" alt=""/>
+  </div>
+  <div class="shop-hero__bg"></div>
+  <div class="container--wide">
+    <div class="shop-hero__content">
+      <div class="shop-hero__eyebrow reveal">
+        <span class="label">Vantage Interiors Division</span>
+        <span class="shop-hero__eyebrow-line"></span>
+      </div>
+      <div class="shop-hero__brand reveal reveal--delay-1">
+        <h1>Celebrity<br><em>Interiors</em></h1>
+        <span class="shop-hero__presented">presented by Vantage</span>
+      </div>
+      <div class="shop-hero__rule reveal reveal--delay-2"></div>
+      <p class="shop-hero__sub reveal reveal--delay-3">
+        Premium curated furniture for home staging, new builds,
+        and luxury residential. Every piece selected for presence,
+        quality, and longevity.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO BAND -->
+<div class="shop-intro">
+  <div class="shop-intro__inner">
+    <div class="shop-intro__text reveal">
+      <span class="label">The Collection</span>
+      <h2>Pieces that make a room <em>speak.</em></h2>
+      <p>Every item in the Celebrity Interiors collection is hand-selected by the Vantage design team for staging power, material quality, and longevity. These are investment pieces — not disposable furniture.</p>
+    </div>
+    <div class="shop-intro__stat reveal reveal--delay-2">
+      <div class="shop-intro__stat-num">5</div>
+      <div class="shop-intro__stat-label">Curated Pieces</div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY FILTER -->
+<div class="shop-filters" id="shopFilters" role="navigation" aria-label="Product categories">
+  <div class="shop-filters__inner">
+    <button class="shop-filter-btn active" data-filter="all" aria-pressed="true">All</button>
+    <button class="shop-filter-btn" data-filter="living-room" aria-pressed="false">Living Room</button>
+    <button class="shop-filter-btn" data-filter="outdoor" aria-pressed="false">Outdoor</button>
+    <button class="shop-filter-btn" data-filter="accent-tables" aria-pressed="false">Accent Tables</button>
+    <button class="shop-filter-btn" data-filter="console-entry" aria-pressed="false">Console &amp; Entry</button>
+  </div>
+</div>
+
+<!-- PRODUCT GRID -->
+<section class="shop-section" aria-label="Product collection">
+  <div class="product-grid" id="productGrid" role="list">
+    <!-- Products injected by JavaScript from shop-data.json -->
+  </div>
+  <div class="product-grid__empty" id="gridEmpty" role="status">
+    <p>No products in this category yet.<br>Check back soon.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <img src="logo.png" alt="Vantage"/>
+        <p>Celebrity Interiors is a curated furniture offering presented by Vantage Interiors. Premium pieces for home staging, new builds, and luxury residential spaces.</p>
+      </div>
+      <div class="footer__col">
+        <h5>Shop</h5>
+        <ul>
+          <li><a href="shop.html">All Products</a></li>
+          <li><a href="shop.html?filter=living-room">Living Room</a></li>
+          <li><a href="shop.html?filter=outdoor">Outdoor</a></li>
+          <li><a href="shop.html?filter=accent-tables">Accent Tables</a></li>
+          <li><a href="shop.html?filter=console-entry">Console &amp; Entry</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h5>Vantage</h5>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html#interiors">Interiors</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="quote.html">Request a Quote</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="tel:0000000000">(000) 000-0000</a></li>
+          <li><a href="mailto:info@vantage.co">info@vantage.co</a></li>
+          <li style="color:var(--slate);font-size:0.85rem;padding-top:8px;">National Coverage</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2025 Vantage · Celebrity Interiors. All rights reserved.</span>
+      <span>Engineered for <span>Results.</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── CURSOR ─────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+function animCursor() {
+  rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+  ring.style.left   = rx+'px'; ring.style.top  = ry+'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+});
+
+// ── NAV ────────────────────────────────────────────────────
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileNav');
+ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
+mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  ham.classList.remove('open'); mob.classList.remove('open');
+}));
+
+// ── SCROLL REVEAL ──────────────────────────────────────────
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }});
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── PRODUCT GRID ───────────────────────────────────────────
+const grid  = document.getElementById('productGrid');
+const empty = document.getElementById('gridEmpty');
+let allProducts = [];
+let activeFilter = 'all';
+
+// Check for URL-based filter on load (e.g. shop.html?filter=outdoor)
+const urlFilter = new URLSearchParams(window.location.search).get('filter');
+if (urlFilter) {
+  activeFilter = urlFilter;
+  document.querySelectorAll('.shop-filter-btn').forEach(btn => {
+    const isActive = btn.dataset.filter === activeFilter;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+}
+
+function buildCard(product) {
+  const article = document.createElement('article');
+  article.className = `product-card${product.featured ? ' product-card--featured' : ''}`;
+  article.setAttribute('data-category', product.category);
+  article.setAttribute('role', 'listitem');
+
+  article.innerHTML = `
+    <img
+      class="product-card__img"
+      src="${product.images[0]}"
+      alt="${product.name}"
+      loading="lazy"
+    />
+    <span class="product-card__badge">${product.categoryLabel}</span>
+    <div class="product-card__info">
+      <div class="product-card__info-name">${product.name}</div>
+      <div class="product-card__info-price">${product.priceDisplay}</div>
+    </div>
+    <div class="product-card__overlay" aria-hidden="true">
+      <div class="product-card__overlay-name">${product.name}</div>
+      <div class="product-card__overlay-price">${product.priceDisplay}</div>
+      <a
+        href="product-detail.html?id=${product.id}"
+        class="product-card__overlay-cta"
+        tabindex="0"
+      >
+        View Details
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+    </div>
+  `;
+
+  // Whole card is clickable
+  article.addEventListener('click', e => {
+    if (!e.target.closest('a')) {
+      window.location.href = `product-detail.html?id=${product.id}`;
+    }
+  });
+
+  return article;
+}
+
+function applyFilter(category) {
+  activeFilter = category;
+  const cards = grid.querySelectorAll('.product-card');
+  let visible = 0;
+
+  // Fade-out then hide
+  cards.forEach(card => {
+    const match = category === 'all' || card.dataset.category === category;
+    if (!match) {
+      card.classList.add('fading-out');
+      setTimeout(() => {
+        card.classList.add('hidden');
+        card.classList.remove('fading-out');
+      }, 200);
+    }
+  });
+
+  // Show matching with fade-in
+  setTimeout(() => {
+    cards.forEach(card => {
+      const match = category === 'all' || card.dataset.category === category;
+      if (match) {
+        card.classList.remove('hidden');
+        card.classList.add('fading-in');
+        visible++;
+        setTimeout(() => card.classList.remove('fading-in'), 400);
+      }
+    });
+    empty.classList.toggle('visible', visible === 0);
+  }, 220);
+}
+
+// Fetch and render products
+fetch('shop-data.json')
+  .then(r => r.json())
+  .then(data => {
+    allProducts = data.products;
+    allProducts.forEach(product => {
+      const card = buildCard(product);
+      grid.appendChild(card);
+    });
+
+    // Apply URL filter if present
+    if (activeFilter !== 'all') {
+      applyFilter(activeFilter);
+    }
+
+    // Staggered reveal for cards
+    const cards = grid.querySelectorAll('.product-card');
+    cards.forEach((card, i) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(24px)';
+      card.style.transition = `opacity 0.6s ease ${i * 0.08}s, transform 0.6s ease ${i * 0.08}s`;
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, 100);
+    });
+
+    // Update cursor hover for dynamically added cards
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+      card.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+    });
+  })
+  .catch(err => {
+    console.error('Failed to load shop-data.json:', err);
+    empty.classList.add('visible');
+    empty.querySelector('p').textContent = 'Unable to load products. Please refresh.';
+  });
+
+// ── FILTER BUTTONS ─────────────────────────────────────────
+document.querySelectorAll('.shop-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.shop-filter-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    applyFilter(btn.dataset.filter);
+  });
+});
+</script>
+</body>
+</html>

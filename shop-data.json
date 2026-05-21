@@ -1,0 +1,97 @@
+{
+  "products": [
+    {
+      "id": "outdoor-lounge-chair",
+      "name": "Outdoor Lounge Chair Set",
+      "category": "outdoor",
+      "categoryLabel": "Outdoor",
+      "price": 3200,
+      "priceDisplay": "$3,200",
+      "description": "Sculptural outdoor lounge chairs with a low-slung profile engineered for expansive terraces and poolside environments. Available as a matched pair with coordinating accent tables. Built to endure the elements without compromising on form — the intersection of resort hospitality and residential permanence.",
+      "materials": "Weather-resistant powder-coated aluminum frame, premium Sunbrella fabric cushions, UV-stabilized matte finish, stainless steel hardware",
+      "dimensions": "Chair: 32\"W × 34\"D × 28\"H · Seat Height: 14\" · Sold as a pair",
+      "images": [
+        "images/products/outdoor-lounge-chair-hero.png",
+        "images/products/outdoor-side-table-detail-1.png",
+        "images/products/outdoor-side-table-detail-2.png"
+      ],
+      "featured": true,
+      "shopifyVariantId": ""
+    },
+    {
+      "id": "round-coffee-table",
+      "name": "Round Coffee Table Natural",
+      "category": "living-room",
+      "categoryLabel": "Living Room",
+      "price": 1850,
+      "priceDisplay": "$1,850",
+      "description": "A handcrafted solid wood coffee table with an organic live-edge profile and an oil-finished surface that deepens with age. Anchors a living space with quiet authority — the kind of piece that reads as art before furniture. Equally at home in a minimalist loft or a richly layered residential interior.",
+      "materials": "Solid white oak, natural oil finish, hairpin steel legs, non-marking floor glides",
+      "dimensions": "42\" diameter × 16\"H",
+      "images": [
+        "images/products/round-coffee-table-hero.png",
+        "images/products/round-coffee-table-detail.png"
+      ],
+      "featured": false,
+      "shopifyVariantId": ""
+    },
+    {
+      "id": "c-table-marble-brass",
+      "name": "C-Table Marble & Brass",
+      "category": "accent-tables",
+      "categoryLabel": "Accent Tables",
+      "price": 620,
+      "priceDisplay": "$620",
+      "description": "A versatile C-profile side table engineered to slide beneath sofas and seating with effortless precision. The Calacatta marble top — with its characteristic veining — brings geological permanence to the everyday ritual of a morning coffee. The polished brass base grounds the piece in warmth.",
+      "materials": "Calacatta marble top, solid polished brass base, satin-brushed hardware, felt floor pads",
+      "dimensions": "18\"W × 14\"D × 26\"H",
+      "images": [
+        "images/products/c-table-marble-hero.png",
+        "images/products/c-table-marble-detail-1.png",
+        "images/products/c-table-marble-detail-2.png"
+      ],
+      "featured": false,
+      "shopifyVariantId": ""
+    },
+    {
+      "id": "drum-coffee-table",
+      "name": "Drum Coffee Table Brass Band",
+      "category": "living-room",
+      "categoryLabel": "Living Room",
+      "price": 2400,
+      "priceDisplay": "$2,400",
+      "description": "A monolithic drum silhouette wrapped in a precision-fitted equatorial brass band. The table carries the visual mass and gravity of fine sculpture while remaining decidedly functional. A centrepiece that commands a room and rewards close inspection — the brass band catches light differently at every hour of the day.",
+      "materials": "Wrapped drum body with hand-applied lacquer finish, precision brass inlay band, polished tempered glass top",
+      "dimensions": "48\" diameter × 17\"H · Glass top: 3/8\" tempered",
+      "images": [
+        "images/products/drum-coffee-table-hero.png",
+        "images/products/drum-coffee-table-detail.png",
+        "images/products/drum-coffee-table-lifestyle.png"
+      ],
+      "featured": true,
+      "shopifyVariantId": ""
+    },
+    {
+      "id": "console-table-glass-brass",
+      "name": "Console Table Glass & Brass",
+      "category": "console-entry",
+      "categoryLabel": "Console & Entry",
+      "price": 1100,
+      "priceDisplay": "$1,100",
+      "description": "An architectural entry console with a razor-thin brass frame and full-width tempered glass shelving. Designed to receive a space — the first object encountered, the first impression made. Scaled for foyer, gallery, and hallway placement. The transparency of the glass reads as near-weightlessness against any wall.",
+      "materials": "Brass-plated steel frame, satin finish, two-tier tempered glass shelves, adjustable floor levellers",
+      "dimensions": "54\"W × 14\"D × 32\"H",
+      "images": [
+        "images/products/console-table-hero.png",
+        "images/products/console-table-detail.png",
+        "images/products/console-table-lifestyle.png"
+      ],
+      "featured": false,
+      "shopifyVariantId": ""
+    }
+  ],
+
+  "_note": "HOW TO ADD MORE PRODUCTS (slots 6–14): Copy any product object above, assign a unique 'id' (kebab-case), set 'featured: true' for every 3rd product to maintain the editorial grid rhythm (featured products span 2 columns). Add product images to images/products/. Set 'shopifyVariantId' once the Shopify Buy Button is configured.",
+
+  "_shopify": "SHOPIFY INTEGRATION: When ready, install the Shopify Buy Button SDK. Each product card in shop.html and the Add to Cart button in product-detail.html has data-shopify-variant-id attributes. Populate 'shopifyVariantId' in this file and the JavaScript will wire everything automatically. See <!-- SHOPIFY INTEGRATION --> comments in shop.html and product-detail.html."
+}

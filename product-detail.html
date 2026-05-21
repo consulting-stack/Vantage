@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Detail — Celebrity Interiors | Vantage</title>
+  <meta name="description" content=""/>
+  <link rel="icon" href="favicon.ico"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="shop.css"/>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav class="nav scrolled" id="mainNav">
+  <a href="index.html" class="nav__logo">
+    <img src="logo.png" alt="Vantage"/>
+  </a>
+  <ul class="nav__links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li class="nav__dropdown">
+      <a href="services.html#interiors">Vantage Interiors
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <ul class="nav__dropdown-menu">
+        <li><a href="services.html#interiors">Interior Services</a></li>
+        <li><a href="shop.html" class="active">Shop</a></li>
+      </ul>
+    </li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav__cta">
+    <a href="quote.html" class="btn btn--gold">Get a Quote</a>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<nav class="nav__mobile" id="mobileNav">
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="services.html">Services</a>
+  <div class="nav__mobile-sub">
+    <a href="services.html#interiors">Interior Services</a>
+    <a href="shop.html" style="color:var(--gold)">Shop</a>
+  </div>
+  <a href="portfolio.html">Portfolio</a>
+  <a href="contact.html">Contact</a>
+  <a href="quote.html" style="color:var(--gold)">Get a Quote →</a>
+</nav>
+
+<!-- BACK LINK -->
+<div class="detail-back container">
+  <a href="shop.html" id="backLink">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    Back to Shop
+  </a>
+</div>
+
+<!-- PRODUCT LAYOUT -->
+<div class="detail-layout" id="detailLayout">
+  <!-- Injected by JavaScript -->
+</div>
+
+<!-- RELATED PRODUCTS -->
+<section class="related-section" id="relatedSection" style="display:none;">
+  <div class="container--wide">
+    <div class="section-head">
+      <span class="label">You May Also Like</span>
+      <div class="gold-rule"></div>
+      <h2>From the <em>Collection</em></h2>
+    </div>
+    <div class="related-grid" id="relatedGrid" role="list">
+      <!-- Injected by JavaScript -->
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <img src="logo.png" alt="Vantage"/>
+        <p>Celebrity Interiors is a curated furniture offering presented by Vantage Interiors. Premium pieces for home staging, new builds, and luxury residential spaces.</p>
+      </div>
+      <div class="footer__col">
+        <h5>Shop</h5>
+        <ul>
+          <li><a href="shop.html">All Products</a></li>
+          <li><a href="shop.html?filter=living-room">Living Room</a></li>
+          <li><a href="shop.html?filter=outdoor">Outdoor</a></li>
+          <li><a href="shop.html?filter=accent-tables">Accent Tables</a></li>
+          <li><a href="shop.html?filter=console-entry">Console &amp; Entry</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h5>Vantage</h5>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html#interiors">Interiors</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="quote.html">Request a Quote</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="tel:0000000000">(000) 000-0000</a></li>
+          <li><a href="mailto:info@vantage.co">info@vantage.co</a></li>
+          <li style="color:var(--slate);font-size:0.85rem;padding-top:8px;">National Coverage</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2025 Vantage · Celebrity Interiors. All rights reserved.</span>
+      <span>Engineered for <span>Results.</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── CURSOR ─────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+function animCursor() {
+  rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+  ring.style.left   = rx+'px'; ring.style.top  = ry+'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+});
+
+// ── NAV ────────────────────────────────────────────────────
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40 || true); // always scrolled on detail
+});
+
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileNav');
+ham.addEventListener('click', () => { ham.classList.toggle('open'); mob.classList.toggle('open'); });
+mob.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  ham.classList.remove('open'); mob.classList.remove('open');
+}));
+
+// ── CAROUSEL ───────────────────────────────────────────────
+let currentImg = 0;
+let carouselImages = [];
+
+function showImage(index) {
+  if (!carouselImages.length) return;
+  const mainImg = document.getElementById('carouselMain');
+  const thumbs  = document.querySelectorAll('.detail-carousel__thumb');
+
+  mainImg.classList.add('transitioning');
+  setTimeout(() => {
+    mainImg.src = carouselImages[index];
+    mainImg.classList.remove('transitioning');
+  }, 180);
+
+  thumbs.forEach((t, i) => t.classList.toggle('active', i === index));
+  currentImg = index;
+}
+
+function prevImage() {
+  showImage((currentImg - 1 + carouselImages.length) % carouselImages.length);
+}
+
+function nextImage() {
+  showImage((currentImg + 1) % carouselImages.length);
+}
+
+// Keyboard carousel
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  prevImage();
+  if (e.key === 'ArrowRight') nextImage();
+});
+
+// ── RENDER PRODUCT DETAIL ──────────────────────────────────
+const productId = new URLSearchParams(window.location.search).get('id');
+const layout    = document.getElementById('detailLayout');
+const relatedSection = document.getElementById('relatedSection');
+const relatedGrid    = document.getElementById('relatedGrid');
+
+function renderDetail(product, allProducts) {
+  carouselImages = product.images;
+  currentImg = 0;
+
+  // Build thumb HTML
+  const thumbsHtml = product.images.map((img, i) => `
+    <button
+      class="detail-carousel__thumb${i === 0 ? ' active' : ''}"
+      onclick="showImage(${i})"
+      aria-label="View image ${i+1}"
+    >
+      <img src="${img}" alt="${product.name} — view ${i+1}" loading="lazy"/>
+    </button>
+  `).join('');
+
+  layout.innerHTML = `
+    <!-- Image Carousel -->
+    <div class="detail-carousel">
+      <div class="detail-carousel__main">
+        <img id="carouselMain" src="${product.images[0]}" alt="${product.name}"/>
+        ${product.images.length > 1 ? `
+        <div class="detail-carousel__nav">
+          <button onclick="prevImage()" aria-label="Previous image">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M10 3L6 8l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button onclick="nextImage()" aria-label="Next image">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M6 3l4 5-4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>` : ''}
+      </div>
+      ${product.images.length > 1 ? `<div class="detail-carousel__thumbs">${thumbsHtml}</div>` : ''}
+    </div>
+
+    <!-- Product Info -->
+    <div class="detail-info">
+      <span class="detail-info__cat">${product.categoryLabel}</span>
+      <h1>${product.name}</h1>
+      <div class="detail-info__price">${product.priceDisplay}</div>
+
+      <div class="detail-info__divider"></div>
+
+      <p class="detail-info__desc">${product.description}</p>
+
+      <div class="detail-info__divider"></div>
+
+      <div class="detail-info__specs">
+        <div class="detail-info__spec">
+          <span class="detail-info__spec-label">Materials</span>
+          <span class="detail-info__spec-value">${product.materials}</span>
+        </div>
+        <div class="detail-info__spec">
+          <span class="detail-info__spec-label">Dimensions</span>
+          <span class="detail-info__spec-value">${product.dimensions}</span>
+        </div>
+        <div class="detail-info__spec">
+          <span class="detail-info__spec-label">Category</span>
+          <span class="detail-info__spec-value">${product.categoryLabel}</span>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        <!--
+          SHOPIFY INTEGRATION: Replace the button below with the Shopify Buy Button embed.
+          The data-shopify-variant-id is populated from shop-data.json.
+          Example embed:
+          <div id="product-component-${product.id}"></div>
+          <script>
+            ShopifyBuy.UI.onReady(client).then(ui => {
+              ui.createComponent('product', {
+                id: '${product.shopifyVariantId}',
+                node: document.getElementById('product-component-${product.id}'),
+                ...
+              });
+            });
+          <\/script>
+        -->
+        <button
+          class="btn btn--gold btn--cart"
+          data-shopify-variant-id="${product.shopifyVariantId}"
+          aria-label="Add ${product.name} to cart"
+        >
+          Add to Cart
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
+          </svg>
+        </button>
+
+        <a
+          href="quote.html"
+          class="btn btn--staging"
+          aria-label="Request a staging consultation"
+        >
+          Request Staging Consultation
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  `;
+
+  // Update page title and meta
+  document.title = `${product.name} — Celebrity Interiors | Vantage`;
+  document.querySelector('meta[name="description"]').content =
+    `${product.name} — ${product.priceDisplay}. ${product.description.slice(0,120)}...`;
+
+  // Re-bind cursor for new interactive elements
+  layout.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+  });
+
+  // Render related products (same category, excluding this product, max 3)
+  const related = allProducts
+    .filter(p => p.category === product.category && p.id !== product.id)
+    .slice(0, 3);
+
+  // Pad with cross-category if not enough in same category
+  if (related.length < 3) {
+    const crossCat = allProducts
+      .filter(p => p.id !== product.id && !related.some(r => r.id === p.id))
+      .slice(0, 3 - related.length);
+    related.push(...crossCat);
+  }
+
+  if (related.length > 0) {
+    relatedGrid.innerHTML = related.map(p => `
+      <a href="product-detail.html?id=${p.id}" class="related-card" role="listitem" aria-label="${p.name} — ${p.priceDisplay}">
+        <img class="related-card__img" src="${p.images[0]}" alt="${p.name}" loading="lazy"/>
+        <div class="related-card__info">
+          <div class="related-card__name">${p.name}</div>
+          <div class="related-card__price">${p.priceDisplay}</div>
+        </div>
+      </a>
+    `).join('');
+    relatedSection.style.display = 'block';
+
+    relatedGrid.querySelectorAll('a').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+      el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+    });
+  }
+}
+
+// ── LOAD DATA ─────────────────────────────────────────────
+fetch('shop-data.json')
+  .then(r => r.json())
+  .then(data => {
+    const product = data.products.find(p => p.id === productId);
+    if (!product) {
+      layout.innerHTML = `
+        <div style="grid-column:1/-1;padding:80px 0;text-align:center;">
+          <span class="label">404</span>
+          <h2 style="font-family:var(--font-display);font-size:2.5rem;font-weight:300;margin:16px 0 24px;">Product not found</h2>
+          <a href="shop.html" class="btn btn--gold">Back to Shop</a>
+        </div>
+      `;
+      return;
+    }
+    renderDetail(product, data.products);
+  })
+  .catch(err => {
+    console.error('Failed to load product:', err);
+    layout.innerHTML = `
+      <div style="grid-column:1/-1;padding:80px 0;text-align:center;">
+        <p style="color:var(--slate-light);">Unable to load product. Please try again.</p>
+        <a href="shop.html" class="btn btn--outline" style="margin-top:24px;">Back to Shop</a>
+      </div>
+    `;
+  });
+</script>
+</body>
+</html>
