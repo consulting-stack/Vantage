@@ -75,6 +75,38 @@
   <!-- Injected by JavaScript -->
 </div>
 
+<!-- IN YOUR ROOM VISUALIZER -->
+<section class="room-visualizer-section" id="roomVisualizerSection" style="display:none;">
+  <div class="container">
+    <div class="room-visualizer" id="roomVisualizer">
+      <span class="label">In Your Space</span>
+      <h3 class="room-visualizer__title">See it in your space</h3>
+      <p class="room-visualizer__sub">Upload a photo of your room — drag and resize this piece to preview how it fits, then save your composition.</p>
+
+      <div class="room-visualizer__stage">
+        <div class="room-visualizer__empty" id="visualizerEmpty">
+          <button class="room-visualizer__upload-btn" id="uploadBtn" aria-label="Upload a photo of your room">Upload a room photo</button>
+          <input type="file" id="roomPhotoInput" accept="image/*" hidden/>
+          <p class="room-visualizer__fallback">No photo handy? <a href="shop.html#book-design">Our design team can do this for you — Book a free consultation</a></p>
+        </div>
+        <div class="room-visualizer__canvas-wrap" id="visualizerCanvasWrap" hidden>
+          <img id="roomPhotoPreview" class="room-visualizer__room-img" alt="Your uploaded room photo"/>
+          <div class="room-visualizer__overlay" id="furnitureOverlay" role="button" tabindex="0" aria-label="Drag to reposition the furniture preview; use the corner handle to resize">
+            <img id="furnitureOverlayImg" src="" alt="Furniture overlay preview"/>
+            <span class="room-visualizer__handle" id="resizeHandle" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="room-visualizer__actions" id="visualizerActions" hidden>
+        <button class="room-visualizer__save-btn" id="savePreviewBtn">Save preview</button>
+        <button class="room-visualizer__reset-btn" id="resetVisualizerBtn">Upload a different photo</button>
+        <span class="room-visualizer__label">Drag the piece · Drag the corner to resize</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- RELATED PRODUCTS -->
 <section class="related-section" id="relatedSection" style="display:none;">
   <div class="container--wide">
@@ -132,6 +164,23 @@
     </div>
   </div>
 </footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" aria-hidden="true">
+  <button class="lightbox__close" id="lightboxClose" aria-label="Close image viewer">
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <button class="lightbox__arrow lightbox__arrow--prev" id="lightboxPrev" aria-label="Previous image">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L6 8l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="lightbox__stage" id="lightboxStage">
+    <img class="lightbox__img" id="lightboxImg" src="" alt=""/>
+  </div>
+  <button class="lightbox__arrow lightbox__arrow--next" id="lightboxNext" aria-label="Next image">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l4 5-4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="lightbox__counter" id="lightboxCounter" aria-live="polite"></div>
+</div>
 
 <script>
 // ── GSAP SETUP ─────────────────────────────────────────────
@@ -208,13 +257,308 @@ function showImage(index) {
   currentImg = index;
 }
 
-function prevImage() { showImage((currentImg - 1 + carouselImages.length) % carouselImages.length); }
-function nextImage() { showImage((currentImg + 1) % carouselImages.length); }
+function prevImage(e) { if (e) e.stopPropagation(); showImage((currentImg - 1 + carouselImages.length) % carouselImages.length); }
+function nextImage(e) { if (e) e.stopPropagation(); showImage((currentImg + 1) % carouselImages.length); }
+
+// ── LIGHTBOX ───────────────────────────────────────────────
+const lightbox        = document.getElementById('lightbox');
+const lightboxStage   = document.getElementById('lightboxStage');
+const lightboxImg     = document.getElementById('lightboxImg');
+const lightboxCounter = document.getElementById('lightboxCounter');
+const lightboxClose   = document.getElementById('lightboxClose');
+const lightboxPrevBtn = document.getElementById('lightboxPrev');
+const lightboxNextBtn = document.getElementById('lightboxNext');
+let lightboxIndex = 0;
+let lightboxLastFocus = null;
+
+function updateLightboxImage() {
+  lightboxImg.src = carouselImages[lightboxIndex];
+  lightboxImg.alt = `Image ${lightboxIndex + 1} of ${carouselImages.length}`;
+  lightboxCounter.textContent = `${lightboxIndex + 1} / ${carouselImages.length}`;
+  const multi = carouselImages.length > 1;
+  lightboxPrevBtn.style.display = multi ? 'flex' : 'none';
+  lightboxNextBtn.style.display = multi ? 'flex' : 'none';
+}
+
+function openLightbox(index) {
+  if (!carouselImages.length) return;
+  lightboxIndex = index;
+  lightboxLastFocus = document.activeElement;
+  updateLightboxImage();
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  lightboxClose.focus();
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  lightboxImg.style.transform = 'scale(1)';
+  lightboxImg.style.transformOrigin = 'center center';
+  if (lightboxLastFocus) lightboxLastFocus.focus();
+}
+
+function lightboxPrev() { lightboxIndex = (lightboxIndex - 1 + carouselImages.length) % carouselImages.length; updateLightboxImage(); }
+function lightboxNext() { lightboxIndex = (lightboxIndex + 1) % carouselImages.length; updateLightboxImage(); }
+
+lightboxClose.addEventListener('click', closeLightbox);
+lightboxPrevBtn.addEventListener('click', e => { e.stopPropagation(); lightboxPrev(); });
+lightboxNextBtn.addEventListener('click', e => { e.stopPropagation(); lightboxNext(); });
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+lightboxStage.addEventListener('mousemove', e => {
+  const rect = lightboxImg.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  lightboxImg.style.transformOrigin = `${Math.max(0, Math.min(100, x))}% ${Math.max(0, Math.min(100, y))}%`;
+  lightboxImg.style.transform = 'scale(2)';
+});
+lightboxStage.addEventListener('mouseleave', () => {
+  lightboxImg.style.transform = 'scale(1)';
+  lightboxImg.style.transformOrigin = 'center center';
+});
 
 document.addEventListener('keydown', e => {
+  if (lightbox.classList.contains('open')) {
+    if (e.key === 'Escape')     closeLightbox();
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); lightboxPrev(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); lightboxNext(); }
+    if (e.key === 'Tab') {
+      const focusables = lightbox.querySelectorAll('button');
+      const first = focusables[0], last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+    return;
+  }
   if (e.key === 'ArrowLeft')  prevImage();
   if (e.key === 'ArrowRight') nextImage();
 });
+
+// ── 360° SPIN SIMULATOR ────────────────────────────────────
+let spinMode = false;
+let spinDragging = false;
+let spinLastX = 0;
+let spinLastTime = 0;
+let spinAccum = 0;
+
+function setupSpin() {
+  const spinToggleBtn = document.getElementById('spinToggleBtn');
+  const spinHint      = document.getElementById('spinHint');
+  const mainWrap      = document.getElementById('carouselMainWrap');
+  if (!spinToggleBtn || !mainWrap) return;
+
+  spinToggleBtn.addEventListener('click', () => {
+    spinMode = !spinMode;
+    spinToggleBtn.classList.toggle('active', spinMode);
+    spinToggleBtn.setAttribute('aria-pressed', spinMode ? 'true' : 'false');
+    spinToggleBtn.querySelector('.spin-toggle-btn__label').textContent = spinMode ? 'Exit 360° Spin' : '360° Spin';
+    mainWrap.classList.toggle('spin-active', spinMode);
+    if (spinHint) spinHint.hidden = !spinMode;
+  });
+
+  function getX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+
+  function spinStart(e) {
+    if (!spinMode) return;
+    spinDragging = true;
+    spinLastX = getX(e);
+    spinLastTime = performance.now();
+    spinAccum = 0;
+    mainWrap.classList.add('grabbing');
+    e.preventDefault();
+  }
+  function spinFrame(dir) {
+    currentImg = (currentImg + dir + carouselImages.length) % carouselImages.length;
+    document.getElementById('carouselMain').src = carouselImages[currentImg];
+    document.querySelectorAll('.detail-carousel__thumb').forEach((t, i) => t.classList.toggle('active', i === currentImg));
+  }
+  function spinMove(e) {
+    if (!spinDragging) return;
+    const x = getX(e);
+    const dx = x - spinLastX;
+    spinLastX = x;
+    const now = performance.now();
+    const dt = Math.max(now - spinLastTime, 1);
+    spinLastTime = now;
+    const velocity = Math.min(Math.abs(dx) / dt, 3);
+    const pxPerFrame = Math.max(6, 36 - velocity * 22);
+    spinAccum += dx;
+    while (spinAccum >= pxPerFrame)  { spinAccum -= pxPerFrame; spinFrame(1); }
+    while (spinAccum <= -pxPerFrame) { spinAccum += pxPerFrame; spinFrame(-1); }
+    e.preventDefault();
+  }
+  function spinEnd() {
+    spinDragging = false;
+    mainWrap.classList.remove('grabbing');
+  }
+
+  mainWrap.addEventListener('mousedown', spinStart);
+  mainWrap.addEventListener('touchstart', spinStart, { passive: false });
+  window.addEventListener('mousemove', spinMove);
+  window.addEventListener('touchmove', spinMove, { passive: false });
+  window.addEventListener('mouseup', spinEnd);
+  window.addEventListener('touchend', spinEnd);
+
+  mainWrap.addEventListener('click', e => {
+    if (spinMode) return;
+    if (e.target.closest('.detail-carousel__nav')) return;
+    openLightbox(currentImg);
+  });
+}
+
+// ── IN YOUR ROOM VISUALIZER ────────────────────────────────
+function initRoomVisualizer(product) {
+  const section    = document.getElementById('roomVisualizerSection');
+  const input      = document.getElementById('roomPhotoInput');
+  const uploadBtn  = document.getElementById('uploadBtn');
+  const empty      = document.getElementById('visualizerEmpty');
+  const stageWrap  = document.getElementById('visualizerCanvasWrap');
+  const roomImg    = document.getElementById('roomPhotoPreview');
+  const overlay    = document.getElementById('furnitureOverlay');
+  const overlayImg = document.getElementById('furnitureOverlayImg');
+  const handle     = document.getElementById('resizeHandle');
+  const actions    = document.getElementById('visualizerActions');
+  const saveBtn    = document.getElementById('savePreviewBtn');
+  const resetBtn   = document.getElementById('resetVisualizerBtn');
+  if (!section) return;
+
+  section.style.display = 'block';
+  overlayImg.src = product.images[0];
+  overlayImg.alt = `${product.name} overlay preview`;
+
+  let aspect = 1;
+  let state = { x: 110, y: 90, w: 160 };
+
+  function applyOverlay() {
+    overlay.style.left   = state.x + 'px';
+    overlay.style.top    = state.y + 'px';
+    overlay.style.width  = state.w + 'px';
+    overlay.style.height = (state.w * aspect) + 'px';
+  }
+  applyOverlay();
+
+  const probe = new Image();
+  probe.onload = () => { aspect = probe.naturalHeight / probe.naturalWidth; applyOverlay(); };
+  probe.src = product.images[0];
+
+  // gold-cursor expand on the custom drag handle (not a native <a>/<button>)
+  overlay.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); ring.classList.add('expanded'); });
+  overlay.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); ring.classList.remove('expanded'); });
+
+  uploadBtn.addEventListener('click', () => input.click());
+
+  input.addEventListener('change', () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      roomImg.src = ev.target.result;
+      empty.hidden = true;
+      stageWrap.hidden = false;
+      actions.hidden = false;
+      state = { x: 110, y: 90, w: 160 };
+      applyOverlay();
+      if (!noAnim) gsap.fromTo(stageWrap, { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    input.value = '';
+    stageWrap.hidden = true;
+    actions.hidden = true;
+    empty.hidden = false;
+  });
+
+  let dragging = false, resizing = false, dragDX = 0, dragDY = 0;
+  function pointerXY(e) { const t = e.touches ? e.touches[0] : e; return { x: t.clientX, y: t.clientY }; }
+
+  overlay.addEventListener('mousedown', e => {
+    if (e.target === handle) return;
+    dragging = true;
+    const r = overlay.getBoundingClientRect();
+    dragDX = e.clientX - r.left;
+    dragDY = e.clientY - r.top;
+    e.preventDefault();
+  });
+  overlay.addEventListener('touchstart', e => {
+    if (e.target === handle) return;
+    dragging = true;
+    const r = overlay.getBoundingClientRect();
+    const p = pointerXY(e);
+    dragDX = p.x - r.left;
+    dragDY = p.y - r.top;
+  }, { passive: true });
+
+  handle.addEventListener('mousedown', e => { resizing = true; e.preventDefault(); e.stopPropagation(); });
+  handle.addEventListener('touchstart', e => { resizing = true; e.stopPropagation(); }, { passive: true });
+
+  function move(e) {
+    if (!dragging && !resizing) return;
+    const p = pointerXY(e);
+    const stageRect = stageWrap.getBoundingClientRect();
+    if (dragging) {
+      state.x = Math.min(Math.max(0, p.x - stageRect.left - dragDX), stageRect.width  - state.w);
+      state.y = Math.min(Math.max(0, p.y - stageRect.top  - dragDY), stageRect.height - state.w * aspect);
+      applyOverlay();
+    }
+    if (resizing) {
+      const newW = Math.min(Math.max(60, p.x - stageRect.left - state.x), stageRect.width - state.x);
+      state.w = newW;
+      applyOverlay();
+    }
+  }
+  function end() { dragging = false; resizing = false; }
+
+  window.addEventListener('mousemove', move);
+  window.addEventListener('touchmove', move, { passive: true });
+  window.addEventListener('mouseup', end);
+  window.addEventListener('touchend', end);
+
+  // Composite via Canvas 2D (Safari-safe — no WebGL)
+  saveBtn.addEventListener('click', () => {
+    if (!roomImg.naturalWidth) return;
+    const stageRect = stageWrap.getBoundingClientRect();
+    const canvas = document.createElement('canvas');
+    canvas.width  = roomImg.naturalWidth;
+    canvas.height = roomImg.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(roomImg, 0, 0, canvas.width, canvas.height);
+
+    const scaleX = canvas.width  / stageRect.width;
+    const scaleY = canvas.height / stageRect.height;
+
+    const furn = new Image();
+    furn.onload = () => {
+      ctx.save();
+      ctx.globalAlpha = 0.85;
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.drawImage(
+        furn,
+        state.x * scaleX,
+        state.y * scaleY,
+        state.w * scaleX,
+        state.w * aspect * scaleY
+      );
+      ctx.restore();
+
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${product.id}-in-your-room.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    };
+    furn.src = product.images[0];
+  });
+}
 
 // ── DETAIL ANIMATIONS ─────────────────────────────────────
 function initDetailAnimations() {
@@ -307,16 +651,20 @@ function renderDetail(product, allProducts) {
 
   layout.innerHTML = `
     <div class="detail-carousel">
-      <div class="detail-carousel__main">
+      <div class="detail-carousel__main" id="carouselMainWrap">
         <img id="carouselMain" src="${product.images[0]}" alt="${product.name}"/>
+        <span class="carousel-zoom-hint" aria-hidden="true">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Click to zoom
+        </span>
         ${product.images.length > 1 ? `
         <div class="detail-carousel__nav">
-          <button onclick="prevImage()" aria-label="Previous image">
+          <button onclick="prevImage(event)" aria-label="Previous image">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M10 3L6 8l4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <button onclick="nextImage()" aria-label="Next image">
+          <button onclick="nextImage(event)" aria-label="Next image">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M6 3l4 5-4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -324,6 +672,13 @@ function renderDetail(product, allProducts) {
         </div>` : ''}
       </div>
       ${product.images.length > 1 ? `<div class="detail-carousel__thumbs">${thumbsHtml}</div>` : ''}
+      ${product.images.length >= 3 ? `
+      <button class="spin-toggle-btn" id="spinToggleBtn" aria-pressed="false" aria-label="Toggle 360 degree spin view">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2a6 6 0 100 12A6 6 0 008 2z" stroke="currentColor" stroke-width="1.2"/><path d="M8 2v3M8 11v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span class="spin-toggle-btn__label">360° Spin</span>
+      </button>
+      <p class="spin-hint" id="spinHint" hidden>Drag left or right to spin · faster drag, faster spin</p>
+      ` : ''}
     </div>
 
     <div class="detail-info">
@@ -387,6 +742,15 @@ function renderDetail(product, allProducts) {
     `${product.name} — ${product.priceDisplay}. ${product.description.slice(0,120)}...`;
 
   bindCursor(layout);
+  setupSpin();
+  initRoomVisualizer(product);
+
+  if (!noAnim) {
+    gsap.fromTo('#carouselMain',
+      { opacity: 0, scale: 1.06 },
+      { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out', delay: 0.25 }
+    );
+  }
 
   // Related products
   const related = allProducts

@@ -649,6 +649,175 @@
   </div>
 </div>
 
+<!-- ROOM STYLE QUIZ -->
+<section class="style-quiz" id="style-quiz" aria-label="Find pieces suited to your style">
+  <div class="style-quiz__inner">
+    <div class="style-quiz__header">
+      <p class="style-quiz__eyebrow">Find Your Fit</p>
+      <h2>Not sure where to <em>start</em>?</h2>
+      <p class="style-quiz__sub">Answer three quick questions and we'll curate pieces suited to your space, your style, and your budget.</p>
+    </div>
+
+    <div class="style-quiz__progress" aria-hidden="true"><div class="style-quiz__progress-fill" id="quizProgress"></div></div>
+
+    <div class="style-quiz__stage">
+      <div class="quiz-step" id="quizStep1" data-step="1">
+        <h3 class="quiz-step__q">What describes your style?</h3>
+        <div class="quiz-cards quiz-cards--2x2" data-group="style" role="group" aria-label="Choose a style">
+          <button type="button" class="quiz-card" data-value="Modern Minimal" aria-pressed="false">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M5 9h18M5 14h12M5 19h18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <span class="quiz-card__name">Modern Minimal</span>
+            <span class="quiz-card__desc">Clean Lines</span>
+          </button>
+          <button type="button" class="quiz-card" data-value="Warm Traditional" aria-pressed="false">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M5 20c0-7 5-12 9-12s9 5 9 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 20c0-4.5 2.5-8 5-8s5 3.5 5 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <span class="quiz-card__name">Warm Traditional</span>
+            <span class="quiz-card__desc">Rich Textures</span>
+          </button>
+          <button type="button" class="quiz-card" data-value="Bold Maximalist" aria-pressed="false">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="11" cy="12" r="6.5" stroke="currentColor" stroke-width="1.4"/><rect x="13" y="13" width="11" height="11" stroke="currentColor" stroke-width="1.4"/></svg>
+            <span class="quiz-card__name">Bold Maximalist</span>
+            <span class="quiz-card__desc">Layered Drama</span>
+          </button>
+          <button type="button" class="quiz-card" data-value="Clean Contemporary" aria-pressed="false">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="5" y="5" width="8" height="8" stroke="currentColor" stroke-width="1.4"/><rect x="15" y="5" width="8" height="8" stroke="currentColor" stroke-width="1.4"/><rect x="5" y="15" width="8" height="8" stroke="currentColor" stroke-width="1.4"/><rect x="15" y="15" width="8" height="8" stroke="currentColor" stroke-width="1.4"/></svg>
+            <span class="quiz-card__name">Clean Contemporary</span>
+            <span class="quiz-card__desc">Sharp Geometry</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="quiz-step" id="quizStep2" data-step="2" hidden>
+        <h3 class="quiz-step__q">Which room are you designing?</h3>
+        <div class="quiz-cards quiz-cards--2x2" data-group="room" role="group" aria-label="Choose a room">
+          <button type="button" class="quiz-card quiz-card--plain" data-value="Living Room" aria-pressed="false"><span class="quiz-card__name">Living Room</span></button>
+          <button type="button" class="quiz-card quiz-card--plain" data-value="Outdoor Space" aria-pressed="false"><span class="quiz-card__name">Outdoor Space</span></button>
+          <button type="button" class="quiz-card quiz-card--plain" data-value="Entry &amp; Hallway" aria-pressed="false"><span class="quiz-card__name">Entry &amp; Hallway</span></button>
+          <button type="button" class="quiz-card quiz-card--plain" data-value="Accent Pieces" aria-pressed="false"><span class="quiz-card__name">Accent Pieces</span></button>
+        </div>
+      </div>
+
+      <div class="quiz-step" id="quizStep3" data-step="3" hidden>
+        <h3 class="quiz-step__q">What's your investment range?</h3>
+        <div class="quiz-cards quiz-cards--budget" data-group="budget" role="group" aria-label="Choose a budget range">
+          <button type="button" class="quiz-card quiz-card--plain" data-value="Under $1,000" aria-pressed="false"><span class="quiz-card__name">Under $1,000</span></button>
+          <button type="button" class="quiz-card quiz-card--plain" data-value="$1,000–$2,500" aria-pressed="false"><span class="quiz-card__name">$1,000–$2,500</span></button>
+          <button type="button" class="quiz-card quiz-card--plain" data-value="$2,500+" aria-pressed="false"><span class="quiz-card__name">$2,500+</span></button>
+        </div>
+      </div>
+
+      <div class="quiz-results" id="quizResults" hidden>
+        <h3 class="quiz-results__heading">Your <em>perfect</em> pieces</h3>
+        <div class="quiz-results__grid" id="quizResultsGrid"></div>
+        <button type="button" class="quiz-results__reset" id="quizReset">Start Over</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROOM BUNDLES — curated multi-piece sets -->
+<section class="room-bundles" id="bundles" aria-label="Curated room bundles">
+  <div class="room-bundles__inner">
+    <div class="room-bundles__header">
+      <span class="room-bundles__eyebrow">Curated Together</span>
+      <h2>Complete the <em>room</em>, save on the set</h2>
+      <p class="room-bundles__sub">Pieces selected to work in concert — bundled at a price that rewards committing to the whole vision.</p>
+    </div>
+
+    <div class="room-bundles__list">
+
+      <!-- Bundle 1 -->
+      <article class="bundle-card">
+        <div class="bundle-card__hero">
+          <img src="images/products/drum-coffee-table-hero.png" alt="The Modern Living Room bundle" loading="lazy" />
+        </div>
+        <div class="bundle-card__body">
+          <h3 class="bundle-card__name">The Modern Living Room</h3>
+          <ul class="bundle-card__items">
+            <li><span>Drum Coffee Table</span><span>$2,400</span></li>
+            <li><span>Round Coffee Table — Natural</span><span>$1,850</span></li>
+            <li><span>C-Table — Marble &amp; Brass</span><span>$620</span></li>
+          </ul>
+          <div class="bundle-card__pricing">
+            <div class="bundle-card__price-row">
+              <span class="bundle-card__total-label">Individually</span>
+              <span class="bundle-card__total-strike">$4,870</span>
+            </div>
+            <div class="bundle-card__price-row bundle-card__price-row--bundle">
+              <span class="bundle-card__total-label">Bundle Price</span>
+              <span class="bundle-card__bundle-price">$4,480</span>
+            </div>
+            <div class="bundle-card__save">You save $390</div>
+          </div>
+          <div class="bundle-card__ctas">
+            <a href="#productGrid" class="bundle-card__cta bundle-card__cta--primary">Shop These Pieces</a>
+            <a href="#book-design" class="bundle-card__cta">Book Assembly for This Bundle</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Bundle 2 -->
+      <article class="bundle-card">
+        <div class="bundle-card__hero">
+          <img src="images/products/outdoor-lounge-chair-hero.png" alt="The Resort Terrace bundle" loading="lazy" />
+        </div>
+        <div class="bundle-card__body">
+          <h3 class="bundle-card__name">The Resort Terrace</h3>
+          <ul class="bundle-card__items">
+            <li><span>Outdoor Lounge Chair Set</span><span>$3,200</span></li>
+            <li><span>C-Table — Marble &amp; Brass</span><span>$620</span></li>
+          </ul>
+          <div class="bundle-card__pricing">
+            <div class="bundle-card__price-row">
+              <span class="bundle-card__total-label">Individually</span>
+              <span class="bundle-card__total-strike">$3,820</span>
+            </div>
+            <div class="bundle-card__price-row bundle-card__price-row--bundle">
+              <span class="bundle-card__total-label">Bundle Price</span>
+              <span class="bundle-card__bundle-price">$3,514</span>
+            </div>
+            <div class="bundle-card__save">You save $306</div>
+          </div>
+          <div class="bundle-card__ctas">
+            <a href="#productGrid" class="bundle-card__cta bundle-card__cta--primary">Shop These Pieces</a>
+            <a href="#book-design" class="bundle-card__cta">Book Assembly for This Bundle</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Bundle 3 -->
+      <article class="bundle-card">
+        <div class="bundle-card__hero">
+          <img src="images/products/console-table-hero.png" alt="The Grand Entry bundle" loading="lazy" />
+        </div>
+        <div class="bundle-card__body">
+          <h3 class="bundle-card__name">The Grand Entry</h3>
+          <ul class="bundle-card__items">
+            <li><span>Console Table — Glass &amp; Brass</span><span>$1,100</span></li>
+            <li><span>C-Table — Marble &amp; Brass</span><span>$620</span></li>
+          </ul>
+          <div class="bundle-card__pricing">
+            <div class="bundle-card__price-row">
+              <span class="bundle-card__total-label">Individually</span>
+              <span class="bundle-card__total-strike">$1,720</span>
+            </div>
+            <div class="bundle-card__price-row bundle-card__price-row--bundle">
+              <span class="bundle-card__total-label">Bundle Price</span>
+              <span class="bundle-card__bundle-price">$1,582</span>
+            </div>
+            <div class="bundle-card__save">You save $138</div>
+          </div>
+          <div class="bundle-card__ctas">
+            <a href="#productGrid" class="bundle-card__cta bundle-card__cta--primary">Shop These Pieces</a>
+            <a href="#book-design" class="bundle-card__cta">Book Assembly for This Bundle</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
 <!-- SERVICE TIERS — the upsell architecture -->
 <section class="service-tiers" id="services">
   <div class="service-tiers__inner">
@@ -953,6 +1122,35 @@
   </div>
 </footer>
 
+<!-- STICKY CONSULTATION BAR -->
+<div class="consult-bar" id="consultBar" role="complementary" aria-label="Free design consultation offer" hidden>
+  <div class="consult-bar__inner">
+    <div class="consult-bar__copy">
+      <span class="consult-bar__dot" aria-hidden="true"></span>
+      <span class="consult-bar__claim">25 years of expertise</span>
+      <span class="consult-bar__sep" aria-hidden="true">·</span>
+      <span class="consult-bar__offer">Free 30-min design consultation — no commitment</span>
+    </div>
+    <div class="consult-bar__actions">
+      <a href="#book-design" class="consult-bar__cta">Book Now →</a>
+      <button type="button" class="consult-bar__dismiss" id="consultBarDismiss" aria-label="Dismiss consultation offer">×</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI DESIGN ASSISTANT — DEEPSEEK CHAT WIDGET -->
+<div class="ai-chat" id="aiChat">
+  <button class="ai-chat__toggle" id="aiChatToggle" aria-label="Ask our designer — open AI design assistant" aria-expanded="false" aria-haspopup="dialog">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M4 5.5C4 4.67 4.67 4 5.5 4h13c.83 0 1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5H9l-4 4v-4H5.5C4.67 16 4 15.33 4 14.5v-9z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="8.5" cy="9.5" r="1" fill="currentColor"/>
+      <circle cx="12" cy="9.5" r="1" fill="currentColor"/>
+      <circle cx="15.5" cy="9.5" r="1" fill="currentColor"/>
+    </svg>
+    <span class="ai-chat__tooltip">Ask our designer</span>
+  </button>
+</div>
+
 <script>
 // ── GSAP SETUP ─────────────────────────────────────────────
 gsap.registerPlugin(ScrollTrigger);
@@ -1145,27 +1343,52 @@ if (urlFilter) {
   });
 }
 
+function financingLine(price) {
+  const perMonth = Math.ceil(price / 24).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  return `<div class="product-card__financing">From ${perMonth}/mo · 24-month financing</div>`;
+}
+
 function buildCard(product) {
   const article = document.createElement('article');
   article.className = `product-card${product.featured ? ' product-card--featured' : ''}`;
   article.setAttribute('data-category', product.category);
   article.setAttribute('role', 'listitem');
 
-  article.innerHTML = `
+  const mediaHtml = product.images.map((src, i) => `
     <img
-      class="product-card__img"
-      src="${product.images[0]}"
-      alt="${product.name}"
+      class="product-card__img${i === 0 ? ' product-card__img--active' : ''}"
+      src="${src}"
+      alt="${product.name}${i > 0 ? ' — view ' + (i + 1) : ''}"
       loading="lazy"
-    />
+      data-index="${i}"
+    />`).join('');
+
+  const dotsHtml = product.images.length > 1 ? `
+    <div class="product-card__dots" role="tablist" aria-label="${product.name} image gallery">
+      ${product.images.map((_, i) => `
+        <button
+          class="product-card__dot${i === 0 ? ' active' : ''}"
+          data-index="${i}"
+          role="tab"
+          aria-label="View image ${i + 1} of ${product.images.length}"
+          aria-selected="${i === 0 ? 'true' : 'false'}"
+        ></button>`).join('')}
+    </div>` : '';
+
+  article.innerHTML = `
+    <div class="product-card__media">${mediaHtml}</div>
     <span class="product-card__badge">${product.categoryLabel}</span>
+    ${product.images.length >= 3 ? '<span class="product-card__spin-badge" aria-hidden="true">360° View</span>' : ''}
     <div class="product-card__info">
       <div class="product-card__info-name">${product.name}</div>
       <div class="product-card__info-price">${product.priceDisplay}</div>
+      ${financingLine(product.price)}
     </div>
     <div class="product-card__overlay" aria-hidden="true">
+      ${dotsHtml}
       <div class="product-card__overlay-name">${product.name}</div>
       <div class="product-card__overlay-price">${product.priceDisplay}</div>
+      ${financingLine(product.price)}
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
         <a
           href="product-detail.html?id=${product.id}"
@@ -1188,8 +1411,24 @@ function buildCard(product) {
     </div>
   `;
 
+  // Gallery dots — crossfade swap, independent of card navigation
+  article.querySelectorAll('.product-card__dot').forEach(dot => {
+    dot.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const idx = parseInt(dot.dataset.index, 10);
+      article.querySelectorAll('.product-card__img').forEach(img => {
+        img.classList.toggle('product-card__img--active', parseInt(img.dataset.index, 10) === idx);
+      });
+      article.querySelectorAll('.product-card__dot').forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+        d.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+      });
+    });
+  });
+
   article.addEventListener('click', e => {
-    if (!e.target.closest('a')) {
+    if (!e.target.closest('a') && !e.target.closest('.product-card__dot')) {
       window.location.href = `product-detail.html?id=${product.id}`;
     }
   });
@@ -1284,6 +1523,376 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
   });
 });
+
+// ── ROOM STYLE QUIZ ────────────────────────────────────────
+(function() {
+  const section = document.getElementById('style-quiz');
+  if (!section) return;
+
+  const QUIZ_MATCH = {
+    style: {
+      'Modern Minimal':     ['drum-coffee-table', 'console-table-glass-brass'],
+      'Warm Traditional':   ['round-coffee-table', 'c-table-marble-brass'],
+      'Bold Maximalist':    ['drum-coffee-table', 'outdoor-lounge-chair'],
+      'Clean Contemporary': ['console-table-glass-brass', 'c-table-marble-brass']
+    },
+    room: {
+      'Living Room':      ['drum-coffee-table', 'round-coffee-table', 'c-table-marble-brass'],
+      'Outdoor Space':    ['outdoor-lounge-chair', 'c-table-marble-brass'],
+      'Entry & Hallway':  ['console-table-glass-brass', 'c-table-marble-brass'],
+      'Accent Pieces':    ['c-table-marble-brass', 'round-coffee-table']
+    },
+    budget: {
+      'Under $1,000':    ['c-table-marble-brass'],
+      '$1,000–$2,500':   ['round-coffee-table', 'console-table-glass-brass'],
+      '$2,500+':         ['drum-coffee-table', 'outdoor-lounge-chair', 'round-coffee-table']
+    }
+  };
+
+  const steps = [1, 2, 3].map(n => document.getElementById('quizStep' + n));
+  const resultsPanel = document.getElementById('quizResults');
+  const resultsGrid = document.getElementById('quizResultsGrid');
+  const progressFill = document.getElementById('quizProgress');
+  const resetBtn = document.getElementById('quizReset');
+
+  let state = { style: null, room: null, budget: null };
+  let current = 1;
+
+  function panelFor(step) { return step <= 3 ? steps[step - 1] : resultsPanel; }
+
+  function setProgress(step) {
+    const pct = Math.min(step, 3) * 33.333;
+    if (noAnim) progressFill.style.width = pct + '%';
+    else gsap.to(progressFill, { width: pct + '%', duration: 0.5, ease: 'power2.out' });
+  }
+
+  function getMatches() {
+    const styleIds = QUIZ_MATCH.style[state.style] || [];
+    const roomIds = QUIZ_MATCH.room[state.room] || [];
+    const budgetIds = new Set(QUIZ_MATCH.budget[state.budget] || []);
+    const union = [...new Set([...styleIds, ...roomIds])];
+    let ids = union.filter(id => budgetIds.has(id));
+    if (!ids.length) ids = union;
+    if (!ids.length) ids = [...budgetIds];
+    return ids.map(id => allProducts.find(p => p.id === id)).filter(Boolean);
+  }
+
+  function buildResults() {
+    const matches = getMatches();
+    resultsGrid.innerHTML = '';
+    matches.forEach(p => {
+      const perMonth = Math.ceil(p.price / 24).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+      const card = document.createElement('div');
+      card.className = 'quiz-result-card';
+      card.innerHTML = `
+        <img class="quiz-result-card__img" src="${p.images[0]}" alt="${p.name}" loading="lazy" />
+        <div class="quiz-result-card__body">
+          <div class="quiz-result-card__name">${p.name}</div>
+          <div class="quiz-result-card__price">${p.priceDisplay}</div>
+          <div class="quiz-result-card__financing">From ${perMonth}/mo · 24-month financing</div>
+          <div class="quiz-result-card__ctas">
+            <a class="quiz-result-card__cta quiz-result-card__cta--primary" href="product-detail.html?id=${p.id}">View Details</a>
+            <a class="quiz-result-card__cta" href="#book-design">Add Assembly</a>
+          </div>
+        </div>
+      `;
+      resultsGrid.appendChild(card);
+    });
+    bindCursor(resultsGrid);
+    if (!noAnim) {
+      gsap.fromTo(resultsGrid.children,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.1, delay: 0.1 }
+      );
+    }
+  }
+
+  function goTo(n) {
+    const prevEl = panelFor(current);
+    const nextEl = panelFor(n);
+    if (prevEl === nextEl) return;
+    current = n;
+    setProgress(n);
+    if (n > 3) buildResults();
+
+    if (noAnim) {
+      prevEl.hidden = true;
+      nextEl.hidden = false;
+      return;
+    }
+
+    gsap.to(prevEl, {
+      x: -40, opacity: 0, duration: 0.3, ease: 'power2.in',
+      onComplete: () => {
+        prevEl.hidden = true;
+        gsap.set(prevEl, { clearProps: 'transform,opacity' });
+        nextEl.hidden = false;
+        gsap.fromTo(nextEl, { x: 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' });
+      }
+    });
+  }
+
+  function selectCard(group, value, btn) {
+    state[group] = value;
+    btn.closest('.quiz-cards').querySelectorAll('.quiz-card').forEach(c => {
+      const isMatch = c === btn;
+      c.classList.toggle('selected', isMatch);
+      c.setAttribute('aria-pressed', isMatch ? 'true' : 'false');
+    });
+    setTimeout(() => goTo(current + 1), 280);
+  }
+
+  section.querySelectorAll('.quiz-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.closest('.quiz-cards').dataset.group;
+      selectCard(group, btn.dataset.value, btn);
+    });
+  });
+
+  resetBtn.addEventListener('click', () => {
+    state = { style: null, room: null, budget: null };
+    section.querySelectorAll('.quiz-card.selected').forEach(c => {
+      c.classList.remove('selected');
+      c.setAttribute('aria-pressed', 'false');
+    });
+    goTo(1);
+  });
+
+  bindCursor(section);
+
+  if (!noAnim) {
+    const reveals = section.querySelectorAll('.style-quiz__eyebrow, .style-quiz__header h2, .style-quiz__sub, .style-quiz__progress, .quiz-step__q, #quizStep1 .quiz-card');
+    gsap.set(reveals, { opacity: 0, y: 24 });
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 78%',
+      once: true,
+      onEnter: () => gsap.to(reveals, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', stagger: 0.07 })
+    });
+  }
+})();
+
+// ── AI DESIGN ASSISTANT — DEEPSEEK CHAT WIDGET ─────────────
+(function() {
+  const AI_SYSTEM_PROMPT = `You are the Celebrity Interiors AI design assistant for Vantage, a luxury
+interior design firm with 25+ years of experience. You help customers choose
+furniture and design services.
+
+Your product catalog:
+1. Outdoor Lounge Chair Set — $3,200 | Outdoor | Sculptural poolside chairs,
+   powder-coated aluminum, Sunbrella fabric, sold as a pair
+2. Round Coffee Table Natural — $1,850 | Living Room | Solid white oak,
+   live-edge, oil finish, hairpin steel legs, 42" diameter
+3. C-Table Marble & Brass — $620 | Accent Tables | Calacatta marble top,
+   polished brass base, slides under sofas, 18"W x 26"H
+4. Drum Coffee Table Brass Band — $2,400 | Living Room | Monolithic drum
+   silhouette, precision brass inlay band, tempered glass top, 48" diameter
+5. Console Table Glass & Brass — $1,100 | Console & Entry | Razor-thin brass
+   frame, two-tier tempered glass shelves, 54"W x 32"H
+
+Services available:
+- Furniture only: white-glove delivery included
+- Assembly service: professional in-home assembly, scheduled via Cal.com
+- Full room design: 1-on-1 consultation, layout plan, recommendations,
+  25+ years of expertise, book at shop.html#book-design
+
+Rules:
+- Always recommend specific products by name when relevant
+- Always end with a soft service upsell (assembly or design consultation)
+- Keep responses concise (under 120 words)
+- Sound like a knowledgeable luxury design consultant, not a chatbot
+- For questions outside furniture/design, politely redirect
+- If unsure, suggest booking a free consultation`;
+
+  const GREETING = "Hello — I'm here to help you find pieces that suit your space and style. Tell me about the room you're working on, or what catches your eye in the collection.";
+  const FALLBACK_HTML = 'Our designers are available to help personally.<br><a href="#book-design">Book a free consultation →</a>';
+
+  const toggle = document.getElementById('aiChatToggle');
+  const root   = document.getElementById('aiChat');
+  if (!toggle || !root) return;
+
+  let initialized = false;
+  let isOpen = false;
+  let history = [];
+  let panel, messagesEl, typingEl, form, input, sendBtn;
+
+  function aiKey() {
+    return (typeof window.__DEEPSEEK_KEY === 'string' && window.__DEEPSEEK_KEY) ? window.__DEEPSEEK_KEY : '';
+  }
+
+  function build() {
+    const hasKey = !!aiKey();
+    root.insertAdjacentHTML('beforeend', `
+      <div class="ai-chat__panel" id="aiChatPanel" role="dialog" aria-modal="true" aria-label="Celebrity Interiors AI design assistant" aria-hidden="true" hidden>
+        <div class="ai-chat__header">
+          <span class="ai-chat__dot" aria-hidden="true"></span>
+          <div class="ai-chat__header-text">
+            <h3 class="ai-chat__title">Celebrity Interiors AI</h3>
+            <p class="ai-chat__subtitle">Powered by 25 years of design expertise</p>
+            ${hasKey ? '' : '<p class="ai-chat__notice">Demo mode — set <code>window.__DEEPSEEK_KEY</code> to enable live replies</p>'}
+          </div>
+          <button class="ai-chat__close" id="aiChatClose" aria-label="Close chat">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M2.5 2.5l10 10M12.5 2.5l-10 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="ai-chat__messages" id="aiChatMessages" aria-live="polite"></div>
+        <div class="ai-chat__typing" id="aiChatTyping" hidden aria-hidden="true"><span></span><span></span><span></span></div>
+        <form class="ai-chat__form" id="aiChatForm" autocomplete="off">
+          <input type="text" class="ai-chat__input" id="aiChatInput" placeholder="Ask about furniture, pricing, design…" aria-label="Type your message to the design assistant"/>
+          <button type="submit" class="ai-chat__send" id="aiChatSend" aria-label="Send message">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8h10M8 3.5L13 8l-5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </form>
+        <button type="button" class="ai-chat__reset" id="aiChatReset">Start fresh</button>
+      </div>
+    `);
+
+    panel      = document.getElementById('aiChatPanel');
+    messagesEl = document.getElementById('aiChatMessages');
+    typingEl   = document.getElementById('aiChatTyping');
+    form       = document.getElementById('aiChatForm');
+    input      = document.getElementById('aiChatInput');
+    sendBtn    = document.getElementById('aiChatSend');
+
+    document.getElementById('aiChatClose').addEventListener('click', closePanel);
+    document.getElementById('aiChatReset').addEventListener('click', resetChat);
+    form.addEventListener('submit', e => { e.preventDefault(); send(input.value); });
+
+    bindCursor(panel);
+    appendMessage('assistant', GREETING);
+  }
+
+  function appendMessage(role, content, html) {
+    const el = document.createElement('div');
+    el.className = 'ai-chat__msg ai-chat__msg--' + role;
+    if (html) el.innerHTML = content; else el.textContent = content;
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    if (!noAnim) gsap.fromTo(el, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+    return el;
+  }
+
+  function setTyping(show) {
+    typingEl.hidden = !show;
+    if (show) messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function resetChat() {
+    history = [];
+    messagesEl.innerHTML = '';
+    appendMessage('assistant', GREETING);
+    input.focus();
+  }
+
+  async function send(raw) {
+    const text = raw.trim();
+    if (!text || sendBtn.disabled) return;
+    appendMessage('user', text);
+    history.push({ role: 'user', content: text });
+    input.value = '';
+    sendBtn.disabled = true;
+    setTyping(true);
+
+    try {
+      const key = aiKey();
+      await new Promise(r => setTimeout(r, 650));
+      if (!key) throw new Error('no-key');
+      const res = await fetch('https://api.deepseek.com/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [{ role: 'system', content: AI_SYSTEM_PROMPT }, ...history],
+          temperature: 0.7,
+          max_tokens: 220
+        })
+      });
+      if (!res.ok) throw new Error('deepseek-' + res.status);
+      const data = await res.json();
+      const reply = data?.choices?.[0]?.message?.content?.trim();
+      if (!reply) throw new Error('empty-reply');
+      setTyping(false);
+      appendMessage('assistant', reply);
+      history.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      setTyping(false);
+      appendMessage('assistant', FALLBACK_HTML, true);
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  function openPanel() {
+    isOpen = true;
+    panel.hidden = false;
+    panel.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    root.classList.add('open');
+    if (!noAnim) {
+      gsap.fromTo(panel, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' });
+    } else {
+      gsap.set(panel, { opacity: 1, scale: 1 });
+    }
+    setTimeout(() => input && input.focus(), noAnim ? 0 : 260);
+  }
+
+  function closePanel() {
+    isOpen = false;
+    toggle.setAttribute('aria-expanded', 'false');
+    const finish = () => { panel.hidden = true; panel.setAttribute('aria-hidden', 'true'); root.classList.remove('open'); };
+    if (!noAnim) gsap.to(panel, { opacity: 0, scale: 0.95, duration: 0.18, ease: 'power2.in', onComplete: finish });
+    else finish();
+  }
+
+  toggle.addEventListener('click', () => {
+    if (!initialized) { initialized = true; build(); }
+    isOpen ? closePanel() : openPanel();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && isOpen) closePanel();
+  });
+})();
+
+// ── STICKY CONSULTATION BAR ────────────────────────────────
+(function() {
+  const bar = document.getElementById('consultBar');
+  if (!bar) return;
+  const dismissBtn = document.getElementById('consultBarDismiss');
+  const DISMISS_KEY = 'ci-consult-bar-dismissed';
+
+  if (window.innerWidth <= 768 || sessionStorage.getItem(DISMISS_KEY)) return;
+
+  let shown = false;
+  let hidden = false;
+
+  function show() {
+    if (shown || hidden) return;
+    shown = true;
+    bar.hidden = false;
+    if (noAnim) { gsap.set(bar, { y: 0, opacity: 1 }); return; }
+    gsap.fromTo(bar, { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' });
+  }
+
+  function dismiss() {
+    if (hidden) return;
+    hidden = true;
+    sessionStorage.setItem(DISMISS_KEY, '1');
+    if (noAnim) { bar.hidden = true; return; }
+    gsap.to(bar, {
+      y: 60, opacity: 0, duration: 0.4, ease: 'power2.in',
+      onComplete: () => { bar.hidden = true; }
+    });
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!shown && window.scrollY > 600) show();
+  }, { passive: true });
+
+  dismissBtn.addEventListener('click', dismiss);
+  bindCursor(bar);
+})();
 </script>
 </body>
 </html>
