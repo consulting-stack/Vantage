@@ -204,8 +204,8 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
 /* ── NUMBER ROW + REGEN ── */
 .num-row{display:flex;gap:6px}
 .num-row input{flex:1;min-width:0}
-.btn-regen{background:#1a1a1a;border:1px solid var(--gold-border);color:var(--gold);font-size:15px;border-radius:var(--r);padding:0 13px;cursor:pointer;transition:all .2s;flex-shrink:0}
-.btn-regen:hover{border-color:var(--gold);background:rgba(201,168,76,.08);transform:rotate(90deg)}
+.btn-regen{background:none;border:none;color:var(--gold);font-size:1.2rem;cursor:pointer;transition:transform .2s;flex-shrink:0}
+.btn-regen:hover{transform:rotate(90deg)}
 
 /* ── SELECT (PAYMENT TERMS) ── */
 select{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23C9A84C' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:11px;padding-right:32px}
@@ -626,9 +626,9 @@ function initApp() {
 // ─── INVOICE / ESTIMATE NUMBER ────────────────────────────────────────────────
 function genNum() {
   if (S.docType === 'estimate') {
-    const r1 = Math.floor(1000 + Math.random() * 9000);
-    const r2 = Math.floor(1000 + Math.random() * 9000);
-    return `EST-${r1}-${r2}`;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const seg = () => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    return `EST-${seg()}-${seg()}`;
   }
   let n = parseInt(localStorage.getItem(CTR_KEY) || '0') + 1;
   localStorage.setItem(CTR_KEY, n);
@@ -661,7 +661,7 @@ function applyDocTypeLabels(type) {
   document.getElementById('lbl-date').textContent  = isEst ? 'Estimate Date'   : 'Invoice Date';
   document.getElementById('lbl-due').textContent   = isEst ? 'Valid Until'     : 'Due Date';
   document.getElementById('lbl-terms').textContent = isEst ? 'Estimate Terms' : 'Payment Terms';
-  document.getElementById('f-num').placeholder = isEst ? 'EST-1234-5678' : 'CIS-2026-0001';
+  document.getElementById('f-num').placeholder = isEst ? 'EST-K7X2-9QM4' : 'CIS-2026-0001';
 
   document.getElementById('lbl-p-details').textContent = isEst ? 'Estimate Details' : 'Invoice Details';
   document.getElementById('lbl-p-num').textContent   = isEst ? 'Estimate No.'  : 'Invoice No.';
