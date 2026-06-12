@@ -168,7 +168,17 @@
   <ul class="nav__links">
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html">About</a></li>
-    <li><a href="services.html" class="active">Services</a></li>
+    <li class="nav__dropdown vantage-services-dropdown">
+      <a href="javascript:void(0)" class="active">Services
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <ul class="nav__dropdown-menu">
+        <li><a href="/heavenly-hands.html" class="vsd-item--live">Credit Repair<span class="vsd-badge vsd-badge--live">Live</span></a></li>
+        <li><a href="javascript:void(0)" class="vsd-item--soon">Interior Design<span class="vsd-badge vsd-badge--soon">Coming Soon</span></a></li>
+        <li><a href="javascript:void(0)" class="vsd-item--soon">Real Estate<span class="vsd-badge vsd-badge--soon">Coming Soon</span></a></li>
+        <li><a href="javascript:void(0)" class="vsd-item--soon">Financial Planning<span class="vsd-badge vsd-badge--soon">Coming Soon</span></a></li>
+      </ul>
+    </li>
     <li class="nav__dropdown">
       <a href="services.html#interiors">Vantage Interiors
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -189,7 +199,15 @@
 <nav class="nav__mobile" id="mobileNav">
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="services.html">Services</a>
+  <button class="vsd-mob-toggle" id="vsdMobToggle" aria-expanded="false">Services
+    <svg width="12" height="12" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="vsd-mob-items" id="vsdMobItems">
+    <a href="/heavenly-hands.html">Credit Repair</a>
+    <a href="javascript:void(0)" class="vsd-mob-soon">Interior Design<span class="vsd-mob-badge">Coming Soon</span></a>
+    <a href="javascript:void(0)" class="vsd-mob-soon">Real Estate<span class="vsd-mob-badge">Coming Soon</span></a>
+    <a href="javascript:void(0)" class="vsd-mob-soon">Financial Planning<span class="vsd-mob-badge">Coming Soon</span></a>
+  </div>
   <div class="nav__mobile-sub">
     <a href="services.html#interiors">Interior Services</a>
     <a href="shop.html" style="color:var(--gold)">Shop</a>
@@ -517,6 +535,25 @@
   ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');});
   const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+<script>
+  (function () {
+    var tog = document.getElementById('vsdMobToggle');
+    var drw = document.getElementById('vsdMobItems');
+    if (!tog || !drw) return;
+    tog.addEventListener('click', function () {
+      var open = drw.classList.toggle('open');
+      tog.classList.toggle('open', open);
+      tog.setAttribute('aria-expanded', String(open));
+    });
+    document.getElementById('hamburger').addEventListener('click', function () {
+      if (!document.getElementById('mobileNav').classList.contains('open')) {
+        drw.classList.remove('open');
+        tog.classList.remove('open');
+        tog.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }());
 </script>
 </body>
 </html>
