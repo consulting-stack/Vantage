@@ -260,6 +260,113 @@
       .about-strip { grid-template-columns:1fr; gap:48px; }
       .why-grid { grid-template-columns:1fr; }
     }
+
+    /* ── SERVICES DROPDOWN ───────────────────────────────────
+       All new classes prefixed vantage-services-dropdown / vsd-
+       to avoid any collision with existing Vantage styles.
+    ─────────────────────────────────────────────────────────── */
+
+    /* Override items to flex so label sits left, badge sits right */
+    .vantage-services-dropdown .nav__dropdown-menu li a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Coming-soon: dimmed, no-pointer, suppress all hover effects */
+    .vantage-services-dropdown .nav__dropdown-menu li a.vsd-item--soon {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .vantage-services-dropdown .nav__dropdown-menu li a.vsd-item--soon:hover {
+      color: var(--slate-light);
+      background: transparent;
+      padding-left: 22px; /* cancel the existing padding-left shift */
+    }
+
+    /* Status badges */
+    .vsd-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .vsd-badge--live {
+      background: rgba(45,138,78,0.18);
+      color: #5cba7d;
+    }
+    .vsd-badge--soon {
+      background: rgba(255,255,255,0.04);
+      color: var(--slate);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── MOBILE: toggle button matches .nav__mobile a style */
+    .vsd-mob-toggle {
+      background: none;
+      border: none;
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--off-white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+      width: 100%;
+      text-align: left;
+      transition: color var(--transition);
+    }
+    .vsd-mob-toggle:hover { color: var(--gold); }
+    .vsd-mob-toggle svg { transition: transform 0.2s ease; }
+    .vsd-mob-toggle.open svg { transform: rotate(180deg); }
+
+    /* Mobile accordion drawer */
+    .vsd-mob-items {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-left: 20px;
+      border-left: 1px solid var(--border);
+      max-height: 0;
+      overflow: hidden;
+      padding-top: 0;
+      transition: max-height 0.25s ease, padding-top 0.25s ease;
+    }
+    .vsd-mob-items.open {
+      max-height: 280px;
+      padding-top: 4px;
+    }
+    .vsd-mob-items a {
+      font-size: 1.2rem !important;
+      color: var(--slate-light) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 8px !important;
+    }
+    .vsd-mob-items a:hover { color: var(--gold) !important; }
+    .vsd-mob-items a.vsd-mob-soon {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .vsd-mob-items a.vsd-mob-soon:hover { color: var(--slate-light) !important; }
+    .vsd-mob-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.04);
+      color: var(--slate);
+      border: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
@@ -276,7 +383,17 @@
   <ul class="nav__links">
     <li><a href="index.html" class="active">Home</a></li>
     <li><a href="about.html">About</a></li>
-    <li><a href="services.html">Services</a></li>
+    <li class="nav__dropdown vantage-services-dropdown">
+      <a href="javascript:void(0)">Services
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <ul class="nav__dropdown-menu">
+        <li><a href="/heavenly-hands.html" class="vsd-item--live">Credit Repair<span class="vsd-badge vsd-badge--live">Live</span></a></li>
+        <li><a href="javascript:void(0)" class="vsd-item--soon">Interior Design<span class="vsd-badge vsd-badge--soon">Coming Soon</span></a></li>
+        <li><a href="javascript:void(0)" class="vsd-item--soon">Real Estate<span class="vsd-badge vsd-badge--soon">Coming Soon</span></a></li>
+        <li><a href="javascript:void(0)" class="vsd-item--soon">Financial Planning<span class="vsd-badge vsd-badge--soon">Coming Soon</span></a></li>
+      </ul>
+    </li>
     <li class="nav__dropdown">
       <a href="services.html#interiors">Vantage Interiors
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -301,7 +418,15 @@
 <nav class="nav__mobile" id="mobileNav">
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="services.html">Services</a>
+  <button class="vsd-mob-toggle" id="vsdMobToggle" aria-expanded="false">Services
+    <svg width="12" height="12" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="vsd-mob-items" id="vsdMobItems">
+    <a href="/heavenly-hands.html">Credit Repair</a>
+    <a href="javascript:void(0)" class="vsd-mob-soon">Interior Design<span class="vsd-mob-badge">Coming Soon</span></a>
+    <a href="javascript:void(0)" class="vsd-mob-soon">Real Estate<span class="vsd-mob-badge">Coming Soon</span></a>
+    <a href="javascript:void(0)" class="vsd-mob-soon">Financial Planning<span class="vsd-mob-badge">Coming Soon</span></a>
+  </div>
   <div class="nav__mobile-sub">
     <a href="services.html#interiors">Interior Services</a>
     <a href="shop.html" style="color:var(--gold)">Shop</a>
@@ -781,6 +906,26 @@
     });
   }, { threshold:0.5 });
   document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+</script>
+<script>
+  (function () {
+    var tog = document.getElementById('vsdMobToggle');
+    var drw = document.getElementById('vsdMobItems');
+    if (!tog || !drw) return;
+    tog.addEventListener('click', function () {
+      var open = drw.classList.toggle('open');
+      tog.classList.toggle('open', open);
+      tog.setAttribute('aria-expanded', String(open));
+    });
+    // Reset drawer when hamburger closes the mobile nav
+    document.getElementById('hamburger').addEventListener('click', function () {
+      if (!document.getElementById('mobileNav').classList.contains('open')) {
+        drw.classList.remove('open');
+        tog.classList.remove('open');
+        tog.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }());
 </script>
 </body>
 </html>
