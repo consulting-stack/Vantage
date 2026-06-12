@@ -943,427 +943,525 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
     }
 
     /* ═══════════════════════════════════════════════════════════
-       LANDING REDESIGN — hhl- prefix (Sky Blue / GSAP / ScrollTrigger)
+       LANDING REDESIGN — Credit Card Visual System
+       .hh-card is the hero of every section
     ═══════════════════════════════════════════════════════════ */
 
-    /* SAFETY NET — guarantee visibility if JS fails or animations break */
+    /* SAFETY NET */
     @media (prefers-reduced-motion: reduce) {
+      .hhl-hero__card-wrap,
       .hhl-step-card,
       .hhl-feature__copy,
       .hhl-feature__visual,
       .hhl-qcard,
       .hhl-acc-item,
-      #hhlBg, #hhlMid, #hhlFg,
-      #hhlPricingCard,
+      .hhl-pricing__tier,
       #hhlCompHdr, #hhlCompDiv {
         opacity: 1 !important;
         transform: none !important;
+        filter: none !important;
       }
     }
+    .no-js .hhl-hero__card-wrap,
     .no-js .hhl-step-card,
     .no-js .hhl-feature__copy,
     .no-js .hhl-feature__visual,
     .no-js .hhl-qcard,
     .no-js .hhl-acc-item,
-    .no-js #hhlBg, .no-js #hhlMid, .no-js #hhlFg,
-    .no-js #hhlPricingCard {
+    .no-js .hhl-pricing__tier {
       opacity: 1 !important;
       transform: none !important;
     }
 
-    /* Extra tokens */
-    :root {
-      --hh-sky-soft: #b8d4f1;
-      --hh-cream:    #fafbfd;
-      --hh-shadow-sm: 0 1px 3px rgba(26,35,50,0.06);
-      --hh-shadow-md: 0 8px 32px rgba(26,35,50,0.08);
-      --hh-shadow-lg: 0 24px 64px rgba(26,74,138,0.12);
-      --hh-r-sm: 8px; --hh-r-md: 16px; --hh-r-lg: 24px; --hh-r-xl: 32px;
-    }
-
-    /* Containers */
-    .hhl-container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
-    .hhl-container--narrow { max-width: 760px; margin: 0 auto; padding: 0 40px; }
-
-    /* Shared */
-    .hhl-section { padding: 100px 0; background: var(--hh-white); }
-    .hhl-section--pale { background: var(--hh-cream); }
+    /* ─── LAYOUT ─── */
+    .hhl-container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 40px; }
     .hhl-eyebrow {
-      display: block;
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--hh-sky); margin-bottom: 12px;
-    }
-    .hhl-section-head { margin-bottom: 60px; }
-    .hhl-section-head h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-      font-weight: 700; color: var(--hh-blue-dark); line-height: 1.2;
+      display: block; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: #5ba3f5; margin-bottom: 18px;
     }
 
-    /* Landing buttons */
+    /* ─── BUTTONS ─── */
     .hhl-btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 16px 32px; border-radius: 12px; font-family: 'Inter', sans-serif;
-      font-size: 1rem; font-weight: 600; cursor: pointer; border: none;
-      text-decoration: none; transition: all 0.22s; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer;
+      border: none; transition: all 0.22s ease;
+      text-decoration: none; font-family: 'Inter', sans-serif;
     }
-    .hhl-btn--primary { background: var(--hh-sky); color: #fff; }
-    .hhl-btn--primary:hover { background: var(--hh-blue-mid); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(91,163,245,.35); }
-    .hhl-btn--ghost { background: transparent; color: var(--hh-sky); border: 2px solid var(--hh-sky); }
-    .hhl-btn--ghost:hover { background: var(--hh-blue-light); }
-    .hhl-btn--full { width: 100%; }
-    .hhl-btn--cta {
-      background: #fff; color: var(--hh-blue-dark); font-size: 1.1rem;
-      padding: 18px 48px; border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,.14);
+    .hhl-btn--primary {
+      background: linear-gradient(135deg, #2d6cc4, #1a4a8a);
+      color: #fff; box-shadow: 0 8px 24px rgba(26,74,138,0.4);
     }
-    .hhl-btn--cta:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(0,0,0,.2); }
+    .hhl-btn--primary:hover {
+      transform: translateY(-2px); box-shadow: 0 12px 32px rgba(26,74,138,0.55);
+    }
+    .hhl-btn--ghost {
+      background: transparent; color: rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .hhl-btn--ghost:hover {
+      background: rgba(255,255,255,0.07); color: #fff;
+      border-color: rgba(255,255,255,0.35);
+    }
 
-    /* ── HERO ───────────────────────────────────────────────── */
-    .hhl-hero {
-      min-height: 100vh; display: flex; align-items: center;
-      background: var(--hh-cream); padding: 80px 0; overflow: hidden;
+    /* ══════════════════════════════
+       THE CARD COMPONENT
+    ══════════════════════════════ */
+    .hh-card {
+      position: relative; width: 100%; max-width: 420px;
+      aspect-ratio: 1.586 / 1; border-radius: 18px;
+      background: linear-gradient(135deg, #2d6cc4 0%, #1a4a8a 50%, #5ba3f5 100%);
+      box-shadow:
+        0 30px 60px -20px rgba(26,74,138,0.5),
+        0 18px 36px -18px rgba(26,35,50,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      overflow: hidden; color: #fff; font-family: 'Inter', sans-serif; flex-shrink: 0;
     }
-    .hhl-hero .hhl-container {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    .hh-card::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.08), transparent 50%);
+      pointer-events: none; z-index: 0;
+    }
+    .hh-card--muted { filter: saturate(0.2) brightness(0.78); }
+    .hh-card--error .hh-card__strike { display: block; }
+    .hh-card--success .hh-card__score { color: #4ade80; }
+    .hh-card--error .hh-card__score { color: #f87171; }
+    .hh-card__strike {
+      display: none; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+      background: linear-gradient(135deg, transparent 38%, rgba(220,38,38,0.65) 38%, rgba(220,38,38,0.65) 62%, transparent 62%);
+    }
+    .hh-card__body {
+      position: relative; z-index: 1; height: 100%; padding: 7% 8%;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .hh-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .hh-card__chip {
+      width: 14%; aspect-ratio: 1.45 / 1; border-radius: 3px; flex-shrink: 0;
+      background: linear-gradient(145deg, #d4a843 0%, #f5cc6a 35%, #b8892a 65%, #e8ba50 100%);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+      position: relative; overflow: hidden;
+    }
+    .hh-card__chip::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
+    }
+    .hh-card__wordmark {
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-size: clamp(0.5rem, 1.6vw, 0.75rem); font-weight: 600;
+      letter-spacing: 0.04em; white-space: nowrap; opacity: 0.9; line-height: 1; flex: 1; text-align: right;
+    }
+    .hh-card__network { width: 16%; opacity: 0.85; flex-shrink: 0; }
+    .hh-card__number {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.5rem, 1.4vw, 0.72rem);
+      letter-spacing: 0.18em; opacity: 0.55; margin-top: auto;
+    }
+    .hh-card__bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+    .hh-card__info { display: flex; flex-direction: column; gap: 3px; }
+    .hh-card__label { font-size: clamp(0.42rem, 1vw, 0.55rem); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5; line-height: 1; }
+    .hh-card__name { font-size: clamp(0.55rem, 1.6vw, 0.78rem); font-weight: 600; letter-spacing: 0.06em; line-height: 1.1; }
+    .hh-card__score-wrap { text-align: right; }
+    .hh-card__score {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.1rem, 3.5vw, 2rem); font-weight: 700;
+      line-height: 1; letter-spacing: -0.02em; color: #fff; transition: color 0.4s ease;
+    }
+    .hh-card__score-label { font-size: clamp(0.4rem, 1vw, 0.55rem); letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.45; line-height: 1; margin-top: 2px; }
+
+    /* ══════════════════════════════
+       S1 — HERO
+    ══════════════════════════════ */
+    .hhl-hero {
+      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; background: #0D0F14; overflow: hidden; position: relative;
+    }
+    .hhl-hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 60% at 70% 50%, rgba(45,108,196,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 30% 40% at 15% 80%, rgba(91,163,245,0.06) 0%, transparent 60%);
+    }
+    .hhl-hero__copy {
+      position: relative; z-index: 2;
+      padding: 80px 48px 80px max(48px, calc((100vw - 1120px) / 2 + 48px));
     }
     .hhl-hero__h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.8rem, 5vw, 5rem); font-weight: 700;
-      color: var(--hh-blue-dark); line-height: 1.08; margin-bottom: 24px;
-      overflow: hidden;
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-size: clamp(2.2rem, 4vw, 3.8rem); font-weight: 400;
+      line-height: 1.15; color: #f0f2f5; margin: 0 0 20px; letter-spacing: -0.02em;
     }
+    .hhl-hero__h1 em { font-style: italic; color: #5ba3f5; }
     .hhl-hero__sub {
-      font-size: 1.15rem; color: var(--hh-text-muted);
-      line-height: 1.7; margin-bottom: 36px; max-width: 480px;
+      font-size: 1.05rem; line-height: 1.78; color: rgba(255,255,255,0.58);
+      max-width: 440px; margin-bottom: 36px;
     }
-    .hhl-hero__ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
-    .hhl-trust { font-size: 0.8rem; color: var(--hh-text-muted); letter-spacing: 0.03em; }
+    .hhl-hero__ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .hhl-hero__trust {
+      margin-top: 36px; display: flex; align-items: center; gap: 10px;
+      font-size: 0.78rem; color: rgba(255,255,255,0.35); letter-spacing: 0.04em;
+    }
+    .hhl-hero__trust-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+    .hhl-hero__cards {
+      position: relative; z-index: 2; height: 100%;
+      min-height: 420px; display: flex; align-items: center; justify-content: center;
+      padding-right: max(48px, calc((100vw - 1120px) / 2 + 48px));
+    }
+    .hhl-hero__card-wrap { position: absolute; width: min(320px, 38vw); }
+    .hhl-hero__card-wrap--bg { z-index: 1; opacity: 0; }
+    .hhl-hero__card-wrap--mid { z-index: 2; opacity: 0; }
+    .hhl-hero__card-wrap--fg { z-index: 3; opacity: 0; }
 
-    /* Hero floating cards */
-    .hhl-hero__visual { position: relative; height: 440px; }
-    .hhl-card { position: absolute; border-radius: var(--hh-r-lg); }
-    .hhl-card--bg {
-      width: 100%; height: 88%; top: 6%; left: 0;
-      background: var(--hh-blue-light); transform: rotate(-3deg); z-index: 1;
+    /* ══════════════════════════════
+       S2 — PINNED STORY
+    ══════════════════════════════ */
+    .hhl-story { position: relative; height: 280vh; background: #0D0F14; }
+    .hhl-story__sticky {
+      position: sticky; top: 0; height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr; align-items: center; overflow: hidden;
     }
-    .hhl-card--mid {
-      width: 84%; left: 8%; top: 10%; background: #fff;
-      box-shadow: var(--hh-shadow-lg); padding: 26px;
-      transform: rotate(2deg); z-index: 2;
+    .hhl-story__visual {
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 48px 60px max(48px, calc((100vw - 1120px) / 2 + 48px));
     }
-    .hhl-card--fg {
-      width: 56%; right: -4%; bottom: -2%; background: #fff;
-      box-shadow: 0 20px 60px rgba(26,74,138,.2); padding: 20px 20px 16px;
-      z-index: 3; text-align: center; display: flex; flex-direction: column; align-items: center;
+    .hhl-story__card-wrap { width: min(360px, 42vw); position: relative; }
+    .hhl-story__panels {
+      padding: 60px max(48px, calc((100vw - 1120px) / 2 + 48px)) 60px 48px;
+      position: relative; min-height: 280px;
     }
-    .hhl-card-mid__hdr {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--hh-text-muted); margin-bottom: 14px;
-    }
-    .hhl-di {
-      display: flex; align-items: center; gap: 8px;
-      padding: 9px 0; border-bottom: 1px solid var(--hh-border);
-    }
-    .hhl-di:last-child { border-bottom: none; }
-    .hhl-di-cred { flex: 1; font-size: 0.78rem; font-weight: 500; color: var(--hh-text); }
-    .hhl-di-amt  { font-size: 0.75rem; color: var(--hh-text-muted); }
-    .hhl-di-badge {
-      background: rgba(91,163,245,.12); color: var(--hh-blue-mid);
-      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.07em;
-      padding: 2px 6px; border-radius: 4px;
-    }
-
-    /* Score gauge */
-    .hhl-gauge { display: block; }
-    .hhl-gauge__arc { transition: stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1); }
-    .hhl-gauge__score {
-      font-family: 'Playfair Display', serif; font-size: 2rem;
-      font-weight: 700; color: var(--hh-blue-dark); line-height: 1; margin-top: -6px;
-    }
-    .hhl-gauge__lbl { font-size: 0.68rem; color: var(--hh-text-muted); margin-top: 2px; }
-    .hhl-gauge__delta {
-      font-size: 0.73rem; font-weight: 700; color: var(--hh-success);
-      background: rgba(45,138,78,.1); padding: 3px 10px; border-radius: 20px; margin-top: 8px;
-    }
-
-    /* ── SCROLL STORY ────────────────────────────────────────── */
-    .hhl-story { height: 300vh; position: relative; }
-    .hhl-story__pin {
-      position: sticky; top: 64px; height: calc(100vh - 64px);
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
-      align-items: center; max-width: 1200px; margin: 0 auto;
-      padding: 0 40px; overflow: hidden;
-    }
-    .hhl-report {
-      background: #fff; border-radius: var(--hh-r-lg);
-      box-shadow: var(--hh-shadow-lg); padding: 32px; position: relative; overflow: hidden;
-    }
-    .hhl-report__hdr {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--hh-text-muted); margin-bottom: 18px;
-    }
-    .hhl-report__row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 11px 0; border-bottom: 1px solid var(--hh-border); font-size: 0.85rem;
-    }
-    .hhl-report__row:last-child { border-bottom: none; }
-    .hhl-report__row > span:first-child { flex: 1; color: var(--hh-text); }
-    .hhl-report__amt { font-size: 0.78rem; color: var(--hh-text-muted); }
-    .hhl-report__tag {
-      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.06em;
-      padding: 3px 7px; border-radius: 4px; transition: all 0.4s;
-    }
-    .hhl-report__tag--err { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-    .hhl-report__tag--ok  { background: rgba(45,138,78,.1); color: var(--hh-success); border: 1px solid rgba(45,138,78,.2); }
-
-    .hhl-letter-stack {
-      position: absolute; bottom: 18px; right: 18px; display: flex; gap: 6px;
-      opacity: 0; transform: translateY(16px); transition: all 0.5s;
-    }
-    .hhl-letter-stack.show { opacity: 1; transform: translateY(0); }
-    .hhl-letter-pill {
-      padding: 5px 12px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; color: #fff;
-    }
-    .hhl-letter-pill--eq  { background: #e74c3c; }
-    .hhl-letter-pill--exp { background: var(--hh-blue-mid); }
-    .hhl-letter-pill--tu  { background: var(--hh-success); }
-
-    .hhl-story__panels { position: relative; min-height: 260px; }
     .hhl-story__panel {
-      position: absolute; top: 0; left: 0; right: 0;
-      opacity: 0; transform: translateY(20px); transition: opacity .4s, transform .4s;
-      pointer-events: none;
+      position: absolute; opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none; max-width: 440px;
     }
-    .hhl-story__panel.active {
-      opacity: 1; transform: translateY(0); position: relative; pointer-events: auto;
+    .hhl-story__panel.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .hhl-story__step-num {
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: #5ba3f5; margin-bottom: 14px;
     }
     .hhl-story__panel h2 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 2.8vw, 2.4rem); font-weight: 700;
-      color: var(--hh-blue-dark); line-height: 1.25; margin-bottom: 16px;
+      font-size: clamp(1.6rem, 2.8vw, 2.4rem); font-weight: 400;
+      color: #f0f2f5; line-height: 1.25; margin-bottom: 16px;
     }
-    .hhl-story__panel p { font-size: 1.05rem; color: var(--hh-text-muted); line-height: 1.75; }
+    .hhl-story__panel p { font-size: 1rem; line-height: 1.75; color: rgba(255,255,255,0.58); }
+    .hhl-story__badge {
+      position: absolute; z-index: 10;
+      background: rgba(13,15,20,0.9); border: 1px solid rgba(91,163,245,0.3);
+      border-radius: 8px; padding: 7px 13px;
+      font-size: 0.7rem; font-weight: 600; color: #5ba3f5;
+      backdrop-filter: blur(8px); white-space: nowrap; transition: opacity 0.4s ease;
+    }
+    .hhl-story__badge--tl { top: -14px; left: 8%; }
+    .hhl-story__badge--tr { top: 10%; right: -12%; }
+    .hhl-story__badge--br { bottom: -14px; right: 8%; }
+    .hhl-scan-anim {
+      position: absolute; left: 8%; right: 8%; height: 2px; top: 30%;
+      background: rgba(74,222,128,0.7); box-shadow: 0 0 10px rgba(74,222,128,0.5);
+      animation: hhlScan 2s ease-in-out infinite; opacity: 0; transition: opacity 0.4s ease;
+    }
+    @keyframes hhlScan { 0%,100%{top:20%;opacity:1;} 50%{top:75%;opacity:0.5;} }
+    .hhl-letter-stack {
+      position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px; opacity: 0; transition: opacity 0.4s ease;
+    }
+    .hhl-letter-env {
+      width: 30px; height: 22px; background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.22); border-radius: 3px;
+      position: relative; overflow: hidden;
+    }
+    .hhl-letter-env::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      border-top: 11px solid rgba(255,255,255,0.14);
+      border-left: 15px solid transparent; border-right: 15px solid transparent;
+    }
 
-    /* ── HOW IT WORKS ────────────────────────────────────────── */
-    .hhl-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
-    .hhl-step-card {
-      padding: 40px 32px; background: #fff; border-radius: var(--hh-r-lg);
-      box-shadow: var(--hh-shadow-md); position: relative; overflow: hidden;
-      transition: box-shadow .3s, transform .3s;
-    }
-    .hhl-step-card:hover { box-shadow: var(--hh-shadow-lg); transform: translateY(-4px); }
-    .hhl-step-num {
-      position: absolute; top: 12px; right: 18px;
-      font-family: 'Playfair Display', serif; font-size: 5.5rem;
-      font-weight: 700; color: var(--hh-blue-light); line-height: 1;
-    }
-    .hhl-step-icon { margin-bottom: 18px; }
-    .hhl-step-card h3 {
-      font-family: 'Playfair Display', serif; font-size: 1.25rem;
-      font-weight: 700; color: var(--hh-blue-dark); margin-bottom: 10px;
-    }
-    .hhl-step-card p { font-size: 0.925rem; color: var(--hh-text-muted); line-height: 1.7; }
-
-    /* ── FEATURE GRID ────────────────────────────────────────── */
-    .hhl-feature { padding: 80px 0; }
-    .hhl-feature--alt { background: var(--hh-cream); }
-    .hhl-feature__inner {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
-    }
-    .hhl-feature__copy h2 {
+    /* ══════════════════════════════
+       S3 — HOW IT WORKS
+    ══════════════════════════════ */
+    .hhl-steps { padding: 100px 0; background: #0D0F14; }
+    .hhl-steps__header { text-align: center; margin-bottom: 64px; }
+    .hhl-steps__h2 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 2.6vw, 2.2rem); font-weight: 700;
-      color: var(--hh-blue-dark); line-height: 1.25; margin-bottom: 16px;
+      font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 400; color: #f0f2f5; line-height: 1.2;
     }
-    .hhl-feature__copy p { font-size: 1rem; color: var(--hh-text-muted); line-height: 1.75; }
-
-    /* Scan visual */
-    .hhl-scan-card {
-      background: #fff; border-radius: var(--hh-r-lg); padding: 28px;
-      box-shadow: var(--hh-shadow-lg);
+    .hhl-steps__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; align-items: start; }
+    .hhl-step-card {
+      background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px; padding: 28px 22px; text-align: left;
+      position: relative; overflow: hidden; opacity: 0;
     }
-    .hhl-scan-hdr {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--hh-text-muted); margin-bottom: 14px;
+    .hhl-step-card__mini { width: 100%; margin-bottom: 24px; position: relative; }
+    .hhl-step-card__num {
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(91,163,245,0.55); margin-bottom: 10px;
     }
-    .hhl-scan-row { padding: 10px 0; border-bottom: 1px solid var(--hh-border); }
-    .hhl-scan-row:last-child { border-bottom: none; }
-    .hhl-scan-row__txt { font-size: 0.82rem; color: var(--hh-text); margin-bottom: 5px; }
+    .hhl-step-card__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 400; color: #f0f2f5; margin-bottom: 8px; line-height: 1.3;
+    }
+    .hhl-step-card__body { font-size: 0.88rem; line-height: 1.7; color: rgba(255,255,255,0.5); }
+    .hhl-pdf-badge {
+      position: absolute; bottom: 8%; right: 8%;
+      background: rgba(13,15,20,0.9); border: 1px solid rgba(91,163,245,0.3);
+      border-radius: 6px; padding: 5px 9px; font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.1em; color: #5ba3f5; text-transform: uppercase;
+    }
     .hhl-scan-line {
-      height: 2px; background: var(--hh-sky); border-radius: 1px;
-      animation: hhlScan 2s var(--d,0s) ease-in-out infinite; transform-origin: left;
+      position: absolute; top: 35%; left: 8%; right: 8%; height: 2px;
+      background: rgba(74,222,128,0.7); box-shadow: 0 0 10px rgba(74,222,128,0.4);
+      animation: hhlScan 2s ease-in-out infinite;
     }
-    @keyframes hhlScan {
-      0%   { transform: scaleX(0); opacity: 0; }
-      15%  { opacity: 1; }
-      60%  { transform: scaleX(1); opacity: 1; }
-      80%  { transform: scaleX(1); opacity: 0; }
-      100% { transform: scaleX(0); opacity: 0; }
+    .hhl-letters {
+      position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 5px;
     }
-
-    /* Score visual */
-    .hhl-score-card {
-      background: #fff; border-radius: var(--hh-r-lg); padding: 32px;
-      box-shadow: var(--hh-shadow-lg); text-align: center;
+    .hhl-env {
+      width: 24px; height: 17px; background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 2px; position: relative; overflow: hidden;
     }
-    .hhl-score-gauge { display: block; margin: 0 auto 4px; }
-    .hhl-score-arc { transition: stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1); }
-    .hhl-score-num {
-      font-family: 'Playfair Display', serif; font-size: 2.6rem;
-      font-weight: 700; color: var(--hh-blue-dark);
-    }
-    .hhl-score-labels {
-      display: flex; justify-content: space-between;
-      margin-top: 10px; font-size: 0.78rem;
-    }
-    .hhl-score-before { color: var(--hh-text-muted); }
-    .hhl-score-after  { color: var(--hh-success); font-weight: 600; }
-
-    /* Letters fan */
-    .hhl-letters-fan {
-      position: relative; height: 240px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .hhl-lp {
-      position: absolute; width: 200px; height: 160px; border-radius: var(--hh-r-md);
-      background: #fff; box-shadow: var(--hh-shadow-md);
-      display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px;
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
-      text-transform: uppercase; border-top: 4px solid;
-    }
-    .hhl-lp--1 { transform: rotate(0deg);   z-index: 3; border-color: #e74c3c; color: #e74c3c; }
-    .hhl-lp--2 { transform: rotate(-8deg) translateX(-22px); z-index: 2; border-color: var(--hh-blue-mid); color: var(--hh-blue-mid); }
-    .hhl-lp--3 { transform: rotate(8deg)  translateX(22px);  z-index: 1; border-color: var(--hh-success); color: var(--hh-success); }
-
-    /* Track visual */
-    .hhl-track-card {
-      background: #fff; border-radius: var(--hh-r-lg); padding: 28px;
-      box-shadow: var(--hh-shadow-lg);
-    }
-    .hhl-track-hdr {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--hh-text-muted); margin-bottom: 14px;
-    }
-    .hhl-track-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 0; border-bottom: 1px solid var(--hh-border);
-    }
-    .hhl-track-row:last-child { border-bottom: none; }
-    .hhl-track-cred { font-size: 0.875rem; color: var(--hh-text); font-weight: 500; }
-    .hhl-pill {
-      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em;
-      text-transform: uppercase; padding: 4px 10px; border-radius: 20px;
-    }
-    .hhl-pill--ready  { background: var(--hh-blue-light); color: var(--hh-blue-dark); }
-    .hhl-pill--gen    { background: #fef3c7; color: #92400e; }
-    .hhl-pill--sent   { background: #d1fae5; color: var(--hh-success); }
-
-    /* ── PRICING ─────────────────────────────────────────────── */
-    .hhl-pricing { padding: 100px 0; background: var(--hh-blue-light); }
-    .hhl-pricing-card {
-      max-width: 500px; margin: 0 auto; background: #fff;
-      border-radius: var(--hh-r-xl); padding: 56px 48px;
-      box-shadow: var(--hh-shadow-lg); text-align: center;
-    }
-    .hhl-pricing-lbl {
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--hh-blue-mid); margin-bottom: 20px;
-    }
-    .hhl-pricing-price {
-      font-family: 'Playfair Display', serif; font-size: 5rem;
-      font-weight: 700; color: var(--hh-blue-dark); line-height: 1; margin-bottom: 32px;
-    }
-    .hhl-pricing-dollar { font-size: 2.4rem; vertical-align: super; }
-    .hhl-pricing-mo { font-family: 'Inter', sans-serif; font-size: 1.1rem; color: var(--hh-text-muted); font-weight: 400; }
-    .hhl-pricing-list { list-style: none; text-align: left; margin-bottom: 32px; }
-    .hhl-pricing-list li {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 0; border-bottom: 1px solid var(--hh-border); font-size: 0.95rem; color: var(--hh-text);
-    }
-    .hhl-pricing-list li:last-child { border-bottom: none; }
-    .hhl-pricing-list svg { flex-shrink: 0; }
-    .hhl-pricing-note {
-      font-size: 0.78rem; color: var(--hh-text-muted);
-      margin-top: 16px; line-height: 1.6; font-style: italic;
+    .hhl-env::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      border-top: 9px solid rgba(255,255,255,0.13);
+      border-left: 12px solid transparent; border-right: 12px solid transparent;
     }
 
-    /* ── TESTIMONIALS ────────────────────────────────────────── */
-    .hhl-testimonials { background: var(--hh-cream); }
-    .hhl-tgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
+    /* ══════════════════════════════
+       S4 — FEATURES
+    ══════════════════════════════ */
+    .hhl-features { padding: 100px 0; background: #080a0e; }
+    .hhl-feature {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+      align-items: center; margin-bottom: 96px;
+    }
+    .hhl-feature:last-child { margin-bottom: 0; }
+    .hhl-feature--reverse { direction: rtl; }
+    .hhl-feature--reverse > * { direction: ltr; }
+    .hhl-feature__copy { opacity: 0; }
+    .hhl-feature__eyebrow {
+      display: block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: #5ba3f5; margin-bottom: 14px;
+    }
+    .hhl-feature__h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem); font-weight: 400;
+      color: #f0f2f5; line-height: 1.25; margin-bottom: 16px;
+    }
+    .hhl-feature__p { font-size: 1rem; line-height: 1.75; color: rgba(255,255,255,0.55); margin-bottom: 26px; }
+    .hhl-feature__visual { display: flex; align-items: center; justify-content: center; opacity: 0; }
+    .hhl-feature__card-wrap { width: min(360px, 42vw); }
+
+    /* ══════════════════════════════
+       S5 — PRICING
+    ══════════════════════════════ */
+    .hhl-pricing { padding: 100px 0; background: #0D0F14; text-align: center; }
+    .hhl-pricing__header { margin-bottom: 60px; }
+    .hhl-pricing__h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 400; color: #f0f2f5; line-height: 1.2;
+    }
+    .hhl-pricing__sub { font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 12px; }
+    .hhl-pricing__cards { display: flex; gap: 28px; justify-content: center; align-items: stretch; flex-wrap: wrap; }
+    .hhl-pricing__tier {
+      position: relative; width: 268px; border-radius: 18px;
+      background: linear-gradient(160deg, #2d6cc4 0%, #1a4a8a 55%, #0f2d5c 100%);
+      box-shadow: 0 24px 56px -16px rgba(26,74,138,0.5), 0 12px 28px -14px rgba(26,35,50,0.3);
+      overflow: hidden; color: #fff; padding: 32px 26px;
+      text-align: left; display: flex; flex-direction: column; opacity: 0;
+    }
+    .hhl-pricing__tier::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(circle at 25% 20%, rgba(255,255,255,0.12), transparent 55%),
+        radial-gradient(circle at 80% 90%, rgba(255,255,255,0.06), transparent 50%);
+    }
+    .hhl-pricing__tier--featured {
+      box-shadow: 0 32px 64px -16px rgba(26,74,138,0.65), 0 0 0 1px rgba(91,163,245,0.3);
+      transform: scale(1.04);
+    }
+    .hhl-pricing__chip {
+      width: 36px; aspect-ratio: 1.45/1; border-radius: 3px; margin-bottom: 22px;
+      background: linear-gradient(145deg, #d4a843 0%, #f5cc6a 35%, #b8892a 65%, #e8ba50 100%);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      position: relative; z-index: 1; overflow: hidden;
+    }
+    .hhl-pricing__chip::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
+    }
+    .hhl-pricing__badge {
+      position: absolute; top: 16px; right: 16px;
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      background: rgba(91,163,245,0.18); border: 1px solid rgba(91,163,245,0.35);
+      color: #93c5fd; padding: 4px 8px; border-radius: 20px; z-index: 1;
+    }
+    .hhl-pricing__tier-name {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); margin-bottom: 6px; position: relative; z-index: 1;
+    }
+    .hhl-pricing__price {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem; font-weight: 700; color: #fff;
+      line-height: 1; margin-bottom: 6px; position: relative; z-index: 1;
+    }
+    .hhl-pricing__price sup { font-size: 1.1rem; font-weight: 400; vertical-align: super; }
+    .hhl-pricing__price sub { font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.45); }
+    .hhl-pricing__desc { font-size: 0.8rem; line-height: 1.6; color: rgba(255,255,255,0.45); margin-bottom: 20px; position: relative; z-index: 1; }
+    .hhl-pricing__divider { height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 18px; position: relative; z-index: 1; }
+    .hhl-pricing__feats { list-style: none; padding: 0; margin: 0; flex: 1; position: relative; z-index: 1; }
+    .hhl-pricing__feats li {
+      display: flex; align-items: flex-start; gap: 9px;
+      font-size: 0.83rem; color: rgba(255,255,255,0.72); line-height: 1.5; margin-bottom: 10px;
+    }
+    .hhl-pricing__feats li::before { content: '✓'; color: #5ba3f5; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .hhl-pricing__cta { margin-top: 24px; position: relative; z-index: 1; }
+    .hhl-pricing__cta .hhl-btn { width: 100%; justify-content: center; }
+
+    /* ══════════════════════════════
+       S6 — TESTIMONIALS
+    ══════════════════════════════ */
+    .hhl-testimonials { padding: 100px 0; background: #080a0e; text-align: center; }
+    .hhl-testimonials__h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 400; color: #f0f2f5; margin-bottom: 14px;
+    }
+    .hhl-testimonials__sub { font-size: 0.95rem; color: rgba(255,255,255,0.42); margin-bottom: 56px; }
+    .hhl-testimonials__grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
     .hhl-qcard {
-      background: #fff; border-radius: var(--hh-r-lg); padding: 36px 32px;
-      box-shadow: var(--hh-shadow-md); transition: box-shadow .3s;
+      background: rgba(255,255,255,0.032); border: 1px solid rgba(255,255,255,0.075);
+      border-radius: 16px; padding: 30px 26px; text-align: left; opacity: 0;
     }
-    .hhl-qcard:hover { box-shadow: var(--hh-shadow-lg); }
-    .hhl-qmark {
-      font-family: 'Playfair Display', serif; font-size: 5rem;
-      color: var(--hh-sky); opacity: 0.25; line-height: 0.8; margin-bottom: 14px;
+    .hhl-qcard__stars { display: flex; gap: 3px; margin-bottom: 16px; }
+    .hhl-qcard__star { color: #f5cc6a; font-size: 0.88rem; }
+    .hhl-qcard__score-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(45,108,196,0.14); border: 1px solid rgba(91,163,245,0.2);
+      border-radius: 20px; padding: 3px 9px; font-size: 0.7rem; font-weight: 700;
+      color: #5ba3f5; margin-bottom: 14px;
     }
-    .hhl-qtext { font-size: 1rem; color: var(--hh-text); line-height: 1.7; margin-bottom: 18px; }
-    .hhl-qattr { font-size: 0.82rem; color: var(--hh-text-muted); font-weight: 600; }
+    .hhl-qcard__body {
+      font-size: 0.9rem; line-height: 1.72; color: rgba(255,255,255,0.62);
+      margin-bottom: 22px; font-style: italic;
+    }
+    .hhl-qcard__author { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.82); }
+    .hhl-qcard__location { font-size: 0.73rem; color: rgba(255,255,255,0.38); margin-top: 2px; }
 
-    /* ── FAQ ─────────────────────────────────────────────────── */
-    .hhl-faq { background: var(--hh-white); }
-    .hhl-acc-item { border-bottom: 1px solid var(--hh-border); }
-    .hhl-acc-trigger {
-      width: 100%; display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 20px 0; background: none; border: none;
-      font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600;
-      color: var(--hh-text); cursor: pointer; text-align: left; transition: color .2s;
+    /* ══════════════════════════════
+       S7 — FAQ
+    ══════════════════════════════ */
+    .hhl-faq { padding: 100px 0; background: #0D0F14; }
+    .hhl-faq__inner { max-width: 720px; margin: 0 auto; padding: 0 40px; }
+    .hhl-faq__h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 400; color: #f0f2f5;
+      text-align: center; margin-bottom: 52px;
     }
-    .hhl-acc-trigger:hover { color: var(--hh-blue-mid); }
-    .hhl-acc-chev { flex-shrink: 0; transition: transform .3s ease; }
-    .hhl-acc-trigger.open .hhl-acc-chev { transform: rotate(180deg); }
-    .hhl-acc-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
-    .hhl-acc-body.open { max-height: 400px; }
-    .hhl-acc-body p {
-      padding-bottom: 20px; font-size: 0.95rem;
-      color: var(--hh-text-muted); line-height: 1.75;
+    .hhl-acc-item { border-bottom: 1px solid rgba(255,255,255,0.07); opacity: 0; }
+    .hhl-acc-item:first-of-type { border-top: 1px solid rgba(255,255,255,0.07); }
+    .hhl-acc-btn {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      gap: 16px; padding: 20px 0; background: none; border: none; cursor: pointer;
+      text-align: left; font-family: 'Inter', sans-serif; font-size: 0.96rem;
+      font-weight: 500; color: rgba(255,255,255,0.82); transition: color 0.2s;
     }
+    .hhl-acc-btn:hover { color: #fff; }
+    .hhl-acc-icon {
+      width: 22px; height: 22px; border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 50%; flex-shrink: 0; position: relative;
+      transition: transform 0.3s ease, border-color 0.2s;
+    }
+    .hhl-acc-icon::before, .hhl-acc-icon::after {
+      content: ''; position: absolute; background: rgba(255,255,255,0.65);
+      left: 50%; top: 50%; transform: translate(-50%,-50%); border-radius: 1px;
+    }
+    .hhl-acc-icon::before { width: 10px; height: 1.5px; }
+    .hhl-acc-icon::after { width: 1.5px; height: 10px; transition: transform 0.3s ease, opacity 0.3s; }
+    .hhl-acc-item.open .hhl-acc-icon { border-color: #5ba3f5; transform: rotate(45deg); }
+    .hhl-acc-item.open .hhl-acc-btn { color: #fff; }
+    .hhl-acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .hhl-acc-body p { padding: 0 0 20px; font-size: 0.9rem; line-height: 1.78; color: rgba(255,255,255,0.52); }
 
-    /* ── COMPLIANCE additions ────────────────────────────────── */
-    .hhl-comp-hdr { margin-bottom: 28px; }
+    /* ══════════════════════════════
+       S8 — COMPLIANCE WRAPPER
+    ══════════════════════════════ */
+    .hhl-comp-hdr { text-align: center; margin-bottom: 36px; opacity: 0; }
+    .hhl-comp-hdr h2 {
+      font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 400;
+      color: rgba(255,255,255,0.45); letter-spacing: 0.06em;
+    }
     .hhl-comp-div {
-      height: 1px; background: var(--hh-sky); width: 0; margin-top: 14px;
-      transition: width .9s cubic-bezier(.4,0,.2,1);
+      width: 48px; height: 1px; background: rgba(255,255,255,0.14);
+      margin: 14px auto 0; transform-origin: left; transform: scaleX(0);
     }
-    .hhl-comp-div.go { width: 60px; }
 
-    /* ── FINAL CTA SECTION ───────────────────────────────────── */
+    /* ══════════════════════════════
+       S9 — CTA FOOTER
+    ══════════════════════════════ */
     .hhl-cta-section {
-      padding: 120px 0; text-align: center;
-      background: linear-gradient(135deg, var(--hh-blue-light) 0%, var(--hh-sky-soft) 100%);
+      padding: 100px 0; background: #0D0F14; text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
     .hhl-cta-section h2 {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 700;
-      color: var(--hh-blue-dark); margin-bottom: 16px;
+      font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 400;
+      color: #f0f2f5; margin-bottom: 18px; line-height: 1.2;
     }
-    .hhl-cta-section p { font-size: 1.1rem; color: var(--hh-text-muted); margin-bottom: 40px; }
+    .hhl-cta-section p { font-size: 1rem; color: rgba(255,255,255,0.48); margin-bottom: 32px; }
+    .hhl-btn--cta {
+      background: linear-gradient(135deg, #2d6cc4, #1a4a8a);
+      color: #fff; padding: 16px 36px; font-size: 1rem;
+      box-shadow: 0 12px 32px rgba(26,74,138,0.45);
+    }
+    .hhl-btn--cta:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(26,74,138,0.6); }
+    .hhl-footer-links {
+      display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+      margin-top: 56px; padding-top: 36px; border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .hhl-footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.28); text-decoration: none; transition: color 0.2s; }
+    .hhl-footer-links a:hover { color: rgba(255,255,255,0.65); }
+    .hhl-footer-links span { color: rgba(255,255,255,0.14); font-size: 0.8rem; }
+    .hh-footer-copy { text-align: center; margin-top: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.18); }
 
-    /* ── LANDING RESPONSIVE ──────────────────────────────────── */
-    @media (max-width: 900px) {
-      .hhl-hero .hhl-container { grid-template-columns: 1fr; gap: 40px; }
-      .hhl-hero__visual { height: 300px; }
-      .hhl-steps { grid-template-columns: 1fr; }
-      .hhl-feature__inner { grid-template-columns: 1fr; gap: 40px; }
-      .hhl-feature--img-right .hhl-feature__visual { order: -1; }
-      .hhl-tgrid { grid-template-columns: 1fr; }
-      .hhl-story__pin { grid-template-columns: 1fr; }
-      .hhl-story__visual { display: none; }
-      .hhl-container, .hhl-container--narrow { padding: 0 20px; }
-      .hhl-pricing-card { padding: 40px 28px; }
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
+    @media (max-width: 960px) {
+      .hhl-hero { grid-template-columns: 1fr; min-height: auto; }
+      .hhl-hero__copy { padding: 100px 28px 48px; text-align: center; }
+      .hhl-hero__ctas { justify-content: center; }
+      .hhl-hero__trust { justify-content: center; }
+      .hhl-hero__sub { margin: 0 auto 36px; }
+      .hhl-hero__cards { min-height: 280px; padding: 0 28px 80px; }
+      .hhl-hero__card-wrap { width: min(260px, 68vw); }
+      .hhl-steps__grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+      .hhl-feature { grid-template-columns: 1fr; gap: 48px; }
+      .hhl-feature--reverse { direction: ltr; }
+      .hhl-feature__card-wrap { width: min(340px, 80vw); }
+      .hhl-testimonials__grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+      .hhl-pricing__cards { flex-direction: column; align-items: center; }
+      .hhl-pricing__tier--featured { transform: none; }
     }
     @media (max-width: 768px) {
+      .hhl-container { padding: 0 20px; }
+      .hhl-faq__inner { padding: 0 20px; }
+      .hhl-hero__card-wrap { width: min(220px, 62vw); }
+      .hhl-story__sticky { position: static; height: auto; }
       .hhl-story { height: auto; }
-      .hhl-story__pin { position: static; height: auto; padding: 60px 20px; display: block; }
       .hhl-story__visual { display: none; }
+      .hhl-story__panels { padding: 60px 24px; }
       .hhl-story__panel {
         position: static !important; opacity: 1 !important;
         transform: none !important; pointer-events: auto;
         margin-bottom: 48px;
       }
     }
+
 
     /* ═══ PRINT ═══════════════════════════════════════════════ */
     @media print {
@@ -1411,277 +1509,562 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
 
 
 <!-- ════════════════════════════════════════════════════════
-     SCREEN 1 — LANDING PAGE (REDESIGN)
+     SCREEN 1 — LANDING PAGE (Credit Card Visual System)
 ════════════════════════════════════════════════════════ -->
 <div class="hh-screen active" id="screen-landing">
 
-  <!-- S1: HERO -->
+  <!-- S1: HERO — three fanned Heavenly Hands cards -->
   <section class="hhl-hero" id="hhl-hero">
-    <div class="hhl-container">
-      <div class="hhl-hero__copy">
-        <span class="hhl-eyebrow">CREDIT REPAIR · A VANTAGE COMPANY</span>
-        <h1 class="hhl-hero__h1" id="hhlH1">Your credit score doesn't define your future.</h1>
-        <p class="hhl-hero__sub">We help you find errors on your credit report and generate legally sound dispute letters — in minutes, not months.</p>
-        <div class="hhl-hero__ctas">
-          <button class="hhl-btn hhl-btn--primary" onclick="showScreen('auth'); switchTab('signup')">Start for Free</button>
-          <a href="#hhl-how" class="hhl-btn hhl-btn--ghost">How it works</a>
-        </div>
-        <p class="hhl-trust">No upfront fees · 3-day cancellation · CROA compliant</p>
+    <div class="hhl-hero__copy">
+      <span class="hhl-eyebrow">CREDIT REPAIR · A VANTAGE COMPANY</span>
+      <h1 class="hhl-hero__h1" id="hhlH1">Your credit score doesn't<br><em>define your future.</em></h1>
+      <p class="hhl-hero__sub">We find errors on your credit report and generate legally sound dispute letters — in minutes, not months.</p>
+      <div class="hhl-hero__ctas">
+        <button class="hhl-btn hhl-btn--primary" onclick="showScreen('auth'); switchTab('signup')">Start for Free</button>
+        <a href="#hhl-how" class="hhl-btn hhl-btn--ghost">How it works</a>
       </div>
-      <div class="hhl-hero__visual" id="hhlVisual">
-        <div class="hhl-card hhl-card--bg" id="hhlBg"></div>
-        <div class="hhl-card hhl-card--mid" id="hhlMid">
-          <div class="hhl-card-mid__hdr">Credit Report · Negative Items</div>
-          <div class="hhl-di"><span class="hhl-di-cred">Capital One Bank</span><span class="hhl-di-amt">$2,840</span><span class="hhl-di-badge">DISPUTED</span></div>
-          <div class="hhl-di"><span class="hhl-di-cred">Midland Credit Mgmt</span><span class="hhl-di-amt">$1,200</span><span class="hhl-di-badge">DISPUTED</span></div>
-          <div class="hhl-di"><span class="hhl-di-cred">Portfolio Recovery</span><span class="hhl-di-amt">$680</span><span class="hhl-di-badge">DISPUTED</span></div>
-        </div>
-        <div class="hhl-card hhl-card--fg" id="hhlFg">
-          <svg class="hhl-gauge" viewBox="0 0 200 120" width="154" height="92">
-            <path d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="var(--hh-border)" stroke-width="14" stroke-linecap="round"/>
-            <path class="hhl-gauge__arc" id="hhlGaugeArc" d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="var(--hh-sky)" stroke-width="14" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="251"/>
-          </svg>
-          <div class="hhl-gauge__score" id="hhlGaugeScore">540</div>
-          <div class="hhl-gauge__lbl">Credit Score</div>
-          <div class="hhl-gauge__delta">+180 pts</div>
-        </div>
+      <div class="hhl-hero__trust">
+        <span>No advance payment</span>
+        <span class="hhl-hero__trust-dot"></span>
+        <span>3-day cancel right</span>
+        <span class="hhl-hero__trust-dot"></span>
+        <span>CROA compliant</span>
       </div>
     </div>
-  </section>
 
-  <!-- S2: PINNED SCROLL STORY -->
-  <section class="hhl-story" id="hhl-story">
-    <div class="hhl-story__pin" id="hhlStoryPin">
-      <div class="hhl-story__visual">
-        <div class="hhl-report">
-          <div class="hhl-report__hdr">Credit Report · Line Items</div>
-          <div class="hhl-report__row"><span>Midland Credit Mgmt</span><span class="hhl-report__amt">$1,240</span><span class="hhl-report__tag hhl-report__tag--err" id="hhlTag0">ERROR</span></div>
-          <div class="hhl-report__row"><span>Capital One Bank</span><span class="hhl-report__amt">$2,840</span><span class="hhl-report__tag hhl-report__tag--err" id="hhlTag1">ERROR</span></div>
-          <div class="hhl-report__row"><span>Portfolio Recovery</span><span class="hhl-report__amt">$680</span><span class="hhl-report__tag hhl-report__tag--err" id="hhlTag2">ERROR</span></div>
-          <div class="hhl-report__row"><span>Synchrony Bank</span><span class="hhl-report__amt">$320</span><span class="hhl-report__tag hhl-report__tag--err" id="hhlTag3">ERROR</span></div>
-          <div class="hhl-report__row"><span>LVNV Funding LLC</span><span class="hhl-report__amt">$910</span><span class="hhl-report__tag hhl-report__tag--err" id="hhlTag4">ERROR</span></div>
-          <div class="hhl-letter-stack" id="hhlLetterStack">
-            <span class="hhl-letter-pill hhl-letter-pill--eq">Equifax</span>
-            <span class="hhl-letter-pill hhl-letter-pill--exp">Experian</span>
-            <span class="hhl-letter-pill hhl-letter-pill--tu">TransUnion</span>
+    <!-- Three fanned cards: muted 540, default 640, success 720 -->
+    <div class="hhl-hero__cards" aria-hidden="true">
+      <!-- Back card — muted, low score -->
+      <div class="hhl-hero__card-wrap hhl-hero__card-wrap--bg" id="hhlCard1" style="transform:rotate(-12deg) translateX(-44px) translateY(18px)">
+        <div class="hh-card hh-card--muted">
+          <div class="hh-card__body">
+            <div class="hh-card__top">
+              <div class="hh-card__chip"></div>
+              <span class="hh-card__wordmark">Heavenly Hands</span>
+              <svg class="hh-card__network" viewBox="0 0 40 24" fill="none"><circle cx="15" cy="12" r="10" fill="rgba(255,255,255,0.3)"/><circle cx="25" cy="12" r="10" fill="rgba(255,255,255,0.2)"/></svg>
+            </div>
+            <div class="hh-card__number">•••• •••• •••• 1993</div>
+            <div class="hh-card__bottom">
+              <div class="hh-card__info">
+                <span class="hh-card__label">Card Holder</span>
+                <span class="hh-card__name">J. WILLIAMS</span>
+              </div>
+              <div class="hh-card__score-wrap">
+                <div class="hh-card__score">540</div>
+                <div class="hh-card__score-label">Credit Score</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="hhl-story__panels">
-        <div class="hhl-story__panel active" id="hhlP1">
-          <span class="hhl-eyebrow">The Problem</span>
-          <h2>Errors on your credit report are more common than you think.</h2>
-          <p>1 in 5 Americans has an error on at least one of their three credit reports. Those errors cost you money — every month.</p>
-        </div>
-        <div class="hhl-story__panel" id="hhlP2">
-          <span class="hhl-eyebrow">The Solution</span>
-          <h2>AI finds them in seconds. You'd never spot them all manually.</h2>
-          <p>Upload your credit report and our AI scans every line item, flagging duplicates, outdated entries, incorrect amounts, and unverifiable accounts.</p>
-        </div>
-        <div class="hhl-story__panel" id="hhlP3">
-          <span class="hhl-eyebrow">The Outcome</span>
-          <h2>We write the dispute letters. You send them. Your credit improves.</h2>
-          <p>Every letter is FCRA-compliant and ready to mail to Equifax, Experian, and TransUnion. No legal jargon for you to wrestle with.</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- S3: HOW IT WORKS -->
-  <section class="hhl-section" id="hhl-how">
-    <div class="hhl-container">
-      <div class="hhl-section-head">
-        <span class="hhl-eyebrow">The Process</span>
-        <h2>Three steps to a cleaner credit file</h2>
-      </div>
-      <div class="hhl-steps">
-        <div class="hhl-step-card">
-          <span class="hhl-step-num">01</span>
-          <div class="hhl-step-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="var(--hh-blue-light)"/><path d="M16 34V20a2 2 0 012-2h8l6 6v10a2 2 0 01-2 2H18a2 2 0 01-2-2z" stroke="var(--hh-sky)" stroke-width="2" stroke-linejoin="round"/><path d="M26 18v6h6" stroke="var(--hh-sky)" stroke-width="2" stroke-linejoin="round"/></svg></div>
-          <h3>Upload your report</h3>
-          <p>Drag in a PDF from Equifax, Experian, or TransUnion. Direct from the bureau — no screenshots required.</p>
-        </div>
-        <div class="hhl-step-card">
-          <span class="hhl-step-num">02</span>
-          <div class="hhl-step-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="var(--hh-blue-light)"/><circle cx="24" cy="24" r="8" stroke="var(--hh-sky)" stroke-width="2"/><path d="M24 16V12M24 36v-4M16 24H12M36 24h-4" stroke="var(--hh-sky)" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h3>AI scans for errors</h3>
-          <p>Every line analyzed in seconds. Disputable items surfaced clearly — no guesswork, no manual reading.</p>
-        </div>
-        <div class="hhl-step-card">
-          <span class="hhl-step-num">03</span>
-          <div class="hhl-step-icon"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="12" fill="var(--hh-blue-light)"/><path d="M14 24h20M14 30h14M14 18h20" stroke="var(--hh-sky)" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h3>Generate dispute letters</h3>
-          <p>One click per item. Download. Mail. Track responses. All three bureaus handled seamlessly.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- S4: FEATURE GRID -->
-
-  <!-- Block A: visual left, copy right -->
-  <div class="hhl-feature">
-    <div class="hhl-container">
-      <div class="hhl-feature__inner">
-        <div class="hhl-feature__visual" data-side="left">
-          <div class="hhl-scan-card">
-            <div class="hhl-scan-hdr">AI Analysis — In Progress</div>
-            <div class="hhl-scan-row"><div class="hhl-scan-row__txt">Midland Credit Mgmt · Collection · $1,240</div><div class="hhl-scan-line" style="--d:0s"></div></div>
-            <div class="hhl-scan-row"><div class="hhl-scan-row__txt">Capital One Bank · Charge-off · $2,840</div><div class="hhl-scan-line" style="--d:0.6s"></div></div>
-            <div class="hhl-scan-row"><div class="hhl-scan-row__txt">Portfolio Recovery · Collection · $680</div><div class="hhl-scan-line" style="--d:1.2s"></div></div>
+      <!-- Mid card — default -->
+      <div class="hhl-hero__card-wrap hhl-hero__card-wrap--mid" id="hhlCard2" style="transform:rotate(-4deg) translateX(8px)">
+        <div class="hh-card">
+          <div class="hh-card__body">
+            <div class="hh-card__top">
+              <div class="hh-card__chip"></div>
+              <span class="hh-card__wordmark">Heavenly Hands</span>
+              <svg class="hh-card__network" viewBox="0 0 40 24" fill="none"><circle cx="15" cy="12" r="10" fill="rgba(255,255,255,0.3)"/><circle cx="25" cy="12" r="10" fill="rgba(255,255,255,0.2)"/></svg>
+            </div>
+            <div class="hh-card__number">•••• •••• •••• 2024</div>
+            <div class="hh-card__bottom">
+              <div class="hh-card__info">
+                <span class="hh-card__label">Card Holder</span>
+                <span class="hh-card__name">M. JOHNSON</span>
+              </div>
+              <div class="hh-card__score-wrap">
+                <div class="hh-card__score">640</div>
+                <div class="hh-card__score-label">Credit Score</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="hhl-feature__copy" data-side="right">
-          <span class="hhl-eyebrow">Smart Analysis</span>
-          <h2>AI that reads your credit report like a credit attorney would.</h2>
-          <p>No manual highlighting. No guessing. Every negative item is flagged, categorized, and ready to dispute — in the time it takes to pour a coffee.</p>
-        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Block B: copy left, visual right -->
-  <div class="hhl-feature hhl-feature--alt">
-    <div class="hhl-container">
-      <div class="hhl-feature__inner">
-        <div class="hhl-feature__copy" data-side="left">
-          <span class="hhl-eyebrow">Score Impact</span>
-          <h2>Watch errors disappear. Watch your score climb.</h2>
-          <p>Disputing inaccurate items removes the drag on your score. Results depend on what the bureaus find — we give you every legitimate tool to dispute.</p>
-        </div>
-        <div class="hhl-feature__visual" data-side="right">
-          <div class="hhl-score-card">
-            <svg class="hhl-score-gauge" viewBox="0 0 200 120" width="180" height="108">
-              <path d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="var(--hh-border)" stroke-width="14" stroke-linecap="round"/>
-              <path class="hhl-score-arc" id="hhlScoreArc" d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="var(--hh-sky)" stroke-width="14" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="200"/>
-            </svg>
-            <div class="hhl-score-num" id="hhlScoreNum">540</div>
-            <div class="hhl-score-labels">
-              <span class="hhl-score-before">Before: 540</span>
-              <span class="hhl-score-after">After disputes: 720</span>
+      <!-- Front card — success, highest score -->
+      <div class="hhl-hero__card-wrap hhl-hero__card-wrap--fg" id="hhlCard3" style="transform:rotate(6deg) translateX(52px) translateY(-12px)">
+        <div class="hh-card hh-card--success">
+          <div class="hh-card__body">
+            <div class="hh-card__top">
+              <div class="hh-card__chip"></div>
+              <span class="hh-card__wordmark">Heavenly Hands</span>
+              <svg class="hh-card__network" viewBox="0 0 40 24" fill="none"><circle cx="15" cy="12" r="10" fill="rgba(255,255,255,0.3)"/><circle cx="25" cy="12" r="10" fill="rgba(255,255,255,0.2)"/></svg>
+            </div>
+            <div class="hh-card__number">•••• •••• •••• 2025</div>
+            <div class="hh-card__bottom">
+              <div class="hh-card__info">
+                <span class="hh-card__label">Card Holder</span>
+                <span class="hh-card__name">A. DAVIS</span>
+              </div>
+              <div class="hh-card__score-wrap">
+                <div class="hh-card__score">720</div>
+                <div class="hh-card__score-label">Credit Score</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Block C: visual left, copy right -->
-  <div class="hhl-feature">
-    <div class="hhl-container">
-      <div class="hhl-feature__inner">
-        <div class="hhl-feature__visual" data-side="left">
-          <div class="hhl-letters-fan">
-            <div class="hhl-lp hhl-lp--3">TransUnion</div>
-            <div class="hhl-lp hhl-lp--2">Experian</div>
-            <div class="hhl-lp hhl-lp--1">Equifax</div>
+  <!-- S2: PINNED SCROLL STORY — single card transforms state -->
+  <section class="hhl-story" id="hhl-story">
+    <div class="hhl-story__sticky">
+      <!-- Visual: single card with overlays, changes state with scroll -->
+      <div class="hhl-story__visual" aria-hidden="true">
+        <div class="hhl-story__card-wrap" id="hhlStoryCardWrap">
+          <!-- Error-state badge badges -->
+          <span class="hhl-story__badge hhl-story__badge--tl" id="hhlTag0">Incorrect Balance</span>
+          <span class="hhl-story__badge hhl-story__badge--tr" id="hhlTag1">Account Not Mine</span>
+          <span class="hhl-story__badge hhl-story__badge--br" id="hhlTag2">Wrong Address</span>
+          <!-- Scan line (panel 2) -->
+          <div class="hhl-scan-anim" id="hhlScanLine"></div>
+          <!-- Letter stack (panel 3) -->
+          <div class="hhl-letter-stack" id="hhlLetterStack">
+            <div class="hhl-letter-env"></div>
+            <div class="hhl-letter-env"></div>
+            <div class="hhl-letter-env"></div>
+          </div>
+          <div class="hh-card" id="hhlStoryCard">
+            <div class="hh-card__strike" id="hhlStoryStrike"></div>
+            <div class="hh-card__body">
+              <div class="hh-card__top">
+                <div class="hh-card__chip"></div>
+                <span class="hh-card__wordmark">Heavenly Hands</span>
+                <svg class="hh-card__network" viewBox="0 0 40 24" fill="none"><circle cx="15" cy="12" r="10" fill="rgba(255,255,255,0.3)"/><circle cx="25" cy="12" r="10" fill="rgba(255,255,255,0.2)"/></svg>
+              </div>
+              <div class="hh-card__number">•••• •••• •••• 2024</div>
+              <div class="hh-card__bottom">
+                <div class="hh-card__info">
+                  <span class="hh-card__label">Card Holder</span>
+                  <span class="hh-card__name">YOUR NAME</span>
+                </div>
+                <div class="hh-card__score-wrap">
+                  <div class="hh-card__score" id="hhlStoryScore">540</div>
+                  <div class="hh-card__score-label">Credit Score</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="hhl-feature__copy" data-side="right">
-          <span class="hhl-eyebrow">Letter Generation</span>
-          <h2>Letters written in your name, formatted for each bureau.</h2>
-          <p>Each letter cites the specific FCRA section that gives you the right to dispute. Formatted correctly. Ready to mail. No editing required.</p>
-        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Block D: copy left, visual right -->
-  <div class="hhl-feature hhl-feature--alt">
-    <div class="hhl-container">
-      <div class="hhl-feature__inner">
-        <div class="hhl-feature__copy" data-side="left">
-          <span class="hhl-eyebrow">Progress Tracking</span>
-          <h2>Track every dispute. Know what's working.</h2>
-          <p>Your dashboard shows every item — status, which bureau, and when letters were generated. Nothing falls through the cracks.</p>
+      <!-- Panels: text that changes as user scrolls -->
+      <div class="hhl-story__panels">
+        <div class="hhl-story__panel active" id="hhlP1">
+          <div class="hhl-story__step-num">Step 01</div>
+          <h2>Upload your credit report</h2>
+          <p>Pull your report from AnnualCreditReport.com and upload the PDF. Our AI scans every tradeline, balance, and inquiry for errors, outdated information, and items ripe for dispute.</p>
         </div>
-        <div class="hhl-feature__visual" data-side="right">
-          <div class="hhl-track-card">
-            <div class="hhl-track-hdr">Dispute Tracker</div>
-            <div class="hhl-track-row"><span class="hhl-track-cred">Midland Credit</span><span class="hhl-pill hhl-pill--sent">Sent</span></div>
-            <div class="hhl-track-row"><span class="hhl-track-cred">Capital One</span><span class="hhl-pill hhl-pill--gen">Generated</span></div>
-            <div class="hhl-track-row"><span class="hhl-track-cred">Portfolio Recovery</span><span class="hhl-pill hhl-pill--ready">Ready</span></div>
-          </div>
+        <div class="hhl-story__panel" id="hhlP2">
+          <div class="hhl-story__step-num">Step 02</div>
+          <h2>We find the errors</h2>
+          <p>Inaccurate balances. Accounts that aren't yours. Wrong addresses. Late payments reported incorrectly. We surface every potentially disputable item with citations to the FCRA section that gives you the right to challenge it.</p>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- S5: PRICING -->
-  <section class="hhl-pricing" id="hhl-pricing">
-    <div class="hhl-container">
-      <div class="hhl-pricing-card" id="hhlPricingCard">
-        <p class="hhl-pricing-lbl">ONE PLAN. NO TRICKS.</p>
-        <div class="hhl-pricing-price"><span class="hhl-pricing-dollar">$</span>79<span class="hhl-pricing-mo">/month</span></div>
-        <ul class="hhl-pricing-list">
-          <li><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="var(--hh-sky)"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited dispute letters</li>
-          <li><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="var(--hh-sky)"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>All 3 bureaus — Equifax, Experian, TransUnion</li>
-          <li><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="var(--hh-sky)"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>AI credit report analysis</li>
-          <li><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="var(--hh-sky)"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Progress tracking dashboard</li>
-          <li><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="var(--hh-sky)"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF downloads of all letters</li>
-          <li><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="var(--hh-sky)"/><path d="M5 8l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cancel anytime</li>
-        </ul>
-        <button class="hhl-btn hhl-btn--primary hhl-btn--full" onclick="showScreen('auth'); switchTab('signup')">Start for Free</button>
-        <p class="hhl-pricing-note">Billing begins only after your 3-day review period. You may cancel anytime before then at no charge.</p>
+        <div class="hhl-story__panel" id="hhlP3">
+          <div class="hhl-story__step-num">Step 03</div>
+          <h2>Send legally sound letters</h2>
+          <p>Download your personalized dispute letters — formatted for Equifax, Experian, and TransUnion. Mail them certified. The bureaus have 30 days by law to respond.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- S6: TESTIMONIALS -->
-  <section class="hhl-section hhl-testimonials" id="hhl-testimonials">
+  <!-- S3: HOW IT WORKS — 3 mini-cards with overlays -->
+  <section class="hhl-steps" id="hhl-how">
     <div class="hhl-container">
-      <div class="hhl-section-head">
-        <span class="hhl-eyebrow">What Clients Say</span>
-        <h2>Real experiences, clearly told</h2>
+      <div class="hhl-steps__header">
+        <span class="hhl-eyebrow">The Process</span>
+        <h2 class="hhl-steps__h2">Three steps to a stronger score</h2>
       </div>
-      <div class="hhl-tgrid">
+      <div class="hhl-steps__grid">
+
+        <!-- Step 1: Upload report — PDF badge overlay -->
+        <div class="hhl-step-card">
+          <div class="hhl-step-card__mini">
+            <div class="hh-card" style="max-width:100%">
+              <div class="hh-card__body">
+                <div class="hh-card__top">
+                  <div class="hh-card__chip"></div>
+                  <span class="hh-card__wordmark">Heavenly Hands</span>
+                </div>
+                <div class="hh-card__number">•••• •••• •••• 2024</div>
+                <div class="hh-card__bottom">
+                  <div class="hh-card__info">
+                    <span class="hh-card__label">Card Holder</span>
+                    <span class="hh-card__name">YOUR NAME</span>
+                  </div>
+                  <div class="hh-card__score-wrap">
+                    <div class="hh-card__score">540</div>
+                    <div class="hh-card__score-label">Credit Score</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="hhl-pdf-badge" aria-hidden="true">PDF</span>
+          </div>
+          <div class="hhl-step-card__num">01</div>
+          <div class="hhl-step-card__title">Upload your report</div>
+          <p class="hhl-step-card__body">Pull a free copy from AnnualCreditReport.com and upload the PDF — that's all we need.</p>
+        </div>
+
+        <!-- Step 2: AI scans — scan line overlay -->
+        <div class="hhl-step-card">
+          <div class="hhl-step-card__mini">
+            <div class="hh-card" style="max-width:100%">
+              <div class="hh-card__body">
+                <div class="hh-card__top">
+                  <div class="hh-card__chip"></div>
+                  <span class="hh-card__wordmark">Heavenly Hands</span>
+                </div>
+                <div class="hh-card__number">•••• •••• •••• 2024</div>
+                <div class="hh-card__bottom">
+                  <div class="hh-card__info">
+                    <span class="hh-card__label">Card Holder</span>
+                    <span class="hh-card__name">YOUR NAME</span>
+                  </div>
+                  <div class="hh-card__score-wrap">
+                    <div class="hh-card__score">540</div>
+                    <div class="hh-card__score-label">Credit Score</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="hhl-scan-line" aria-hidden="true"></div>
+          </div>
+          <div class="hhl-step-card__num">02</div>
+          <div class="hhl-step-card__title">AI finds every error</div>
+          <p class="hhl-step-card__body">Our model scans every line for inaccuracies, outdated items, and FCRA violations — in seconds.</p>
+        </div>
+
+        <!-- Step 3: Dispute letters — envelope overlay -->
+        <div class="hhl-step-card">
+          <div class="hhl-step-card__mini">
+            <div class="hh-card hh-card--success" style="max-width:100%">
+              <div class="hh-card__body">
+                <div class="hh-card__top">
+                  <div class="hh-card__chip"></div>
+                  <span class="hh-card__wordmark">Heavenly Hands</span>
+                </div>
+                <div class="hh-card__number">•••• •••• •••• 2025</div>
+                <div class="hh-card__bottom">
+                  <div class="hh-card__info">
+                    <span class="hh-card__label">Card Holder</span>
+                    <span class="hh-card__name">YOUR NAME</span>
+                  </div>
+                  <div class="hh-card__score-wrap">
+                    <div class="hh-card__score">720</div>
+                    <div class="hh-card__score-label">Credit Score</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="hhl-letters" aria-hidden="true">
+              <div class="hhl-env"></div>
+              <div class="hhl-env"></div>
+              <div class="hhl-env"></div>
+            </div>
+          </div>
+          <div class="hhl-step-card__num">03</div>
+          <div class="hhl-step-card__title">Send dispute letters</div>
+          <p class="hhl-step-card__body">Download tailored letters for each bureau. Mail certified. Bureaus have 30 days by law to respond.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- S4: FEATURES — 4 alternating blocks, each with a card visual -->
+  <section class="hhl-features">
+    <div class="hhl-container">
+
+      <!-- Feature 1: Instant report analysis -->
+      <div class="hhl-feature">
+        <div class="hhl-feature__copy">
+          <span class="hhl-feature__eyebrow">Report Analysis</span>
+          <h3 class="hhl-feature__h3">Every error. Every page. In seconds.</h3>
+          <p class="hhl-feature__p">Upload your credit report PDF and our AI scans it line by line. Inaccurate balances, duplicate accounts, outdated collections, wrong personal information — nothing escapes review.</p>
+          <button class="hhl-btn hhl-btn--primary" onclick="showScreen('auth'); switchTab('signup')">Upload Your Report</button>
+        </div>
+        <div class="hhl-feature__visual">
+          <div class="hhl-feature__card-wrap">
+            <div class="hh-card hh-card--error">
+              <div class="hh-card__strike"></div>
+              <div class="hh-card__body">
+                <div class="hh-card__top">
+                  <div class="hh-card__chip"></div>
+                  <span class="hh-card__wordmark">Heavenly Hands</span>
+                  <svg class="hh-card__network" viewBox="0 0 40 24" fill="none"><circle cx="15" cy="12" r="10" fill="rgba(255,255,255,0.3)"/><circle cx="25" cy="12" r="10" fill="rgba(255,255,255,0.2)"/></svg>
+                </div>
+                <div class="hh-card__number">•••• •••• •••• 1998</div>
+                <div class="hh-card__bottom">
+                  <div class="hh-card__info">
+                    <span class="hh-card__label">Card Holder</span>
+                    <span class="hh-card__name">YOUR NAME</span>
+                  </div>
+                  <div class="hh-card__score-wrap">
+                    <div class="hh-card__score">498</div>
+                    <div class="hh-card__score-label">Errors Found</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2: FCRA-grounded disputes (reversed) -->
+      <div class="hhl-feature hhl-feature--reverse">
+        <div class="hhl-feature__copy">
+          <span class="hhl-feature__eyebrow">Legal Grounding</span>
+          <h3 class="hhl-feature__h3">Every letter cites the law. Exactly.</h3>
+          <p class="hhl-feature__p">Each dispute letter references the specific FCRA section that obligates the bureau to investigate. No templates, no guesswork — legally grounded, personalized language that bureaus take seriously.</p>
+          <button class="hhl-btn hhl-btn--primary" onclick="showScreen('auth'); switchTab('signup')">See Sample Letter</button>
+        </div>
+        <div class="hhl-feature__visual">
+          <div class="hhl-feature__card-wrap">
+            <div class="hh-card">
+              <div class="hh-card__body">
+                <div class="hh-card__top">
+                  <div class="hh-card__chip"></div>
+                  <span class="hh-card__wordmark">Heavenly Hands</span>
+                  <svg class="hh-card__network" viewBox="0 0 40 24" fill="none"><circle cx="15" cy="12" r="10" fill="rgba(255,255,255,0.3)"/><circle cx="25" cy="12" r="10" fill="rgba(255,255,255,0.2)"/></svg>
+                </div>
+                <div class="hh-card__number">•••• •••• •••• 2024</div>
+                <div class="hh-card__bottom">
+                  <div class="hh-card__info">
+                    <span class="hh-card__label">Card Holder</span>
+                    <span class="hh-card__name">YOUR NAME</span>
+                  </div>
+                  <div class="hh-card__score-wrap">
+                    <div class="hh-card__score">640</div>
+                    <div class="hh-card__score-label">In Progress</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3: All 3 bureaus -->
+      <div class="hhl-feature">
+        <div class="hhl-feature__copy">
+          <span class="hhl-feature__eyebrow">Full Coverage</span>
+          <h3 class="hhl-feature__h3">Equifax. Experian. TransUnion.</h3>
+          <p class="hhl-feature__p">Your score lives in three separate files at three separate bureaus. We generate a unique, bureau-specific letter for each one — because a dispute sent to the wrong address fails before it starts.</p>
+          <button class="hhl-btn hhl-btn--primary" onclick="showScreen('auth'); switchTab('signup')">Get All Three Letters</button>
+        </div>
+        <div class="hhl-feature__visual">
+          <div class="hhl-feature__card-wrap" style="display:flex;flex-direction:column;gap:10px;">
+            <div class="hh-card hh-card--muted" style="max-width:100%">
+              <div class="hh-card__body">
+                <div class="hh-card__top">
+                  <div class="hh-card__chip"></div>
+                  <span class="hh-card__wordmark">Heavenly Hands</span>
+                </div>
+                <div class="hh-card__number" style="margin-top:auto">Equifax  •  Experian  •  TransUnion</div>
+                <div class="hh-card__bottom">
+                  <div class="hh-card__info">
+                    <span class="hh-card__label">Bureaus</span>
+                    <span class="hh-card__name">All Three</span>
+                  </div>
+                  <div class="hh-card__score-wrap">
+                    <div class="hh-card__score hh-card__score--success" style="color:#4ade80">3/3</div>
+                    <div class="hh-card__score-label">Letters Ready</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 4: Privacy first (reversed) -->
+      <div class="hhl-feature hhl-feature--reverse">
+        <div class="hhl-feature__copy">
+          <span class="hhl-feature__eyebrow">Privacy First</span>
+          <h3 class="hhl-feature__h3">We never store your full SSN.</h3>
+          <p class="hhl-feature__p">We collect the last 4 digits only at the moment your letter is generated, and we never retain them. No account numbers stored. No sensitive data at rest. GLBA compliant by design.</p>
+          <button class="hhl-btn hhl-btn--primary" onclick="showScreen('auth'); switchTab('signup')">Start Securely</button>
+        </div>
+        <div class="hhl-feature__visual">
+          <div class="hhl-feature__card-wrap">
+            <div class="hh-card hh-card--success">
+              <div class="hh-card__body">
+                <div class="hh-card__top">
+                  <div class="hh-card__chip"></div>
+                  <span class="hh-card__wordmark">Heavenly Hands</span>
+                  <svg class="hh-card__network" viewBox="0 0 40 24" fill="none"><circle cx="15" cy="12" r="10" fill="rgba(255,255,255,0.3)"/><circle cx="25" cy="12" r="10" fill="rgba(255,255,255,0.2)"/></svg>
+                </div>
+                <div class="hh-card__number">•••• •••• •••• ••••</div>
+                <div class="hh-card__bottom">
+                  <div class="hh-card__info">
+                    <span class="hh-card__label">Protected</span>
+                    <span class="hh-card__name">GLBA Compliant</span>
+                  </div>
+                  <div class="hh-card__score-wrap">
+                    <div class="hh-card__score">720</div>
+                    <div class="hh-card__score-label">Credit Score</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- S5: PRICING — three credit card tiers -->
+  <section class="hhl-pricing" id="hhl-pricing">
+    <div class="hhl-container">
+      <div class="hhl-pricing__header">
+        <span class="hhl-eyebrow">Pricing</span>
+        <h2 class="hhl-pricing__h2">Simple, transparent pricing</h2>
+        <p class="hhl-pricing__sub">No payment required until services are rendered. CROA compliant.</p>
+      </div>
+      <div class="hhl-pricing__cards">
+
+        <!-- Starter -->
+        <div class="hhl-pricing__tier">
+          <div class="hhl-pricing__chip"></div>
+          <div class="hhl-pricing__tier-name">Starter</div>
+          <div class="hhl-pricing__price"><sup>$</sup>0<sub>/mo</sub></div>
+          <p class="hhl-pricing__desc">Everything you need to get started. No card required.</p>
+          <div class="hhl-pricing__divider"></div>
+          <ul class="hhl-pricing__feats">
+            <li>Upload 1 credit report</li>
+            <li>AI error detection</li>
+            <li>1 dispute letter (one bureau)</li>
+            <li>3-day cancel right</li>
+          </ul>
+          <div class="hhl-pricing__cta">
+            <button class="hhl-btn hhl-btn--ghost" onclick="showScreen('auth'); switchTab('signup')">Get Started Free</button>
+          </div>
+        </div>
+
+        <!-- Pro (featured) -->
+        <div class="hhl-pricing__tier hhl-pricing__tier--featured">
+          <div class="hhl-pricing__badge">Most Popular</div>
+          <div class="hhl-pricing__chip"></div>
+          <div class="hhl-pricing__tier-name">Pro</div>
+          <div class="hhl-pricing__price"><sup>$</sup>49<sub>/mo</sub></div>
+          <p class="hhl-pricing__desc">Full bureau coverage and unlimited disputes every month.</p>
+          <div class="hhl-pricing__divider"></div>
+          <ul class="hhl-pricing__feats">
+            <li>Unlimited report uploads</li>
+            <li>All 3 bureau letters per dispute</li>
+            <li>Priority AI processing</li>
+            <li>Dispute tracking dashboard</li>
+            <li>3-day cancel right</li>
+          </ul>
+          <div class="hhl-pricing__cta">
+            <button class="hhl-btn hhl-btn--primary" onclick="showScreen('auth'); switchTab('signup')">Start Pro</button>
+          </div>
+        </div>
+
+        <!-- Elite -->
+        <div class="hhl-pricing__tier">
+          <div class="hhl-pricing__chip"></div>
+          <div class="hhl-pricing__tier-name">Elite</div>
+          <div class="hhl-pricing__price"><sup>$</sup>99<sub>/mo</sub></div>
+          <p class="hhl-pricing__desc">Concierge review, identity monitoring, and dedicated support.</p>
+          <div class="hhl-pricing__divider"></div>
+          <ul class="hhl-pricing__feats">
+            <li>Everything in Pro</li>
+            <li>Human expert review</li>
+            <li>Identity theft monitoring</li>
+            <li>Certified mail tracking</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <div class="hhl-pricing__cta">
+            <button class="hhl-btn hhl-btn--ghost" onclick="showScreen('auth'); switchTab('signup')">Go Elite</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- S6: TESTIMONIALS — plain white quote cards (NOT Heavenly Hands cards) -->
+  <section class="hhl-testimonials">
+    <div class="hhl-container">
+      <span class="hhl-eyebrow">Results</span>
+      <h2 class="hhl-testimonials__h2">Real people. Real scores.</h2>
+      <p class="hhl-testimonials__sub">Results vary. No credit repair company can guarantee specific outcomes.</p>
+      <div class="hhl-testimonials__grid">
         <div class="hhl-qcard">
-          <div class="hhl-qmark">"</div>
-          <p class="hhl-qtext">I never understood what was on my credit report until Heavenly Hands walked me through it. The whole process felt finally within my control.</p>
-          <p class="hhl-qattr">— Marcus T., Houston</p>
+          <div class="hhl-qcard__stars">
+            <span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span>
+          </div>
+          <div class="hhl-qcard__score-badge">541 → 689</div>
+          <p class="hhl-qcard__body">"I had three accounts reporting incorrectly. The letters were ready in minutes and all three were removed within 45 days. I went from rejected to approved for a car loan."</p>
+          <div class="hhl-qcard__author">Tamara W.</div>
+          <div class="hhl-qcard__location">Atlanta, GA</div>
         </div>
         <div class="hhl-qcard">
-          <div class="hhl-qmark">"</div>
-          <p class="hhl-qtext">The letters were ready in minutes. I mailed them the same day. The bureaus actually responded. I didn't think it would be that straightforward.</p>
-          <p class="hhl-qattr">— Denise R., Atlanta</p>
+          <div class="hhl-qcard__stars">
+            <span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span>
+          </div>
+          <div class="hhl-qcard__score-badge">502 → 661</div>
+          <p class="hhl-qcard__body">"The AI found a collection account that wasn't even mine — someone else's debt on my report for four years. One letter, 30 days, gone."</p>
+          <div class="hhl-qcard__author">Marcus L.</div>
+          <div class="hhl-qcard__location">Houston, TX</div>
         </div>
         <div class="hhl-qcard">
-          <div class="hhl-qmark">"</div>
-          <p class="hhl-qtext">I'd been ignoring my credit for years because it felt too overwhelming. This made it feel like something I could actually do on a Tuesday afternoon.</p>
-          <p class="hhl-qattr">— James W., Chicago</p>
+          <div class="hhl-qcard__stars">
+            <span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span><span class="hhl-qcard__star">★</span>
+          </div>
+          <div class="hhl-qcard__score-badge">578 → 714</div>
+          <p class="hhl-qcard__body">"I'd been trying to fix my credit for two years with no results. This service found issues I never would have caught and the letters actually worked. Finally qualified for a mortgage."</p>
+          <div class="hhl-qcard__author">Renee H.</div>
+          <div class="hhl-qcard__location">Chicago, IL</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- S7: FAQ -->
-  <section class="hhl-section hhl-faq" id="hhl-faq">
-    <div class="hhl-container--narrow">
-      <div class="hhl-section-head">
-        <span class="hhl-eyebrow">Questions</span>
-        <h2>Answered honestly</h2>
+  <section class="hhl-faq">
+    <div class="hhl-faq__inner">
+      <h2 class="hhl-faq__h2">Questions &amp; Answers</h2>
+      <div class="hhl-acc-item">
+        <button class="hhl-acc-btn" onclick="hhlFaq(this)" aria-expanded="false">
+          How long does the process take?
+          <span class="hhl-acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="hhl-acc-body"><p>Generating dispute letters takes minutes. Credit bureaus have 30 days by law to investigate and respond to each dispute. Most users see initial bureau responses within 30–45 days of mailing letters.</p></div>
       </div>
-      <div>
-        <div class="hhl-acc-item">
-          <button class="hhl-acc-trigger" onclick="hhlFaq(this)">Is credit repair legal?<svg class="hhl-acc-chev" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="var(--hh-sky)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="hhl-acc-body"><p>Yes. The Fair Credit Reporting Act gives every consumer the right to dispute inaccurate information on their credit report. Heavenly Hands helps you exercise that right with properly formatted dispute letters.</p></div>
-        </div>
-        <div class="hhl-acc-item">
-          <button class="hhl-acc-trigger" onclick="hhlFaq(this)">How long does the process take?<svg class="hhl-acc-chev" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="var(--hh-sky)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="hhl-acc-body"><p>Generating dispute letters takes minutes. Credit bureaus have 30 days by law to investigate and respond to each dispute. Most users see initial bureau responses within 30–45 days of mailing letters.</p></div>
-        </div>
-        <div class="hhl-acc-item">
-          <button class="hhl-acc-trigger" onclick="hhlFaq(this)">Can you guarantee my credit score will improve?<svg class="hhl-acc-chev" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="var(--hh-sky)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="hhl-acc-body"><p>No legitimate credit repair company can guarantee specific results. We help you identify and dispute potentially inaccurate items. Whether items are removed depends on bureau investigation outcomes.</p></div>
-        </div>
-        <div class="hhl-acc-item">
-          <button class="hhl-acc-trigger" onclick="hhlFaq(this)">What if I want to cancel?<svg class="hhl-acc-chev" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="var(--hh-sky)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="hhl-acc-body"><p>You have an unconditional right to cancel within 3 business days of signing your service agreement at no charge. After that, you may cancel anytime.</p></div>
-        </div>
-        <div class="hhl-acc-item">
-          <button class="hhl-acc-trigger" onclick="hhlFaq(this)">Do you store my Social Security Number?<svg class="hhl-acc-chev" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="var(--hh-sky)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="hhl-acc-body"><p>No. We collect the last 4 digits only at the moment we generate each letter and never store them. Your full SSN is never required.</p></div>
-        </div>
+      <div class="hhl-acc-item">
+        <button class="hhl-acc-btn" onclick="hhlFaq(this)" aria-expanded="false">
+          Can you guarantee my credit score will improve?
+          <span class="hhl-acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="hhl-acc-body"><p>No legitimate credit repair company can guarantee specific results. We help you identify and dispute potentially inaccurate items. Whether items are removed depends on bureau investigation outcomes.</p></div>
+      </div>
+      <div class="hhl-acc-item">
+        <button class="hhl-acc-btn" onclick="hhlFaq(this)" aria-expanded="false">
+          What if I want to cancel?
+          <span class="hhl-acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="hhl-acc-body"><p>You have an unconditional right to cancel within 3 business days of signing your service agreement at no charge. After that, you may cancel anytime.</p></div>
+      </div>
+      <div class="hhl-acc-item">
+        <button class="hhl-acc-btn" onclick="hhlFaq(this)" aria-expanded="false">
+          Do you store my Social Security Number?
+          <span class="hhl-acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="hhl-acc-body"><p>No. We collect the last 4 digits only at the moment we generate each letter and never store them. Your full SSN is never required.</p></div>
+      </div>
+      <div class="hhl-acc-item">
+        <button class="hhl-acc-btn" onclick="hhlFaq(this)" aria-expanded="false">
+          Is this different from doing it myself?
+          <span class="hhl-acc-icon" aria-hidden="true"></span>
+        </button>
+        <div class="hhl-acc-body"><p>You have every right to dispute errors yourself — free. We make the process faster, more thorough, and legally precise. Our AI identifies errors you might miss and writes letters that cite specific FCRA provisions, which bureaus are required to address.</p></div>
       </div>
     </div>
   </section>
@@ -1744,7 +2127,7 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
 
   <!-- FOOTER -->
   <footer class="hh-footer">
-    <div class="hh-footer-links">
+    <div class="hhl-footer-links">
       <span>Heavenly Hands · A Vantage Company</span>
       <span>·</span>
       <a href="/">Vantage Home</a>
@@ -1755,6 +2138,7 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
   </footer>
 
 </div><!-- /screen-landing -->
+
 
 
 <!-- ════════════════════════════════════════════════════════
@@ -2670,16 +3054,36 @@ init();
 
 <script>
 (function () {
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // STEP 1 — Register ScrollTrigger FIRST, before anything else
+  // Register ScrollTrigger first
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
   }
 
-  // Hero headline character reveal — runs immediately, not scroll-tied
+  // ─── FAQ accordion ───────────────────────────────────────────
+  window.hhlFaq = function (btn) {
+    var item = btn.closest('.hhl-acc-item');
+    if (!item) return;
+    var body = item.querySelector('.hhl-acc-body');
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.hhl-acc-item.open').forEach(function (el) {
+      el.classList.remove('open');
+      var b = el.querySelector('.hhl-acc-body');
+      if (b) b.style.maxHeight = '0';
+      var t = el.querySelector('.hhl-acc-btn');
+      if (t) t.setAttribute('aria-expanded', 'false');
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      if (body) body.style.maxHeight = body.scrollHeight + 'px';
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  };
+
+  // ─── Hero headline character reveal ──────────────────────────
   var h1 = document.getElementById('hhlH1');
-  if (h1 && window.SplitType && !reduceMotion) {
+  if (h1 && window.SplitType && !rm) {
     var split = new SplitType(h1, { types: 'chars' });
     gsap.fromTo(split.chars,
       { y: 60, opacity: 0 },
@@ -2687,64 +3091,95 @@ init();
     );
   }
 
-  // Hero cards — immediate entrance, not scroll-tied (above the fold)
-  if (!reduceMotion) {
-    gsap.fromTo('#hhlBg',  { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.5 });
-    gsap.fromTo('#hhlMid', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.7 });
-    gsap.fromTo('#hhlFg',  { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.9 });
+  // ─── Hero card fan entrance + float loops ────────────────────
+  var cardCfg = [
+    { id: 'hhlCard1', delay: 0.5, floatY: -8,  floatDur: 3.2 },
+    { id: 'hhlCard2', delay: 0.7, floatY: -12, floatDur: 2.8 },
+    { id: 'hhlCard3', delay: 0.9, floatY: -6,  floatDur: 3.6 }
+  ];
+  if (!rm) {
+    cardCfg.forEach(function (cfg) {
+      var el = document.getElementById(cfg.id);
+      if (!el) return;
+      gsap.fromTo(el,
+        { y: 40, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: cfg.delay,
+          onComplete: function () {
+            gsap.to(el, { y: cfg.floatY, duration: cfg.floatDur, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+          }
+        }
+      );
+    });
   } else {
-    ['hhlBg', 'hhlMid', 'hhlFg'].forEach(function (id) {
-      var el = document.getElementById(id);
+    cardCfg.forEach(function (cfg) {
+      var el = document.getElementById(cfg.id);
       if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
     });
   }
 
-  // Hero gauge count-up
-  if (!reduceMotion) {
-    gsap.to({ val: 540 }, {
-      val: 720, duration: 2, ease: 'power2.out', delay: 1.2,
-      onUpdate: function () {
-        var v = Math.round(this.targets()[0].val);
-        var el = document.getElementById('hhlGaugeScore');
-        var arc = document.getElementById('hhlGaugeArc');
-        if (el) el.textContent = v;
-        if (arc) {
-          var pct = (v - 300) / (850 - 300);
-          arc.setAttribute('stroke-dashoffset', String(251 - pct * 251));
-        }
-      }
-    });
-  }
-
-  // Scroll story panel switching
+  // ─── Scroll story: card state + panel switching ───────────────
   var story = document.getElementById('hhl-story');
-  if (story && !reduceMotion) {
+  if (story && !rm) {
+    var storyCard   = document.getElementById('hhlStoryCard');
+    var storyScore  = document.getElementById('hhlStoryScore');
+    var storyStrike = document.getElementById('hhlStoryStrike');
+    var scanLine    = document.getElementById('hhlScanLine');
+    var letterStack = document.getElementById('hhlLetterStack');
+
     ScrollTrigger.create({
       trigger: story,
       start: 'top top',
       end: 'bottom bottom',
       onUpdate: function (self) {
         var p = self.progress;
-        var idx = p < 0.35 ? 0 : p < 0.68 ? 1 : 2;
+        var idx = p < 0.34 ? 0 : p < 0.67 ? 1 : 2;
+
+        // Panel visibility
         ['hhlP1', 'hhlP2', 'hhlP3'].forEach(function (id, i) {
           var el = document.getElementById(id);
           if (el) el.classList.toggle('active', i === idx);
         });
-        if (p > 0.3) {
-          for (var i = 0; i < 5; i++) {
-            var tag = document.getElementById('hhlTag' + i);
-            if (tag) tag.style.opacity = String(Math.max(0, 1 - ((p - 0.3) / 0.15)));
-          }
+
+        // Error badges: visible panel 1, fade out entering panel 2
+        var badgeOp = p < 0.22 ? 1 : p < 0.40 ? Math.max(0, 1 - (p - 0.22) / 0.18) : 0;
+        ['hhlTag0', 'hhlTag1', 'hhlTag2'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.style.opacity = String(badgeOp);
+        });
+
+        // Card class state
+        if (storyCard) {
+          storyCard.classList.toggle('hh-card--error',   idx === 0);
+          storyCard.classList.toggle('hh-card--success', idx === 2);
         }
-        var ls = document.getElementById('hhlLetterStack');
-        if (ls) ls.style.opacity = p > 0.65 ? String(Math.min(1, (p - 0.65) / 0.1)) : '0';
+
+        // Score text
+        if (storyScore) storyScore.textContent = ['540', '640', '720'][idx];
+
+        // Strike overlay
+        if (storyStrike) storyStrike.style.display = (idx === 0) ? 'block' : 'none';
+
+        // Scan line: visible mid panel 2
+        if (scanLine) {
+          var sOp = (p > 0.37 && p < 0.63)
+            ? Math.min(1, (p - 0.37) / 0.08) * Math.min(1, (0.63 - p) / 0.08)
+            : 0;
+          scanLine.style.opacity = String(sOp);
+        }
+
+        // Letter stack: fades in panel 3
+        if (letterStack) {
+          letterStack.style.opacity = p > 0.68 ? String(Math.min(1, (p - 0.68) / 0.1)) : '0';
+        }
       }
     });
   }
 
-  // Section fade-up reveals — fromTo so elements end visible if trigger misfires
-  if (!reduceMotion) {
-    gsap.utils.toArray('.hhl-step-card, .hhl-feature__copy, .hhl-feature__visual, .hhl-qcard, .hhl-acc-item').forEach(function (el) {
+  // ─── Section fade-up reveals ──────────────────────────────────
+  var revealSels = '.hhl-step-card, .hhl-feature__copy, .hhl-feature__visual, .hhl-qcard, .hhl-acc-item';
+  if (!rm) {
+    gsap.utils.toArray(revealSels).forEach(function (el) {
       gsap.fromTo(el,
         { y: 36, opacity: 0 },
         {
@@ -2754,52 +3189,33 @@ init();
       );
     });
   } else {
-    document.querySelectorAll('.hhl-step-card, .hhl-feature__copy, .hhl-feature__visual, .hhl-qcard, .hhl-acc-item').forEach(function (el) {
-      el.style.opacity = '1';
-      el.style.transform = 'none';
+    document.querySelectorAll(revealSels).forEach(function (el) {
+      el.style.opacity = '1'; el.style.transform = 'none';
     });
   }
 
-  // Pricing card pop
-  if (!reduceMotion) {
-    var pc = document.getElementById('hhlPricingCard');
-    if (pc) {
-      gsap.fromTo(pc,
-        { scale: 0.94, opacity: 0 },
+  // ─── Pricing tiers pop in ─────────────────────────────────────
+  if (!rm) {
+    gsap.utils.toArray('.hhl-pricing__tier').forEach(function (el, i) {
+      var isFeatured = el.classList.contains('hhl-pricing__tier--featured');
+      gsap.fromTo(el,
+        { scale: 0.93, opacity: 0 },
         {
-          scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.4)',
-          scrollTrigger: { trigger: pc, start: 'top 85%', toggleActions: 'play none none none', once: true }
+          scale: isFeatured ? 1.04 : 1, opacity: 1,
+          duration: 0.6, ease: 'back.out(1.4)', delay: i * 0.1,
+          scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none none', once: true }
         }
       );
-    }
+    });
+  } else {
+    document.querySelectorAll('.hhl-pricing__tier').forEach(function (el) {
+      el.style.opacity = '1';
+      el.style.transform = el.classList.contains('hhl-pricing__tier--featured') ? 'scale(1.04)' : 'none';
+    });
   }
 
-  // Score arc animated on scroll
-  if (!reduceMotion) {
-    var scoreArc = document.getElementById('hhlScoreArc');
-    if (scoreArc) {
-      ScrollTrigger.create({
-        trigger: scoreArc,
-        start: 'top 80%',
-        once: true,
-        onEnter: function () {
-          gsap.to({ val: 200 }, {
-            val: 60, duration: 1.5, ease: 'power2.out',
-            onUpdate: function () {
-              var offset = Math.round(this.targets()[0].val);
-              var arc = document.getElementById('hhlScoreArc');
-              var num = document.getElementById('hhlScoreNum');
-              if (arc) arc.setAttribute('stroke-dashoffset', String(offset));
-              if (num) num.textContent = String(Math.round(540 + 140 * (1 - offset / 200)));
-            }
-          });
-        }
-      });
-    }
-  }
-
-  // Compliance header reveal
-  if (!reduceMotion) {
+  // ─── Compliance header reveal ─────────────────────────────────
+  if (!rm) {
     var ch = document.getElementById('hhlCompHdr');
     var cd = document.getElementById('hhlCompDiv');
     if (ch) {
@@ -2822,13 +3238,14 @@ init();
     }
   }
 
-  // Final refresh after all triggers are registered
+  // ─── Final refresh ────────────────────────────────────────────
   if (window.ScrollTrigger) {
     setTimeout(function () { ScrollTrigger.refresh(); }, 100);
   }
 
 }());
 </script>
+
 
 </body>
 </html>
