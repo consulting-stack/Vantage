@@ -65,10 +65,11 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="https://unpkg.com/split-type"></script>
 
   <style>
+    html { scroll-behavior: smooth; }
+
     /* ═══ BRAND TOKENS ═══════════════════════════════════════ */
     :root {
       --hh-blue-dark:  #1a4a8a;
@@ -942,7 +943,7 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
     }
 
     /* ═══════════════════════════════════════════════════════════
-       LANDING REDESIGN — hhl- prefix (Sky Blue / GSAP / Lenis)
+       LANDING REDESIGN — hhl- prefix (Sky Blue / GSAP / ScrollTrigger)
     ═══════════════════════════════════════════════════════════ */
 
     /* SAFETY NET — guarantee visibility if JS fails or animations break */
@@ -2674,42 +2675,6 @@ init();
   // STEP 1 — Register ScrollTrigger FIRST, before anything else
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
-  }
-
-  // STEP 2 — Initialize Lenis with a lighter lerp
-  var lenis = null;
-  if (!reduceMotion && window.Lenis) {
-    lenis = new Lenis({
-      lerp: 0.12,
-      duration: 1.0,
-      smoothWheel: true,
-      smoothTouch: false,
-      wheelMultiplier: 1
-    });
-
-    // STEP 3 — Lenis ↔ ScrollTrigger sync
-    lenis.on('scroll', ScrollTrigger.update);
-
-    gsap.ticker.add(function (time) {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    // STEP 4 — Tell ScrollTrigger to use Lenis as its scroll source
-    ScrollTrigger.scrollerProxy(document.body, {
-      scrollTop: function (value) {
-        if (arguments.length) {
-          lenis.scrollTo(value, { immediate: true });
-        }
-        return lenis.actualScroll || window.scrollY;
-      },
-      getBoundingClientRect: function () {
-        return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
-      }
-    });
-
-    ScrollTrigger.defaults({ scroller: document.body });
-    ScrollTrigger.refresh();
   }
 
   // Hero headline character reveal — runs immediately, not scroll-tied
