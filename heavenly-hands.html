@@ -52,7 +52,7 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
 ════════════════════════════════════════════════════════════════
 -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -61,6 +61,7 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
   <meta http-equiv="Expires" content="0"/>
   <title>Heavenly Hands — Credit Repair Powered by AI</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script>document.documentElement.classList.remove('no-js');</script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -943,6 +944,31 @@ create policy "Users see own letters" on dispute_letters for all using (auth.uid
     /* ═══════════════════════════════════════════════════════════
        LANDING REDESIGN — hhl- prefix (Sky Blue / GSAP / Lenis)
     ═══════════════════════════════════════════════════════════ */
+
+    /* SAFETY NET — guarantee visibility if JS fails or animations break */
+    @media (prefers-reduced-motion: reduce) {
+      .hhl-step-card,
+      .hhl-feature__copy,
+      .hhl-feature__visual,
+      .hhl-qcard,
+      .hhl-acc-item,
+      #hhlBg, #hhlMid, #hhlFg,
+      #hhlPricingCard,
+      #hhlCompHdr, #hhlCompDiv {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+    .no-js .hhl-step-card,
+    .no-js .hhl-feature__copy,
+    .no-js .hhl-feature__visual,
+    .no-js .hhl-qcard,
+    .no-js .hhl-acc-item,
+    .no-js #hhlBg, .no-js #hhlMid, .no-js #hhlFg,
+    .no-js #hhlPricingCard {
+      opacity: 1 !important;
+      transform: none !important;
+    }
 
     /* Extra tokens */
     :root {
@@ -2643,114 +2669,198 @@ init();
 
 <script>
 (function () {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Lenis smooth scroll
-  var lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
-  gsap.ticker.lagSmoothing(0);
+  // STEP 1 — Register ScrollTrigger FIRST, before anything else
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+  }
 
-  // SplitType — hero headline character reveal
+  // STEP 2 — Initialize Lenis with a lighter lerp
+  var lenis = null;
+  if (!reduceMotion && window.Lenis) {
+    lenis = new Lenis({
+      lerp: 0.12,
+      duration: 1.0,
+      smoothWheel: true,
+      smoothTouch: false,
+      wheelMultiplier: 1
+    });
+
+    // STEP 3 — Lenis ↔ ScrollTrigger sync
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add(function (time) {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // STEP 4 — Tell ScrollTrigger to use Lenis as its scroll source
+    ScrollTrigger.scrollerProxy(document.body, {
+      scrollTop: function (value) {
+        if (arguments.length) {
+          lenis.scrollTo(value, { immediate: true });
+        }
+        return lenis.actualScroll || window.scrollY;
+      },
+      getBoundingClientRect: function () {
+        return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+      }
+    });
+
+    ScrollTrigger.defaults({ scroller: document.body });
+    ScrollTrigger.refresh();
+  }
+
+  // Hero headline character reveal — runs immediately, not scroll-tied
   var h1 = document.getElementById('hhlH1');
-  if (h1 && window.SplitType) {
+  if (h1 && window.SplitType && !reduceMotion) {
     var split = new SplitType(h1, { types: 'chars' });
-    gsap.from(split.chars, {
-      y: 60, opacity: 0, stagger: 0.025, duration: 0.7,
-      ease: 'power3.out', delay: 0.3
+    gsap.fromTo(split.chars,
+      { y: 60, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.025, duration: 0.7, ease: 'power3.out', delay: 0.2 }
+    );
+  }
+
+  // Hero cards — immediate entrance, not scroll-tied (above the fold)
+  if (!reduceMotion) {
+    gsap.fromTo('#hhlBg',  { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.5 });
+    gsap.fromTo('#hhlMid', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.7 });
+    gsap.fromTo('#hhlFg',  { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out', delay: 0.9 });
+  } else {
+    ['hhlBg', 'hhlMid', 'hhlFg'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) { el.style.opacity = '1'; el.style.transform = 'none'; }
     });
   }
 
-  // Hero card stagger entrance
-  gsap.from('#hhlBg',  { y: 40, opacity: 0, duration: 0.9, ease: 'power2.out', delay: 0.5 });
-  gsap.from('#hhlMid', { y: 30, opacity: 0, duration: 0.9, ease: 'power2.out', delay: 0.7 });
-  gsap.from('#hhlFg',  { y: 20, opacity: 0, duration: 0.9, ease: 'power2.out', delay: 0.9 });
-
   // Hero gauge count-up
-  gsap.to({ val: 540 }, {
-    val: 720, duration: 2, ease: 'power2.out', delay: 1.2,
-    onUpdate: function () {
-      var v = Math.round(this.targets()[0].val);
-      var el = document.getElementById('hhlGaugeScore');
-      var arc = document.getElementById('hhlGaugeArc');
-      if (el) el.textContent = v;
-      if (arc) {
-        var pct = (v - 300) / (850 - 300);
-        arc.setAttribute('stroke-dashoffset', String(251 - pct * 251));
+  if (!reduceMotion) {
+    gsap.to({ val: 540 }, {
+      val: 720, duration: 2, ease: 'power2.out', delay: 1.2,
+      onUpdate: function () {
+        var v = Math.round(this.targets()[0].val);
+        var el = document.getElementById('hhlGaugeScore');
+        var arc = document.getElementById('hhlGaugeArc');
+        if (el) el.textContent = v;
+        if (arc) {
+          var pct = (v - 300) / (850 - 300);
+          arc.setAttribute('stroke-dashoffset', String(251 - pct * 251));
+        }
       }
-    }
-  });
+    });
+  }
 
-  // Scroll story panel switching (CSS sticky handles the pin)
+  // Scroll story panel switching
   var story = document.getElementById('hhl-story');
-  if (story) {
+  if (story && !reduceMotion) {
     ScrollTrigger.create({
       trigger: story,
       start: 'top top',
       end: 'bottom bottom',
-      onUpdate: function(self) {
+      onUpdate: function (self) {
         var p = self.progress;
         var idx = p < 0.35 ? 0 : p < 0.68 ? 1 : 2;
-        ['hhlP1','hhlP2','hhlP3'].forEach(function(id, i) {
+        ['hhlP1', 'hhlP2', 'hhlP3'].forEach(function (id, i) {
           var el = document.getElementById(id);
           if (el) el.classList.toggle('active', i === idx);
         });
-        // Error tags fade as panel 2 approaches
         if (p > 0.3) {
           for (var i = 0; i < 5; i++) {
             var tag = document.getElementById('hhlTag' + i);
             if (tag) tag.style.opacity = String(Math.max(0, 1 - ((p - 0.3) / 0.15)));
           }
         }
-        // Letter pills appear in panel 3
         var ls = document.getElementById('hhlLetterStack');
         if (ls) ls.style.opacity = p > 0.65 ? String(Math.min(1, (p - 0.65) / 0.1)) : '0';
       }
     });
   }
 
-  // Section fade-up reveals
-  gsap.utils.toArray('.hhl-step-card, .hhl-feature__copy, .hhl-feature__visual, .hhl-qcard, .hhl-acc-item').forEach(function(el) {
-    gsap.from(el, {
-      y: 36, opacity: 0, duration: 0.7, ease: 'power2.out',
-      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+  // Section fade-up reveals — fromTo so elements end visible if trigger misfires
+  if (!reduceMotion) {
+    gsap.utils.toArray('.hhl-step-card, .hhl-feature__copy, .hhl-feature__visual, .hhl-qcard, .hhl-acc-item').forEach(function (el) {
+      gsap.fromTo(el,
+        { y: 36, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none', once: true }
+        }
+      );
     });
-  });
+  } else {
+    document.querySelectorAll('.hhl-step-card, .hhl-feature__copy, .hhl-feature__visual, .hhl-qcard, .hhl-acc-item').forEach(function (el) {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }
 
   // Pricing card pop
-  gsap.from('#hhlPricingCard', {
-    scale: 0.94, opacity: 0, duration: 0.6, ease: 'back.out(1.4)',
-    scrollTrigger: { trigger: '#hhlPricingCard', start: 'top 80%', toggleActions: 'play none none none' }
-  });
+  if (!reduceMotion) {
+    var pc = document.getElementById('hhlPricingCard');
+    if (pc) {
+      gsap.fromTo(pc,
+        { scale: 0.94, opacity: 0 },
+        {
+          scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.4)',
+          scrollTrigger: { trigger: pc, start: 'top 85%', toggleActions: 'play none none none', once: true }
+        }
+      );
+    }
+  }
 
   // Score arc animated on scroll
-  ScrollTrigger.create({
-    trigger: '#hhlScoreArc',
-    start: 'top 80%',
-    once: true,
-    onEnter: function() {
-      gsap.to({ val: 200 }, {
-        val: 60, duration: 1.5, ease: 'power2.out',
-        onUpdate: function() {
-          var offset = Math.round(this.targets()[0].val);
-          var arc = document.getElementById('hhlScoreArc');
-          var num = document.getElementById('hhlScoreNum');
-          if (arc) arc.setAttribute('stroke-dashoffset', String(offset));
-          if (num) num.textContent = String(Math.round(540 + 140 * (1 - offset / 200)));
+  if (!reduceMotion) {
+    var scoreArc = document.getElementById('hhlScoreArc');
+    if (scoreArc) {
+      ScrollTrigger.create({
+        trigger: scoreArc,
+        start: 'top 80%',
+        once: true,
+        onEnter: function () {
+          gsap.to({ val: 200 }, {
+            val: 60, duration: 1.5, ease: 'power2.out',
+            onUpdate: function () {
+              var offset = Math.round(this.targets()[0].val);
+              var arc = document.getElementById('hhlScoreArc');
+              var num = document.getElementById('hhlScoreNum');
+              if (arc) arc.setAttribute('stroke-dashoffset', String(offset));
+              if (num) num.textContent = String(Math.round(540 + 140 * (1 - offset / 200)));
+            }
+          });
         }
       });
     }
-  });
+  }
 
   // Compliance header reveal
-  gsap.from('#hhlCompHdr', {
-    opacity: 0, y: 20, duration: 0.7, ease: 'power2.out',
-    scrollTrigger: { trigger: '#hhlCompHdr', start: 'top 85%', toggleActions: 'play none none none' }
-  });
-  gsap.from('#hhlCompDiv', {
-    scaleX: 0, duration: 0.8, ease: 'power2.inOut',
-    scrollTrigger: { trigger: '#hhlCompDiv', start: 'top 85%', toggleActions: 'play none none none' }
-  });
+  if (!reduceMotion) {
+    var ch = document.getElementById('hhlCompHdr');
+    var cd = document.getElementById('hhlCompDiv');
+    if (ch) {
+      gsap.fromTo(ch,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1, y: 0, duration: 0.7, ease: 'power2.out',
+          scrollTrigger: { trigger: ch, start: 'top 85%', toggleActions: 'play none none none', once: true }
+        }
+      );
+    }
+    if (cd) {
+      gsap.fromTo(cd,
+        { scaleX: 0 },
+        {
+          scaleX: 1, duration: 0.8, ease: 'power2.inOut',
+          scrollTrigger: { trigger: cd, start: 'top 85%', toggleActions: 'play none none none', once: true }
+        }
+      );
+    }
+  }
+
+  // Final refresh after all triggers are registered
+  if (window.ScrollTrigger) {
+    setTimeout(function () { ScrollTrigger.refresh(); }, 100);
+  }
 
 }());
 </script>
