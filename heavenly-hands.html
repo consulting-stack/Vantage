@@ -1,0 +1,2025 @@
+<!--
+════════════════════════════════════════════════════════════════
+ SUPABASE SQL SETUP
+ Run this entire block in Supabase SQL Editor before first use
+════════════════════════════════════════════════════════════════
+
+create table if not exists user_profiles (
+  id uuid references auth.users on delete cascade primary key,
+  first_name text,
+  last_name text,
+  dob text,
+  address_street text,
+  address_city text,
+  address_state text,
+  address_zip text,
+  onboarding_complete boolean default false,
+  created_at timestamptz default now()
+);
+
+create table if not exists dispute_items (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users on delete cascade,
+  bureau text,
+  creditor text,
+  account_number text,
+  type text,
+  amount text,
+  date_reported text,
+  dispute_reason text,
+  notes text,
+  status text default 'ready',
+  sent_at timestamptz,
+  created_at timestamptz default now()
+);
+
+create table if not exists dispute_letters (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users on delete cascade,
+  dispute_item_id uuid references dispute_items on delete cascade,
+  letter_text text,
+  generated_at timestamptz default now()
+);
+
+alter table user_profiles enable row level security;
+alter table dispute_items enable row level security;
+alter table dispute_letters enable row level security;
+
+create policy "Users see own profile" on user_profiles for all using (auth.uid() = id);
+create policy "Users see own disputes" on dispute_items for all using (auth.uid() = user_id);
+create policy "Users see own letters" on dispute_letters for all using (auth.uid() = user_id);
+
+════════════════════════════════════════════════════════════════
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
+  <title>Heavenly Hands — Credit Repair Powered by AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* ═══ BRAND TOKENS ═══════════════════════════════════════ */
+    :root {
+      --hh-blue-dark:  #1a4a8a;
+      --hh-blue-mid:   #2d6cc4;
+      --hh-blue-light: #e8f1fb;
+      --hh-sky:        #5ba3f5;
+      --hh-white:      #ffffff;
+      --hh-text:       #1a2332;
+      --hh-text-muted: #6b7a8d;
+      --hh-success:    #2d8a4e;
+      --hh-warning:    #b86a00;
+      --hh-border:     #d4e3f5;
+      --hh-navy:       #1a2332;
+      --hh-r-card:     12px;
+      --hh-r-btn:      8px;
+    }
+
+    /* ═══ RESET ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--hh-text);
+      background: var(--hh-white);
+      line-height: 1.6;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; }
+
+    /* ═══ SCREEN ROUTER ═══════════════════════════════════════ */
+    .hh-screen { display: none; min-height: 100vh; padding-top: 64px; }
+    .hh-screen.active { display: block; }
+
+    /* ═══ NAV ══════════════════════════════════════════════════ */
+    .hh-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      height: 64px;
+      background: var(--hh-white);
+      border-bottom: 1px solid var(--hh-border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hh-wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+      letter-spacing: -0.01em;
+    }
+    .hh-tagline {
+      font-size: 0.7rem;
+      color: var(--hh-text-muted);
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 1px solid var(--hh-border);
+      border-radius: 20px;
+    }
+    .hh-nav-spacer { flex: 1; }
+    .hh-nav-group { display: flex; align-items: center; gap: 12px; }
+    .hh-nav-link {
+      font-size: 0.875rem;
+      color: var(--hh-text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .hh-nav-link:hover { color: var(--hh-blue-mid); }
+    .hh-back-link {
+      font-size: 0.8rem;
+      color: var(--hh-text-muted);
+      text-decoration: none;
+      border-left: 1px solid var(--hh-border);
+      padding-left: 14px;
+      margin-left: 4px;
+      transition: color 0.2s;
+    }
+    .hh-back-link:hover { color: var(--hh-blue-mid); }
+
+    /* ═══ CONTAINERS ═══════════════════════════════════════════ */
+    .hh-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .hh-container--narrow {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ═══ BUTTONS ═══════════════════════════════════════════════ */
+    .hh-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 11px 26px;
+      border: none;
+      border-radius: var(--hh-r-btn);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hh-btn--primary { background: var(--hh-blue-mid); color: #fff; }
+    .hh-btn--primary:hover:not(:disabled) { background: var(--hh-blue-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(45,108,196,0.3); }
+    .hh-btn--outline { background: transparent; color: var(--hh-blue-mid); border: 2px solid var(--hh-blue-mid); }
+    .hh-btn--outline:hover:not(:disabled) { background: var(--hh-blue-light); }
+    .hh-btn--ghost { background: transparent; color: var(--hh-text-muted); border: 1px solid var(--hh-border); }
+    .hh-btn--ghost:hover:not(:disabled) { border-color: var(--hh-blue-mid); color: var(--hh-blue-mid); }
+    .hh-btn--sky { background: var(--hh-sky); color: #fff; }
+    .hh-btn--sky:hover:not(:disabled) { background: #4a92e4; transform: translateY(-1px); }
+    .hh-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .hh-btn--sm { padding: 8px 18px; font-size: 0.82rem; }
+    .hh-btn--block { display: flex; width: 100%; }
+    .hh-btn--lg { padding: 14px 36px; font-size: 1rem; }
+
+    /* ═══ FORM ELEMENTS ════════════════════════════════════════ */
+    .hh-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .hh-form-group { margin-bottom: 18px; }
+    .hh-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--hh-text);
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+    }
+    .hh-input {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--hh-border);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--hh-text);
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .hh-input:focus {
+      outline: none;
+      border-color: var(--hh-sky);
+      box-shadow: 0 0 0 3px rgba(91,163,245,0.15);
+    }
+    .hh-checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--hh-blue-light);
+      border-radius: 8px;
+      border: 1px solid var(--hh-border);
+    }
+    .hh-checkbox-row input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: var(--hh-blue-mid);
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .hh-checkbox-label {
+      font-size: 0.85rem;
+      color: var(--hh-text);
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    /* ═══ INLINE ALERTS ════════════════════════════════════════ */
+    .hh-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 11px 15px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .hh-error.show { display: block; }
+
+    /* ═══ TOAST ════════════════════════════════════════════════ */
+    .hh-toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      z-index: 9999;
+      background: var(--hh-navy);
+      color: #fff;
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      max-width: 340px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all 0.25s;
+      pointer-events: none;
+    }
+    .hh-toast.show { opacity: 1; transform: translateY(0); }
+    .hh-toast--success { border-left: 4px solid var(--hh-success); }
+    .hh-toast--error   { border-left: 4px solid #dc2626; }
+
+    /* ═══ LOADING OVERLAY ══════════════════════════════════════ */
+    .hh-overlay {
+      position: fixed; inset: 0; z-index: 5000;
+      background: rgba(255,255,255,0.92);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .hh-overlay.show { display: flex; }
+    .hh-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--hh-border);
+      border-top-color: var(--hh-blue-mid);
+      border-radius: 50%;
+      animation: hh-spin 0.75s linear infinite;
+    }
+    @keyframes hh-spin { to { transform: rotate(360deg); } }
+    .hh-overlay-text {
+      font-size: 0.95rem;
+      color: var(--hh-text-muted);
+      font-weight: 500;
+      text-align: center;
+      max-width: 300px;
+      line-height: 1.5;
+    }
+
+    /* ═══ STATUS BADGES ════════════════════════════════════════ */
+    .hh-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .hh-badge--ready     { background: var(--hh-blue-light); color: var(--hh-blue-dark); }
+    .hh-badge--generated { background: #fef3c7; color: #92400e; }
+    .hh-badge--sent      { background: #d1fae5; color: var(--hh-success); }
+
+    /* ═══════════════════════════════════════════════════════════
+       SCREEN 1 — LANDING
+    ═══════════════════════════════════════════════════════════ */
+    #screen-landing { padding-top: 64px; }
+
+    /* Hero */
+    .hh-hero {
+      min-height: 88vh;
+      background: linear-gradient(155deg, #0c2557 0%, #1a4a8a 45%, #2d6cc4 100%);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 72px 0 80px;
+    }
+    .hh-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 55% 65% at 85% 45%, rgba(91,163,245,0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 45% at 5% 25%, rgba(255,255,255,0.03) 0%, transparent 60%);
+    }
+    .hh-hero__content { position: relative; z-index: 2; max-width: 700px; }
+    .hh-hero__pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .hh-hero__pill {
+      background: rgba(91,163,245,0.18);
+      border: 1px solid rgba(91,163,245,0.35);
+      color: #b8d8ff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 13px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hh-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.12;
+      margin-bottom: 22px;
+    }
+    .hh-hero h1 em { font-style: italic; color: var(--hh-sky); }
+    .hh-hero__sub {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.75;
+      max-width: 540px;
+      margin-bottom: 36px;
+    }
+    .hh-hero__ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 44px;
+    }
+    .hh-hero__trust-strip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.48);
+      letter-spacing: 0.03em;
+    }
+    .hh-hero__trust-strip strong { color: rgba(255,255,255,0.7); }
+    .hh-hero__trust-strip .sep { color: rgba(91,163,245,0.4); }
+
+    /* Section anatomy */
+    .hh-section { padding: 80px 0; }
+    .hh-section--alt { background: var(--hh-blue-light); }
+    .hh-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hh-sky);
+      margin-bottom: 10px;
+    }
+    .hh-section-head { margin-bottom: 52px; }
+    .hh-section-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .hh-section-head h2 em { font-style: italic; color: var(--hh-blue-mid); }
+    .hh-section-head p { color: var(--hh-text-muted); font-size: 1rem; max-width: 480px; }
+
+    /* Steps */
+    .hh-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .hh-step {
+      padding: 32px 24px;
+      border: 1px solid var(--hh-border);
+      border-radius: 14px;
+      background: #fff;
+      text-align: center;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .hh-step:hover { border-color: var(--hh-sky); box-shadow: 0 8px 28px rgba(45,108,196,0.08); }
+    .hh-step__num {
+      width: 46px; height: 46px;
+      background: var(--hh-blue-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+    }
+    .hh-step h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--hh-blue-dark);
+      margin-bottom: 10px;
+    }
+    .hh-step p { color: var(--hh-text-muted); font-size: 0.875rem; line-height: 1.65; }
+
+    /* Pricing */
+    .hh-pricing-card {
+      max-width: 460px;
+      margin: 0 auto;
+      background: #fff;
+      border: 2px solid var(--hh-blue-mid);
+      border-radius: 16px;
+      padding: 48px 44px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(45,108,196,0.11);
+    }
+    .hh-pricing-badge {
+      display: inline-block;
+      background: var(--hh-blue-mid);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 16px;
+      border-radius: 20px;
+      margin-bottom: 22px;
+    }
+    .hh-pricing-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+      line-height: 1;
+    }
+    .hh-pricing-period { font-size: 0.875rem; color: var(--hh-text-muted); margin-bottom: 30px; }
+    .hh-pricing-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 30px;
+    }
+    .hh-pricing-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--hh-border);
+      font-size: 0.9rem;
+    }
+    .hh-pricing-features li:last-child { border-bottom: none; }
+    .hh-pricing-check { color: var(--hh-blue-mid); font-size: 0.9rem; flex-shrink: 0; }
+    .hh-pricing-note {
+      font-size: 0.78rem;
+      color: var(--hh-text-muted);
+      margin-top: 18px;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    /* Legal Compliance */
+    .hh-compliance {
+      background: #1a2332;
+      padding: 60px 0;
+    }
+    .hh-compliance-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .hh-compliance-inner > h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 28px;
+      line-height: 1.25;
+    }
+    .hh-compliance-inner > h2 span { color: var(--hh-sky); }
+    .hh-compliance-intro {
+      color: rgba(255,255,255,0.82);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .hh-law { margin-bottom: 26px; }
+    .hh-law h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--hh-sky);
+      margin-bottom: 9px;
+    }
+    .hh-law p {
+      color: rgba(255,255,255,0.82);
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+    .hh-compliance-rule {
+      border: none;
+      border-top: 1px solid rgba(91,163,245,0.2);
+      margin: 32px 0;
+    }
+    .hh-compliance-body {
+      color: rgba(255,255,255,0.82);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+    .hh-compliance-body a { color: var(--hh-sky); }
+    .hh-compliance-disclaimer {
+      color: var(--hh-text-muted);
+      font-size: 13px;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .hh-footer {
+      background: var(--hh-navy);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .hh-footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .hh-footer-links a, .hh-footer-links span {
+      color: rgba(255,255,255,0.38);
+      font-size: 0.82rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .hh-footer-links a:hover { color: var(--hh-sky); }
+    .hh-footer-copy { color: rgba(255,255,255,0.2); font-size: 0.75rem; }
+
+    /* ═══════════════════════════════════════════════════════════
+       SCREEN 2 — AUTH
+    ═══════════════════════════════════════════════════════════ */
+    #screen-auth {
+      background: var(--hh-blue-light);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 80px 24px 48px;
+    }
+    #screen-auth.active { display: flex; min-height: 100vh; }
+
+    .hh-auth-card {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(26,74,138,0.11);
+      overflow: hidden;
+      margin-top: 24px;
+    }
+    .hh-auth-tabs { display: flex; border-bottom: 1px solid var(--hh-border); }
+    .hh-auth-tab {
+      flex: 1;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--hh-text-muted);
+      background: var(--hh-blue-light);
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .hh-auth-tab.active {
+      background: #fff;
+      color: var(--hh-blue-mid);
+      border-bottom-color: var(--hh-blue-mid);
+    }
+    .hh-auth-body { padding: 32px; }
+    .hh-auth-panel { display: none; }
+    .hh-auth-panel.active { display: block; }
+    .hh-auth-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+      margin-bottom: 4px;
+    }
+    .hh-auth-sub { color: var(--hh-text-muted); font-size: 0.85rem; margin-bottom: 24px; }
+    .hh-forgot { font-size: 0.78rem; color: var(--hh-blue-mid); cursor: pointer; }
+    .hh-forgot:hover { text-decoration: underline; }
+
+    /* ═══════════════════════════════════════════════════════════
+       SCREEN 3 — ONBOARDING
+    ═══════════════════════════════════════════════════════════ */
+    #screen-onboarding {
+      background: var(--hh-blue-light);
+      padding: 80px 24px 48px;
+    }
+    .hh-onboarding-wrap { max-width: 660px; margin: 0 auto; }
+    .hh-onboarding-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 16px 50px rgba(26,74,138,0.09);
+      overflow: hidden;
+    }
+    .hh-onboarding-hd {
+      background: linear-gradient(135deg, var(--hh-blue-dark), var(--hh-blue-mid));
+      padding: 28px 36px;
+    }
+    .hh-onboarding-hd h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .hh-onboarding-hd p { font-size: 0.82rem; color: rgba(255,255,255,0.72); }
+    .hh-steps-dots { display: flex; gap: 6px; margin-top: 14px; }
+    .hh-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.28); transition: background 0.2s; }
+    .hh-dot.active { background: #fff; }
+    .hh-onboarding-body { padding: 32px 36px; }
+
+    .hh-disclosure-box {
+      background: var(--hh-blue-light);
+      border: 1px solid var(--hh-border);
+      border-radius: 8px;
+      padding: 20px 22px;
+      max-height: 280px;
+      overflow-y: auto;
+      font-family: 'Georgia', serif;
+      font-size: 0.875rem;
+      line-height: 1.85;
+      color: var(--hh-text);
+      white-space: pre-line;
+      margin-bottom: 18px;
+    }
+    .hh-disclosure-box::-webkit-scrollbar { width: 5px; }
+    .hh-disclosure-box::-webkit-scrollbar-track { background: transparent; }
+    .hh-disclosure-box::-webkit-scrollbar-thumb { background: var(--hh-border); border-radius: 3px; }
+
+    .hh-ssn-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 0.78rem;
+      color: #78350f;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SCREEN 4 — UPLOAD
+    ═══════════════════════════════════════════════════════════ */
+    #screen-upload {
+      background: var(--hh-blue-light);
+      padding: 80px 24px 48px;
+    }
+    .hh-upload-card {
+      max-width: 580px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 44px;
+      box-shadow: 0 14px 44px rgba(26,74,138,0.08);
+    }
+    .hh-upload-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+      margin-bottom: 6px;
+    }
+    .hh-upload-card > p { color: var(--hh-text-muted); margin-bottom: 32px; font-size: 0.9rem; }
+
+    .hh-drop-zone {
+      border: 2px dashed var(--hh-border);
+      border-radius: 12px;
+      padding: 44px 24px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+      margin-bottom: 22px;
+    }
+    .hh-drop-zone:hover, .hh-drop-zone.drag-over {
+      border-color: var(--hh-sky);
+      background: var(--hh-blue-light);
+    }
+    .hh-drop-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+    }
+    .hh-drop-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .hh-drop-text { font-size: 0.95rem; font-weight: 500; color: var(--hh-blue-dark); margin-bottom: 4px; }
+    .hh-drop-sub { font-size: 0.78rem; color: var(--hh-text-muted); }
+
+    .hh-file-selected {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      background: var(--hh-blue-light);
+      border: 1px solid var(--hh-border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      margin-bottom: 20px;
+    }
+    .hh-file-selected.show { display: flex; }
+    .hh-file-name { font-weight: 500; font-size: 0.875rem; color: var(--hh-text); }
+    .hh-file-size { font-size: 0.75rem; color: var(--hh-text-muted); }
+    .hh-file-clear { background: none; border: none; cursor: pointer; color: var(--hh-text-muted); font-size: 1rem; margin-left: auto; padding: 2px 6px; }
+
+    .hh-bureau-label { font-size: 0.82rem; font-weight: 600; color: var(--hh-text); margin-bottom: 10px; }
+    .hh-bureau-btns { display: flex; gap: 10px; margin-bottom: 26px; }
+    .hh-bureau-btn {
+      flex: 1;
+      padding: 11px 6px;
+      border: 2px solid var(--hh-border);
+      border-radius: 10px;
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--hh-text-muted);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .hh-bureau-btn:hover { border-color: var(--hh-sky); color: var(--hh-blue-dark); }
+    .hh-bureau-btn.selected { border-color: var(--hh-blue-mid); background: var(--hh-blue-light); color: var(--hh-blue-dark); }
+
+    /* ═══════════════════════════════════════════════════════════
+       SCREEN 5 — DASHBOARD
+    ═══════════════════════════════════════════════════════════ */
+    #screen-dashboard {
+      background: var(--hh-blue-light);
+      padding: 80px 24px 48px;
+    }
+    .hh-dash-inner { max-width: 900px; margin: 0 auto; }
+    .hh-dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .hh-dash-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+    }
+    .hh-summary-strip {
+      background: #fff;
+      border: 1px solid var(--hh-border);
+      border-radius: 10px;
+      padding: 13px 18px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: var(--hh-text-muted);
+    }
+    .hh-summary-strip strong { color: var(--hh-blue-dark); }
+    .hh-summary-sep { color: var(--hh-border); }
+    .hh-bureau-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .hh-bureau-tab {
+      padding: 7px 18px;
+      border: 1px solid var(--hh-border);
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #fff;
+      color: var(--hh-text-muted);
+      transition: all 0.18s;
+    }
+    .hh-bureau-tab.active { background: var(--hh-blue-mid); border-color: var(--hh-blue-mid); color: #fff; }
+
+    .hh-items-list { display: flex; flex-direction: column; gap: 14px; }
+    .hh-item-card {
+      background: #fff;
+      border: 1px solid var(--hh-border);
+      border-radius: var(--hh-r-card);
+      padding: 22px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      transition: box-shadow 0.2s;
+    }
+    .hh-item-card:hover { box-shadow: 0 4px 18px rgba(45,108,196,0.07); }
+    .hh-item-body { flex: 1; min-width: 0; }
+    .hh-item-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .hh-item-creditor { font-weight: 600; font-size: 0.975rem; color: var(--hh-blue-dark); }
+    .hh-item-meta { font-size: 0.78rem; color: var(--hh-text-muted); display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+    .hh-item-reason { font-size: 0.85rem; color: var(--hh-text); font-style: italic; }
+    .hh-item-notes { font-size: 0.78rem; color: var(--hh-text-muted); margin-top: 5px; }
+    .hh-item-actions { flex-shrink: 0; }
+
+    .hh-empty {
+      text-align: center;
+      padding: 56px 24px;
+      background: #fff;
+      border-radius: var(--hh-r-card);
+      border: 1px solid var(--hh-border);
+    }
+    .hh-empty-icon { font-size: 2.8rem; margin-bottom: 14px; }
+    .hh-empty h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--hh-blue-dark);
+      margin-bottom: 8px;
+    }
+    .hh-empty p { color: var(--hh-text-muted); font-size: 0.875rem; max-width: 380px; margin: 0 auto; line-height: 1.6; }
+
+    /* ═══════════════════════════════════════════════════════════
+       SCREEN 6 — LETTER VIEW
+    ═══════════════════════════════════════════════════════════ */
+    #screen-letter {
+      background: var(--hh-blue-light);
+      padding: 80px 24px 48px;
+    }
+    .hh-letter-wrap { max-width: 760px; margin: 0 auto; }
+    .hh-letter-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .hh-letter-toolbar h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--hh-blue-dark);
+    }
+    .hh-letter-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* Letter document */
+    .hh-letter-doc {
+      background: #fff;
+      border-radius: var(--hh-r-card);
+      box-shadow: 0 10px 44px rgba(26,74,138,0.12);
+      overflow: hidden;
+    }
+    .hh-letter-hd {
+      background: linear-gradient(135deg, #0c2557, var(--hh-blue-mid));
+      padding: 30px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hh-letter-hd-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .hh-letter-hd-sub { font-size: 0.72rem; color: rgba(255,255,255,0.55); margin-top: 3px; }
+    .hh-letter-hd-seal {
+      width: 44px; height: 44px;
+      border: 1.5px solid rgba(255,255,255,0.28);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+    }
+    .hh-letter-rule-sky { height: 3px; background: linear-gradient(90deg, var(--hh-sky) 0%, rgba(91,163,245,0.1) 100%); }
+    .hh-letter-body-area { padding: 44px 48px; }
+    .hh-letter-text {
+      font-family: 'Georgia', serif;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--hh-text);
+      white-space: pre-wrap;
+    }
+
+    /* ═══ RESPONSIVE ══════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .hh-steps { grid-template-columns: 1fr; }
+      .hh-form-row { grid-template-columns: 1fr; }
+      .hh-bureau-btns { flex-direction: column; }
+      .hh-letter-hd { padding: 22px 28px; flex-direction: column; gap: 12px; }
+      .hh-letter-body-area { padding: 28px; }
+      .hh-auth-body { padding: 24px 22px; }
+      .hh-onboarding-body { padding: 24px 22px; }
+      .hh-upload-card { padding: 28px 22px; }
+      .hh-item-card { flex-direction: column; }
+      .hh-nav { padding: 0 16px; }
+    }
+
+    /* ═══ PRINT ═══════════════════════════════════════════════ */
+    @media print {
+      .hh-nav, .hh-letter-toolbar, .hh-overlay, .hh-toast { display: none !important; }
+      body { background: #fff !important; }
+      #screen-letter { background: #fff !important; padding: 0 !important; }
+      .hh-letter-wrap { max-width: 100% !important; }
+      .hh-letter-doc { box-shadow: none !important; border-radius: 0 !important; }
+      .hh-screen { display: none !important; }
+      #screen-letter { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════ NAV (always visible) ═══════════════════════════════ -->
+<nav class="hh-nav">
+  <span class="hh-wordmark">Heavenly Hands</span>
+  <span class="hh-tagline">A Vantage Company</span>
+  <div class="hh-nav-spacer"></div>
+
+  <!-- Guest links -->
+  <div class="hh-nav-group" id="navGuest">
+    <a class="hh-nav-link" onclick="showScreen('auth'); switchTab('login')">Log In</a>
+    <button class="hh-btn hh-btn--primary" style="padding:8px 18px;font-size:0.82rem;" onclick="showScreen('auth'); switchTab('signup')">Get Started</button>
+  </div>
+
+  <!-- Auth links -->
+  <div class="hh-nav-group" id="navUser" style="display:none;">
+    <a class="hh-nav-link" onclick="showScreen('dashboard'); loadDashboard()">Dashboard</a>
+    <button class="hh-btn hh-btn--ghost" style="padding:7px 16px;font-size:0.82rem;" onclick="handleSignOut()">Sign Out</button>
+  </div>
+
+  <a href="/" class="hh-back-link">← Back to Vantage</a>
+</nav>
+
+<!-- ════ TOAST ══════════════════════════════════════════════ -->
+<div class="hh-toast" id="toast"></div>
+
+<!-- ════ LOADING OVERLAY ════════════════════════════════════ -->
+<div class="hh-overlay" id="overlay">
+  <div class="hh-spinner"></div>
+  <div class="hh-overlay-text" id="overlayText">Loading...</div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 1 — LANDING PAGE
+════════════════════════════════════════════════════════ -->
+<div class="hh-screen active" id="screen-landing">
+
+  <!-- HERO -->
+  <section class="hh-hero">
+    <div class="hh-container">
+      <div class="hh-hero__content">
+        <div class="hh-hero__pills">
+          <span class="hh-hero__pill">AI-Powered</span>
+          <span class="hh-hero__pill">CROA Compliant</span>
+          <span class="hh-hero__pill">Free to Start</span>
+        </div>
+        <h1>Your credit score<br>doesn't define your<br><em>future.</em> We'll help<br>you rewrite it.</h1>
+        <p class="hh-hero__sub">Heavenly Hands helps you identify errors on your credit report and generate legally sound dispute letters — in minutes.</p>
+        <div class="hh-hero__ctas">
+          <button class="hh-btn hh-btn--sky hh-btn--lg" onclick="showScreen('auth'); switchTab('signup')">Start for Free</button>
+          <a href="#how-it-works" class="hh-btn hh-btn--lg" style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.25);color:#fff;">See How It Works</a>
+        </div>
+        <div class="hh-hero__trust-strip">
+          <strong>✓ CROA Compliant</strong>
+          <span class="sep">·</span>
+          <strong>✓ 3-Day Cancellation Right</strong>
+          <span class="sep">·</span>
+          <strong>✓ No Payment Until Services Rendered</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="hh-section" id="how-it-works">
+    <div class="hh-container">
+      <div class="hh-section-head">
+        <div class="hh-eyebrow">The Process</div>
+        <h2>Three steps to a <em>cleaner credit file</em></h2>
+        <p>Simple, transparent, and built entirely on your legal rights.</p>
+      </div>
+      <div class="hh-steps">
+        <div class="hh-step">
+          <div class="hh-step__num">1</div>
+          <h3>Upload Your Credit Report</h3>
+          <p>Securely upload a PDF from Equifax, Experian, or TransUnion. Direct from the bureau — no screenshots.</p>
+        </div>
+        <div class="hh-step">
+          <div class="hh-step__num">2</div>
+          <h3>AI Finds the Errors</h3>
+          <p>Our AI scans every line for negative items, inaccuracies, and disputable entries that may be harming your score.</p>
+        </div>
+        <div class="hh-step">
+          <div class="hh-step__num">3</div>
+          <h3>Generate Dispute Letters</h3>
+          <p>Get professionally written, FCRA-compliant dispute letters for all three bureaus — download and mail in minutes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="hh-section hh-section--alt" id="pricing">
+    <div class="hh-container">
+      <div class="hh-section-head">
+        <div class="hh-eyebrow">Pricing</div>
+        <h2>Simple, honest pricing</h2>
+        <p>One plan. No hidden fees. No payment before services are rendered.</p>
+      </div>
+      <div class="hh-pricing-card">
+        <span class="hh-pricing-badge">Full Access</span>
+        <div class="hh-pricing-price">$79</div>
+        <div class="hh-pricing-period">/month after free trial</div>
+        <ul class="hh-pricing-features">
+          <li><span class="hh-pricing-check">✓</span> Unlimited dispute letters</li>
+          <li><span class="hh-pricing-check">✓</span> All 3 bureaus — Equifax, Experian, TransUnion</li>
+          <li><span class="hh-pricing-check">✓</span> AI-powered credit report analysis</li>
+          <li><span class="hh-pricing-check">✓</span> Progress tracking dashboard</li>
+          <li><span class="hh-pricing-check">✓</span> PDF downloads of all letters</li>
+          <li><span class="hh-pricing-check">✓</span> FCRA-compliant letter generation</li>
+        </ul>
+        <button class="hh-btn hh-btn--primary hh-btn--block hh-btn--lg" onclick="showScreen('auth'); switchTab('signup')">Start Free Trial</button>
+        <p class="hh-pricing-note">Billing begins only after your 3-day review period. You may cancel anytime before then at no charge.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGAL COMPLIANCE -->
+  <section class="hh-compliance" id="legal-compliance">
+    <div class="hh-compliance-inner">
+      <h2><span>Our Commitment to You</span> — and the Law</h2>
+
+      <p class="hh-compliance-intro">Heavenly Hands operates in full compliance with every federal and state law governing the credit repair industry. This is not a policy we revisit — it is the foundation our business is built on.</p>
+
+      <p class="hh-compliance-intro" style="margin-top:-12px;">We are bound by and strictly adhere to the following regulatory frameworks:</p>
+
+      <div class="hh-law">
+        <h3>Credit Repair Organizations Act (CROA) — 15 U.S.C. §§ 1679–1679j</h3>
+        <p>Enforced by the Federal Trade Commission, CROA governs every credit repair organization in the United States. Under this law, Heavenly Hands will never accept payment before services have been fully rendered, will always provide a written contract prior to performing any service, and will always honor your right to cancel that contract within three (3) business days of signing — without penalty, without obligation, and without question.</p>
+      </div>
+
+      <div class="hh-law">
+        <h3>Fair Credit Reporting Act (FCRA) — 15 U.S.C. § 1681 et seq.</h3>
+        <p>The FCRA gives consumers the right to dispute inaccurate, incomplete, or unverifiable information on their credit reports. Heavenly Hands operates exclusively within these boundaries. We do not dispute accurate information, we do not fabricate pretexts, and we do not make representations about your credit file that are false. Every dispute letter we generate is grounded in a legitimate, documentable basis.</p>
+      </div>
+
+      <div class="hh-law">
+        <h3>Telemarketing Sales Rule (TSR) — 16 C.F.R. Part 310</h3>
+        <p>Enforced jointly by the FTC and the Consumer Financial Protection Bureau (CFPB), the TSR prohibits credit repair organizations from requesting or collecting advance fees for services not yet performed. Heavenly Hands complies unconditionally. We do not solicit by deceptive means, we do not misrepresent outcomes, and we do not guarantee specific results — because no legitimate credit repair organization can.</p>
+      </div>
+
+      <div class="hh-law">
+        <h3>Gramm-Leach-Bliley Act (GLBA) — 15 U.S.C. §§ 6801–6827</h3>
+        <p>As an organization handling nonpublic personal financial information, Heavenly Hands is subject to the GLBA's Privacy Rule and Safeguards Rule. Your data is collected only for the purpose of providing the services you have requested. It is never sold, never shared with unaffiliated third parties without your consent, and is protected under a documented information security program.</p>
+      </div>
+
+      <div class="hh-law">
+        <h3>FTC Act — Section 5 (15 U.S.C. § 45)</h3>
+        <p>The Federal Trade Commission's broad authority to prohibit unfair or deceptive acts or practices applies to every consumer-facing representation we make. Our marketing, our pricing, our contracts, and our communications are written to inform — not to mislead.</p>
+      </div>
+
+      <hr class="hh-compliance-rule"/>
+
+      <p class="hh-compliance-body">We only work under written contracts that include the full cancellation period required by law. No verbal agreements. No informal arrangements. Every client engagement begins with a dated, signed contract that clearly states the services to be performed, the total cost, the payment schedule, and your unconditional right to cancel within three business days.</p>
+
+      <p class="hh-compliance-body">If you believe your rights under any of these laws have been violated by any credit repair organization — including Heavenly Hands — you have the right to file a complaint with the Federal Trade Commission at <a href="https://reportfraud.ftc.gov" target="_blank" rel="noopener">ReportFraud.ftc.gov</a>, or contact your state's Attorney General office.</p>
+
+      <p class="hh-compliance-disclaimer">This section is provided for informational purposes. It does not constitute legal advice. Heavenly Hands recommends that all consumers review their rights independently.</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="hh-footer">
+    <div class="hh-footer-links">
+      <span>Heavenly Hands · A Vantage Company</span>
+      <span>·</span>
+      <a href="/">Vantage Home</a>
+      <span>·</span>
+      <a href="#legal-compliance" onclick="event.preventDefault(); document.getElementById('legal-compliance').scrollIntoView({behavior:'smooth'});">Legal Compliance</a>
+    </div>
+    <p class="hh-footer-copy">© 2025 Heavenly Hands LLC. All rights reserved.</p>
+  </footer>
+
+</div><!-- /screen-landing -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 2 — AUTH
+════════════════════════════════════════════════════════ -->
+<div class="hh-screen" id="screen-auth">
+  <div class="hh-auth-card">
+    <div class="hh-auth-tabs">
+      <button class="hh-auth-tab active" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+      <button class="hh-auth-tab" id="tab-login"  onclick="switchTab('login')">Log In</button>
+    </div>
+    <div class="hh-auth-body">
+
+      <!-- SIGN UP PANEL -->
+      <div class="hh-auth-panel active" id="panel-signup">
+        <h2 class="hh-auth-title">Create your account</h2>
+        <p class="hh-auth-sub">Start rewriting your credit story today.</p>
+        <div class="hh-error" id="err-signup"></div>
+        <div class="hh-form-row">
+          <div class="hh-form-group">
+            <label class="hh-label" for="su-first">First Name</label>
+            <input class="hh-input" type="text" id="su-first" placeholder="First" required/>
+          </div>
+          <div class="hh-form-group">
+            <label class="hh-label" for="su-last">Last Name</label>
+            <input class="hh-input" type="text" id="su-last" placeholder="Last" required/>
+          </div>
+        </div>
+        <div class="hh-form-group">
+          <label class="hh-label" for="su-email">Email Address</label>
+          <input class="hh-input" type="email" id="su-email" placeholder="you@example.com" required/>
+        </div>
+        <div class="hh-form-group">
+          <label class="hh-label" for="su-pass">Password</label>
+          <input class="hh-input" type="password" id="su-pass" placeholder="Min. 8 characters" minlength="8" required/>
+        </div>
+        <div class="hh-form-group">
+          <div class="hh-checkbox-row">
+            <input type="checkbox" id="su-agree"/>
+            <label class="hh-checkbox-label" for="su-agree">I have read and agree to the Heavenly Hands Service Agreement, including my right to cancel within 3 business days of signing without any charge.</label>
+          </div>
+        </div>
+        <button class="hh-btn hh-btn--primary hh-btn--block" onclick="handleSignUp()">Create My Account</button>
+      </div>
+
+      <!-- LOGIN PANEL -->
+      <div class="hh-auth-panel" id="panel-login">
+        <h2 class="hh-auth-title">Welcome back</h2>
+        <p class="hh-auth-sub">Log in to continue your credit repair journey.</p>
+        <div class="hh-error" id="err-login"></div>
+        <div class="hh-form-group">
+          <label class="hh-label" for="li-email">Email Address</label>
+          <input class="hh-input" type="email" id="li-email" placeholder="you@example.com" required/>
+        </div>
+        <div class="hh-form-group">
+          <label class="hh-label" for="li-pass">Password</label>
+          <input class="hh-input" type="password" id="li-pass" placeholder="Your password" required/>
+          <div style="text-align:right;margin-top:6px;">
+            <span class="hh-forgot" onclick="handleForgotPassword()">Forgot password?</span>
+          </div>
+        </div>
+        <button class="hh-btn hh-btn--primary hh-btn--block" onclick="handleLogin()">Log In</button>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /screen-auth -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 3 — ONBOARDING
+════════════════════════════════════════════════════════ -->
+<div class="hh-screen" id="screen-onboarding">
+  <div class="hh-onboarding-wrap">
+    <div class="hh-onboarding-card">
+
+      <div class="hh-onboarding-hd">
+        <h2 id="ob-step-title">Step 1 of 2 — Your Legal Rights</h2>
+        <p>Required by federal law before we begin.</p>
+        <div class="hh-steps-dots">
+          <div class="hh-dot active" id="dot-1"></div>
+          <div class="hh-dot" id="dot-2"></div>
+        </div>
+      </div>
+
+      <!-- STEP 1: Disclosure -->
+      <div class="hh-onboarding-body" id="ob-step-1">
+        <p style="font-size:0.82rem;color:var(--hh-text-muted);margin-bottom:14px;">Please read this disclosure in full. Scroll to the bottom to enable the checkbox.</p>
+
+        <div class="hh-disclosure-box" id="disclosureBox">CONSUMER CREDIT FILE RIGHTS UNDER STATE AND FEDERAL LAW
+
+You have a right to dispute inaccurate information in your credit report without the assistance of a credit repair organization.
+
+You may contact the credit bureau directly to dispute any inaccurate information at no charge to you.
+
+A credit repair organization cannot make any guarantee of improving your credit score.
+
+You have the right to cancel your contract with Heavenly Hands LLC without penalty or obligation within three (3) business days from the date you signed the contract.
+
+Heavenly Hands will not accept payment for services until those services have been fully performed.
+
+For more information on credit repair organizations and your rights, contact:
+Federal Trade Commission — Consumer Response Center
+600 Pennsylvania Ave NW, Washington, DC 20580
+ftc.gov/credit</div>
+
+        <div class="hh-form-group" style="margin-top:14px;">
+          <div class="hh-checkbox-row">
+            <input type="checkbox" id="disclosure-agree" disabled/>
+            <label class="hh-checkbox-label" for="disclosure-agree">I have read and understand my rights as described above.</label>
+          </div>
+        </div>
+
+        <div class="hh-error" id="err-disclosure"></div>
+
+        <button class="hh-btn hh-btn--primary hh-btn--block" id="btn-disclosure" disabled onclick="goToStep2()">
+          I Understand — Continue
+        </button>
+        <p style="font-size:0.72rem;color:var(--hh-text-muted);margin-top:10px;text-align:center;">Scroll to the bottom of the disclosure above to enable the checkbox.</p>
+      </div>
+
+      <!-- STEP 2: Personal Info -->
+      <div class="hh-onboarding-body" id="ob-step-2" style="display:none;">
+        <p style="font-size:0.82rem;color:var(--hh-text-muted);margin-bottom:18px;">This information personalizes your dispute letters. All fields except SSN last 4 are saved to your profile.</p>
+
+        <div class="hh-error" id="err-onboarding"></div>
+
+        <div class="hh-form-group">
+          <label class="hh-label" for="ob-dob">Date of Birth</label>
+          <input class="hh-input" type="date" id="ob-dob" required/>
+        </div>
+        <div class="hh-form-group">
+          <label class="hh-label" for="ob-street">Street Address</label>
+          <input class="hh-input" type="text" id="ob-street" placeholder="123 Main St" required/>
+        </div>
+        <div class="hh-form-row">
+          <div class="hh-form-group">
+            <label class="hh-label" for="ob-city">City</label>
+            <input class="hh-input" type="text" id="ob-city" placeholder="City" required/>
+          </div>
+          <div class="hh-form-group">
+            <label class="hh-label" for="ob-state">State</label>
+            <input class="hh-input" type="text" id="ob-state" placeholder="TX" maxlength="2" style="text-transform:uppercase;" required/>
+          </div>
+        </div>
+        <div class="hh-form-group">
+          <label class="hh-label" for="ob-zip">ZIP Code</label>
+          <input class="hh-input" type="text" id="ob-zip" placeholder="75001" maxlength="5" inputmode="numeric" required/>
+        </div>
+        <div class="hh-form-group">
+          <label class="hh-label" for="ob-ssn">Last 4 Digits of SSN</label>
+          <input class="hh-input" type="password" id="ob-ssn" placeholder="••••" maxlength="4" pattern="[0-9]{4}" inputmode="numeric"/>
+          <div class="hh-ssn-note">
+            <span>⚠️</span>
+            <span>Used only to personalize dispute letters. <strong>Never stored.</strong> Held in memory for this session only and never written to any database.</span>
+          </div>
+        </div>
+
+        <button class="hh-btn hh-btn--primary hh-btn--block" onclick="handleOnboardingSubmit()">Save and Continue →</button>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /screen-onboarding -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 4 — UPLOAD
+════════════════════════════════════════════════════════ -->
+<div class="hh-screen" id="screen-upload">
+  <div class="hh-upload-card">
+    <h2>Upload Your Credit Report</h2>
+    <p>Upload a PDF from Equifax, Experian, or TransUnion. We'll scan it and identify items you can dispute.</p>
+
+    <div class="hh-error" id="err-upload"></div>
+
+    <div class="hh-drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".pdf,application/pdf" onchange="handleFileSelect(event)"/>
+      <div class="hh-drop-icon">📄</div>
+      <div class="hh-drop-text">Drop your PDF here, or click to browse</div>
+      <div class="hh-drop-sub">PDF only · Max 10MB</div>
+    </div>
+
+    <div class="hh-file-selected" id="fileSelected">
+      <span style="font-size:1.1rem;">📄</span>
+      <div style="flex:1;min-width:0;">
+        <div class="hh-file-name" id="fileName"></div>
+        <div class="hh-file-size" id="fileSize"></div>
+      </div>
+      <button class="hh-file-clear" onclick="clearFile()">✕</button>
+    </div>
+
+    <div class="hh-bureau-label">Which bureau is this report from?</div>
+    <div class="hh-bureau-btns">
+      <button class="hh-bureau-btn" onclick="selectBureau('Equifax', this)">Equifax</button>
+      <button class="hh-bureau-btn" onclick="selectBureau('Experian', this)">Experian</button>
+      <button class="hh-bureau-btn" onclick="selectBureau('TransUnion', this)">TransUnion</button>
+    </div>
+
+    <button class="hh-btn hh-btn--primary hh-btn--block" id="analyzeBtn" onclick="analyzeReport()" disabled>
+      Analyze My Report
+    </button>
+  </div>
+</div><!-- /screen-upload -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 5 — DISPUTE DASHBOARD
+════════════════════════════════════════════════════════ -->
+<div class="hh-screen" id="screen-dashboard">
+  <div class="hh-dash-inner">
+    <div class="hh-dash-header">
+      <h2>Your Dispute Items</h2>
+      <button class="hh-btn hh-btn--outline hh-btn--sm" onclick="showScreen('upload')">+ Upload Another Report</button>
+    </div>
+
+    <div class="hh-summary-strip">
+      <span><strong id="sum-found">0</strong> items found</span>
+      <span class="hh-summary-sep">·</span>
+      <span><strong id="sum-generated">0</strong> letters generated</span>
+      <span class="hh-summary-sep">·</span>
+      <span><strong id="sum-sent">0</strong> marked as sent</span>
+    </div>
+
+    <div class="hh-bureau-tabs" id="bureauTabs"></div>
+    <div class="hh-items-list" id="itemsList">
+      <div class="hh-empty">
+        <div class="hh-empty-icon">📋</div>
+        <h3>Loading your items...</h3>
+        <p>Fetching your dispute data.</p>
+      </div>
+    </div>
+  </div>
+</div><!-- /screen-dashboard -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 6 — LETTER VIEW
+════════════════════════════════════════════════════════ -->
+<div class="hh-screen" id="screen-letter">
+  <div class="hh-letter-wrap">
+    <div class="hh-letter-toolbar">
+      <h2>Dispute Letter</h2>
+      <div class="hh-letter-actions">
+        <button class="hh-btn hh-btn--ghost hh-btn--sm" onclick="showScreen('dashboard'); loadDashboard()">← Dashboard</button>
+        <button class="hh-btn hh-btn--outline hh-btn--sm" onclick="window.print()">Download as PDF</button>
+        <button class="hh-btn hh-btn--primary hh-btn--sm" id="markSentBtn" onclick="markAsSent()">Mark as Sent ✓</button>
+      </div>
+    </div>
+
+    <div class="hh-letter-doc">
+      <div class="hh-letter-hd">
+        <div>
+          <div class="hh-letter-hd-brand">Heavenly Hands</div>
+          <div class="hh-letter-hd-sub">A Vantage Company · Credit Dispute Services</div>
+        </div>
+        <div class="hh-letter-hd-seal">⚖️</div>
+      </div>
+      <div class="hh-letter-rule-sky"></div>
+      <div class="hh-letter-body-area">
+        <div class="hh-letter-text" id="letterText">Generating your dispute letter...</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /screen-letter -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+// ═══ CREDENTIALS — Replace before use ═══════════════════
+const SUPABASE_URL     = 'REPLACE_WITH_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'REPLACE_WITH_SUPABASE_ANON_KEY';
+const CLAUDE_API_KEY   = 'REPLACE_WITH_CLAUDE_API_KEY';
+
+const BUREAU_ADDR = {
+  'Equifax':    'P.O. Box 740256, Atlanta, GA 30374-0256',
+  'Experian':   'P.O. Box 4500, Allen, TX 75013',
+  'TransUnion': 'P.O. Box 2000, Chester, PA 19016'
+};
+
+// ═══ SUPABASE ════════════════════════════════════════════
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ═══ STATE ═══════════════════════════════════════════════
+let curUser    = null;
+let curProfile = null;
+let ssnSession = null;  // SSN last 4 — session memory only, never persisted
+let allItems   = [];
+let activeBureau = null;
+let activeLetterItemId = null;
+let selectedFile   = null;
+let selectedBureau = null;
+
+// ═══ ROUTER ══════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.hh-screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(`screen-${name}`);
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ═══ TOAST ═══════════════════════════════════════════════
+let toastTimer;
+function toast(msg, type = 'success') {
+  clearTimeout(toastTimer);
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `hh-toast hh-toast--${type} show`;
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3600);
+}
+
+// ═══ LOADING ═════════════════════════════════════════════
+function showLoading(msg = 'Loading...') {
+  document.getElementById('overlayText').textContent = msg;
+  document.getElementById('overlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ═══ NAV STATE ═══════════════════════════════════════════
+function setNavAuth(loggedIn) {
+  document.getElementById('navGuest').style.display = loggedIn ? 'none' : 'flex';
+  document.getElementById('navUser').style.display  = loggedIn ? 'flex' : 'none';
+}
+
+// ═══ AUTH TABS ═══════════════════════════════════════════
+function switchTab(tab) {
+  ['signup','login'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+    document.getElementById(`panel-${t}`).classList.toggle('active', t === tab);
+  });
+}
+
+// ═══ SIGN UP ═════════════════════════════════════════════
+async function handleSignUp() {
+  const first = document.getElementById('su-first').value.trim();
+  const last  = document.getElementById('su-last').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  const agree = document.getElementById('su-agree').checked;
+  const errEl = document.getElementById('err-signup');
+
+  errEl.classList.remove('show');
+
+  if (!first || !last || !email || !pass) { errEl.textContent = 'Please fill in all fields.'; errEl.classList.add('show'); return; }
+  if (pass.length < 8) { errEl.textContent = 'Password must be at least 8 characters.'; errEl.classList.add('show'); return; }
+  if (!agree) { errEl.textContent = 'You must agree to the Service Agreement to continue.'; errEl.classList.add('show'); return; }
+
+  showLoading('Creating your account...');
+
+  const { data, error } = await db.auth.signUp({
+    email, password: pass,
+    options: { data: { first_name: first, last_name: last } }
+  });
+
+  if (error) { hideLoading(); errEl.textContent = error.message; errEl.classList.add('show'); return; }
+
+  // Create profile row
+  await db.from('user_profiles').upsert({ id: data.user.id, first_name: first, last_name: last, onboarding_complete: false });
+
+  curUser    = data.user;
+  curProfile = { first_name: first, last_name: last, onboarding_complete: false };
+  setNavAuth(true);
+  hideLoading();
+  toast('Account created! Let\'s get you set up.');
+  showScreen('onboarding');
+  initOnboarding();
+}
+
+// ═══ LOG IN ═══════════════════════════════════════════════
+async function handleLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const errEl = document.getElementById('err-login');
+
+  errEl.classList.remove('show');
+  if (!email || !pass) { errEl.textContent = 'Please enter your email and password.'; errEl.classList.add('show'); return; }
+
+  showLoading('Logging you in...');
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
+  if (error) { hideLoading(); errEl.textContent = error.message; errEl.classList.add('show'); return; }
+
+  curUser = data.user;
+  await loadProfile();
+  setNavAuth(true);
+  hideLoading();
+  toast('Welcome back!');
+
+  if (!curProfile || !curProfile.onboarding_complete) {
+    showScreen('onboarding'); initOnboarding();
+  } else {
+    showScreen('dashboard'); loadDashboard();
+  }
+}
+
+// ═══ SIGN OUT ════════════════════════════════════════════
+async function handleSignOut() {
+  await db.auth.signOut();
+  curUser = null; curProfile = null; ssnSession = null; allItems = [];
+  setNavAuth(false);
+  showScreen('landing');
+  toast('You\'ve been signed out.');
+}
+
+// ═══ FORGOT PASSWORD ═════════════════════════════════════
+async function handleForgotPassword() {
+  const email = document.getElementById('li-email').value.trim();
+  if (!email) { const e = document.getElementById('err-login'); e.textContent = 'Enter your email above first.'; e.classList.add('show'); return; }
+  await db.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+  toast('Password reset email sent — check your inbox.');
+}
+
+// ═══ PROFILE ═════════════════════════════════════════════
+async function loadProfile() {
+  if (!curUser) return;
+  const { data } = await db.from('user_profiles').select('*').eq('id', curUser.id).single();
+  curProfile = data;
+}
+
+// ═══ ONBOARDING ══════════════════════════════════════════
+function initOnboarding() {
+  // Reset to step 1
+  document.getElementById('ob-step-1').style.display = 'block';
+  document.getElementById('ob-step-2').style.display = 'none';
+  document.getElementById('ob-step-title').textContent = 'Step 1 of 2 — Your Legal Rights';
+  document.getElementById('dot-1').classList.add('active');
+  document.getElementById('dot-2').classList.remove('active');
+
+  const box      = document.getElementById('disclosureBox');
+  const checkbox = document.getElementById('disclosure-agree');
+  const btn      = document.getElementById('btn-disclosure');
+
+  checkbox.disabled = true;
+  checkbox.checked  = false;
+  btn.disabled      = true;
+
+  // Enable checkbox once user scrolls to bottom
+  function onScroll() {
+    if (box.scrollHeight - box.scrollTop <= box.clientHeight + 24) {
+      checkbox.disabled = false;
+      box.removeEventListener('scroll', onScroll);
+    }
+  }
+  box.addEventListener('scroll', onScroll);
+
+  checkbox.addEventListener('change', () => { btn.disabled = !checkbox.checked; });
+}
+
+function goToStep2() {
+  document.getElementById('ob-step-1').style.display = 'none';
+  document.getElementById('ob-step-2').style.display = 'block';
+  document.getElementById('ob-step-title').textContent = 'Step 2 of 2 — Your Information';
+  document.getElementById('dot-2').classList.add('active');
+}
+
+async function handleOnboardingSubmit() {
+  const dob    = document.getElementById('ob-dob').value;
+  const street = document.getElementById('ob-street').value.trim();
+  const city   = document.getElementById('ob-city').value.trim();
+  const state  = document.getElementById('ob-state').value.trim().toUpperCase();
+  const zip    = document.getElementById('ob-zip').value.trim();
+  const ssn4   = document.getElementById('ob-ssn').value.trim();
+  const errEl  = document.getElementById('err-onboarding');
+
+  errEl.classList.remove('show');
+  if (!dob || !street || !city || !state || !zip) {
+    errEl.textContent = 'Please fill in all required fields.';
+    errEl.classList.add('show'); return;
+  }
+
+  // SSN last 4 — memory ONLY, never written to Supabase
+  if (ssn4 && /^\d{4}$/.test(ssn4)) ssnSession = ssn4;
+
+  showLoading('Saving your profile...');
+
+  const { error } = await db.from('user_profiles').upsert({
+    id: curUser.id,
+    dob, address_street: street, address_city: city,
+    address_state: state, address_zip: zip,
+    onboarding_complete: true
+  });
+
+  if (error) {
+    hideLoading();
+    errEl.textContent = error.message; errEl.classList.add('show'); return;
+  }
+
+  curProfile = { ...(curProfile || {}), dob, address_street: street, address_city: city, address_state: state, address_zip: zip, onboarding_complete: true };
+  hideLoading();
+  toast('Profile saved! Now let\'s look at your credit report.');
+  showScreen('upload');
+}
+
+// ═══ UPLOAD — FILE HANDLING ═══════════════════════════════
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
+    toast('Please upload a PDF file.', 'error'); return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    toast('File exceeds 10MB maximum.', 'error'); return;
+  }
+  selectedFile = file;
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = fmtSize(file.size);
+  document.getElementById('fileSelected').classList.add('show');
+  checkReady();
+}
+
+function clearFile() {
+  selectedFile = null;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileSelected').classList.remove('show');
+  checkReady();
+}
+
+function selectBureau(bureau, btn) {
+  selectedBureau = bureau;
+  document.querySelectorAll('.hh-bureau-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  checkReady();
+}
+
+function checkReady() {
+  document.getElementById('analyzeBtn').disabled = !(selectedFile && selectedBureau);
+}
+
+function fmtSize(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+// Drag-and-drop
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) {
+    const dt = new DataTransfer(); dt.items.add(f);
+    document.getElementById('fileInput').files = dt.files;
+    handleFileSelect({ target: { files: [f] } });
+  }
+});
+
+// ═══ UPLOAD — ANALYZE ════════════════════════════════════
+async function analyzeReport() {
+  if (!selectedFile || !selectedBureau) return;
+
+  document.getElementById('err-upload').classList.remove('show');
+  showLoading('Analyzing your report... this takes about 15 seconds.');
+
+  try {
+    const base64 = await toBase64(selectedFile);
+
+    const sysPrompt = `You are a credit report analyst. The user has uploaded a credit report PDF.
+Your job is to extract ALL negative items that could be disputed.
+
+For each item found, return a JSON array with this exact structure:
+[
+  {
+    "id": "unique_id_string",
+    "creditor": "Creditor Name",
+    "account_number": "last 4 digits only or 'unknown'",
+    "type": "Collection | Late Payment | Charge-off | Inquiry | Other",
+    "amount": "dollar amount or 'unknown'",
+    "date_reported": "MM/YYYY or 'unknown'",
+    "dispute_reason": "one of: Not Mine | Incorrect Amount | Incorrect Date | Paid in Full | Duplicate | Other",
+    "notes": "brief description of why this is disputable"
+  }
+]
+
+Return ONLY the JSON array. No preamble, no markdown, no explanation.
+If no negative items are found, return an empty array: []`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4096,
+        system: sysPrompt,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
+            { type: 'text', text: 'Analyze this credit report and extract all negative items.' }
+          ]
+        }]
+      })
+    });
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error?.message || `API error ${res.status}`);
+
+    let items = [];
+    try {
+      const raw = result.content[0].text.trim();
+      const match = raw.match(/\[[\s\S]*\]/);
+      if (match) items = JSON.parse(match[0]);
+    } catch(_) { items = []; }
+
+    // Persist to Supabase
+    if (items.length > 0) {
+      const rows = items.map(item => ({
+        user_id:        curUser.id,
+        bureau:         selectedBureau,
+        creditor:       item.creditor       || 'Unknown Creditor',
+        account_number: item.account_number || 'unknown',
+        type:           item.type           || 'Other',
+        amount:         item.amount         || 'unknown',
+        date_reported:  item.date_reported  || 'unknown',
+        dispute_reason: item.dispute_reason || 'Other',
+        notes:          item.notes          || '',
+        status:         'ready'
+      }));
+      await db.from('dispute_items').insert(rows);
+    }
+
+    // Reset upload state
+    selectedFile = null; selectedBureau = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('fileSelected').classList.remove('show');
+    document.querySelectorAll('.hh-bureau-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('analyzeBtn').disabled = true;
+
+    hideLoading();
+    toast(items.length === 0 ? 'No negative items found — great news!' : `Found ${items.length} item${items.length !== 1 ? 's' : ''} to review.`);
+    showScreen('dashboard');
+    loadDashboard();
+
+  } catch(err) {
+    hideLoading();
+    const e = document.getElementById('err-upload');
+    e.textContent = `Analysis failed: ${err.message}. Check your API key and try again.`;
+    e.classList.add('show');
+  }
+}
+
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload  = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ═══ DASHBOARD ═══════════════════════════════════════════
+async function loadDashboard() {
+  if (!curUser) return;
+
+  const { data: items } = await db
+    .from('dispute_items').select('*')
+    .eq('user_id', curUser.id)
+    .order('created_at', { ascending: false });
+
+  allItems = items || [];
+
+  // Summary counts
+  const { data: letters } = await db.from('dispute_letters').select('id').eq('user_id', curUser.id);
+  document.getElementById('sum-found').textContent     = allItems.length;
+  document.getElementById('sum-generated').textContent = (letters || []).length;
+  document.getElementById('sum-sent').textContent      = allItems.filter(i => i.status === 'sent').length;
+
+  // Bureau tabs
+  const bureaus = [...new Set(allItems.map(i => i.bureau).filter(Boolean))];
+  const tabsEl  = document.getElementById('bureauTabs');
+  tabsEl.innerHTML = '';
+
+  if (bureaus.length > 0) {
+    if (!activeBureau || !bureaus.includes(activeBureau)) activeBureau = bureaus[0];
+    bureaus.forEach(b => {
+      const t = document.createElement('button');
+      t.className = `hh-bureau-tab${b === activeBureau ? ' active' : ''}`;
+      t.textContent = b;
+      t.onclick = () => {
+        activeBureau = b;
+        tabsEl.querySelectorAll('.hh-bureau-tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        renderItems(allItems.filter(i => i.bureau === b));
+      };
+      tabsEl.appendChild(t);
+    });
+    renderItems(allItems.filter(i => i.bureau === activeBureau));
+  } else {
+    renderItems([]);
+  }
+}
+
+function renderItems(items) {
+  const el = document.getElementById('itemsList');
+  if (!items.length) {
+    el.innerHTML = `
+      <div class="hh-empty">
+        <div class="hh-empty-icon">🎉</div>
+        <h3>No negative items found on this report.</h3>
+        <p>That's great news! You can upload reports from other bureaus to check those too.</p>
+      </div>`;
+    return;
+  }
+  el.innerHTML = items.map(item => `
+    <div class="hh-item-card" id="card-${esc(item.id)}">
+      <div class="hh-item-body">
+        <div class="hh-item-top">
+          <span class="hh-item-creditor">${esc(item.creditor)}</span>
+          <span class="hh-badge hh-badge--${esc(item.status)}">${statusLabel(item.status)}</span>
+        </div>
+        <div class="hh-item-meta">
+          <span>${esc(item.type)}</span>
+          ${item.amount !== 'unknown' ? `<span>$${esc(item.amount)}</span>` : ''}
+          ${item.date_reported !== 'unknown' ? `<span>Reported: ${esc(item.date_reported)}</span>` : ''}
+          ${item.account_number !== 'unknown' ? `<span>Acct: ···${esc(item.account_number)}</span>` : ''}
+        </div>
+        <div class="hh-item-reason">Dispute reason: ${esc(item.dispute_reason)}</div>
+        ${item.notes ? `<div class="hh-item-notes">${esc(item.notes)}</div>` : ''}
+      </div>
+      <div class="hh-item-actions">
+        <button class="hh-btn hh-btn--primary hh-btn--sm" onclick="generateLetter('${esc(item.id)}')">Generate Dispute Letter</button>
+      </div>
+    </div>`).join('');
+}
+
+function statusLabel(s) {
+  return s === 'ready' ? 'Ready' : s === 'sent' ? 'Sent' : 'Letter Generated';
+}
+function esc(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══ LETTER GENERATION ═══════════════════════════════════
+async function generateLetter(itemId) {
+  const item = allItems.find(i => i.id === itemId);
+  if (!item) return;
+  if (!curProfile) await loadProfile();
+
+  const p = curProfile || {};
+  const name    = `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Consumer';
+  const address = [p.address_street, p.address_city, p.address_state, p.address_zip].filter(Boolean).join(', ') || '[Address on file]';
+  const dob     = p.dob || '[Date of Birth]';
+  const ssn     = ssnSession ? ssnSession : 'XXXX';
+  const bAddr   = BUREAU_ADDR[item.bureau] || '';
+  const today   = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  showScreen('letter');
+  document.getElementById('letterText').textContent = 'Generating your letter...';
+  document.getElementById('markSentBtn').disabled = false;
+  activeLetterItemId = itemId;
+
+  showLoading('Writing your dispute letter...');
+
+  const prompt = `Generate a formal credit dispute letter compliant with the Fair Credit Reporting Act (FCRA).
+
+Consumer Information:
+- Name: ${name}
+- Address: ${address}
+- Date of Birth: ${dob}
+- SSN Last 4: ${ssn} (include as: "SSN: xxx-xx-${ssn}")
+
+Dispute Details:
+- Bureau: ${item.bureau}
+- Bureau Address: ${bAddr}
+- Creditor: ${item.creditor}
+- Account: ${item.account_number}
+- Dispute Reason: ${item.dispute_reason}
+- Notes: ${item.notes}
+
+Today's Date: ${today}
+
+Write a professional, firm dispute letter citing the FCRA Section 611 right to dispute inaccurate information. Request removal or correction within 30 days. Request written confirmation of investigation results. Do not be aggressive. Be factual and formal.
+
+Format as a proper letter with date, addresses, salutation, body paragraphs, and closing.
+Return ONLY the letter text. No preamble.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error?.message || `API error ${res.status}`);
+
+    const letterText = result.content[0].text;
+    document.getElementById('letterText').textContent = letterText;
+
+    // Save letter
+    await db.from('dispute_letters').insert({
+      user_id: curUser.id,
+      dispute_item_id: itemId,
+      letter_text: letterText,
+      generated_at: new Date().toISOString()
+    });
+
+    // Update item status
+    await db.from('dispute_items').update({ status: 'generated' }).eq('id', itemId);
+    const idx = allItems.findIndex(i => i.id === itemId);
+    if (idx !== -1) allItems[idx].status = 'generated';
+
+    hideLoading();
+    toast('Letter generated and ready to download.');
+
+  } catch(err) {
+    hideLoading();
+    document.getElementById('letterText').textContent = `Letter generation failed: ${err.message}\n\nPlease go back and try again.`;
+    toast('Failed to generate letter. Check API key.', 'error');
+  }
+}
+
+// ═══ MARK AS SENT ═════════════════════════════════════════
+async function markAsSent() {
+  if (!activeLetterItemId) return;
+  document.getElementById('markSentBtn').disabled = true;
+
+  await db.from('dispute_items').update({
+    status: 'sent',
+    sent_at: new Date().toISOString()
+  }).eq('id', activeLetterItemId);
+
+  const idx = allItems.findIndex(i => i.id === activeLetterItemId);
+  if (idx !== -1) allItems[idx].status = 'sent';
+
+  toast('Marked as sent! Keep a copy for your records.');
+}
+
+// ═══ CLAUDE API HELPER ════════════════════════════════════
+async function callClaude(systemPrompt, userContent) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': CLAUDE_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userContent }]
+    })
+  });
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+// ═══ INIT ═════════════════════════════════════════════════
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+
+  if (session?.user) {
+    curUser = session.user;
+    await loadProfile();
+    setNavAuth(true);
+
+    if (!curProfile || !curProfile.onboarding_complete) {
+      showScreen('onboarding'); initOnboarding();
+    } else {
+      showScreen('dashboard'); loadDashboard();
+    }
+  } else {
+    showScreen('landing');
+    setNavAuth(false);
+  }
+
+  db.auth.onAuthStateChange((_event, session) => {
+    if (!session) { curUser = null; curProfile = null; ssnSession = null; allItems = []; setNavAuth(false); }
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>
