@@ -2109,3 +2109,391 @@
 @media (max-width: 768px) {
   .consult-bar { display: none !important; }
 }
+
+/* ── HERO SECONDARY CTA + TRUST PILLS ───────────────────── */
+.btn--hero-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--slate-light);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: 1px solid var(--border);
+  transition: border-color 0.25s ease, color 0.25s ease;
+  text-decoration: none;
+}
+.btn--hero-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.shop-hero__actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+.shop-hero__trust-pills {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.shop-hero__trust-pills span {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.hero-trust-sep {
+  color: var(--border-hover) !important;
+  letter-spacing: 0 !important;
+}
+
+/* ── HOW IT WORKS — 3-STEP PROCESS BAND ─────────────────── */
+.how-it-works {
+  background: var(--obsidian-2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 96px 0;
+}
+.how-it-works__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.how-it-works__header {
+  text-align: center;
+  margin-bottom: 72px;
+}
+.how-it-works__header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 300;
+  color: var(--white);
+  margin-top: 12px;
+  line-height: 1.1;
+}
+.how-it-works__header h2 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.how-it-works__steps {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr 1px 1fr;
+  align-items: start;
+}
+.how-it-works__divider {
+  min-height: 180px;
+  background: var(--border);
+  align-self: stretch;
+}
+.how-it-works__step {
+  padding: 0 52px;
+  text-align: center;
+}
+.how-it-works__step-num {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 7vw, 6.5rem);
+  font-weight: 300;
+  color: rgba(201,168,76,0.14);
+  line-height: 1;
+  margin-bottom: 16px;
+  letter-spacing: -0.03em;
+}
+.how-it-works__step-title {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 14px;
+}
+.how-it-works__step-rule {
+  width: 28px;
+  height: 1px;
+  background: var(--gold);
+  margin: 0 auto 16px;
+  opacity: 0.45;
+}
+.how-it-works__step-desc {
+  font-size: 0.88rem;
+  color: var(--slate);
+  line-height: 1.8;
+  max-width: 240px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .how-it-works__step { padding: 0 32px; }
+}
+@media (max-width: 768px) {
+  .how-it-works { padding: 64px 0; }
+  .how-it-works__steps {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .how-it-works__divider { display: none; }
+  .how-it-works__step { padding: 0; }
+}
+
+/* ── SERVICES OVERVIEW GRID — 6 CAPABILITY CARDS ────────── */
+.cis-services {
+  background: var(--obsidian);
+  border-bottom: 1px solid var(--border);
+  padding: 96px 0;
+}
+.cis-services__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.cis-services__header {
+  margin-bottom: 56px;
+}
+.cis-services__header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 300;
+  color: var(--white);
+  margin-top: 12px;
+  line-height: 1.1;
+}
+.cis-services__header h2 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.cis-services__header p {
+  font-size: 0.95rem;
+  color: var(--slate);
+  max-width: 500px;
+  line-height: 1.8;
+  margin-top: 16px;
+}
+.cis-services__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+.cis-service-card {
+  background: var(--obsidian-2);
+  padding: 40px 36px 48px;
+  position: relative;
+  text-decoration: none;
+  display: block;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+.cis-service-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.cis-service-card:hover { background: var(--obsidian-3); }
+.cis-service-card:hover::before { transform: scaleX(1); }
+.cis-service-card__icon {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+  color: var(--gold);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.cis-service-card:hover .cis-service-card__icon {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+}
+.cis-service-card__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.cis-service-card__desc {
+  font-size: 0.85rem;
+  color: var(--slate);
+  line-height: 1.75;
+}
+.cis-service-card__arrow {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  color: var(--gold);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.cis-service-card:hover .cis-service-card__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 1024px) {
+  .cis-services__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .cis-services { padding: 64px 0; }
+  .cis-services__grid { grid-template-columns: 1fr; }
+}
+
+/* ── FAQ ACCORDION ───────────────────────────────────────── */
+.faq-section {
+  background: var(--obsidian-2);
+  border-top: 1px solid var(--border);
+  padding: 96px 0;
+}
+.faq-section__inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.faq-section__header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.faq-section__header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  font-weight: 300;
+  color: var(--white);
+  margin-top: 12px;
+  line-height: 1.1;
+}
+.faq-section__header h2 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.faq-list { display: flex; flex-direction: column; }
+.faq-item { border-top: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: 1px solid var(--border); }
+
+.faq-item__trigger {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 26px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
+}
+.faq-item__question {
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-weight: 300;
+  color: var(--off-white);
+  line-height: 1.35;
+  transition: color 0.25s ease;
+}
+.faq-item__trigger:hover .faq-item__question { color: var(--gold); }
+.faq-item__trigger[aria-expanded="true"] .faq-item__question { color: var(--gold); }
+
+.faq-item__icon {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold);
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.faq-item__trigger:hover .faq-item__icon { border-color: var(--gold); }
+.faq-item__trigger[aria-expanded="true"] .faq-item__icon {
+  background: var(--gold);
+  color: var(--obsidian);
+  border-color: var(--gold);
+  transform: rotate(45deg);
+}
+
+.faq-item__panel {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.faq-item__panel[aria-hidden="false"] { max-height: 400px; }
+
+.faq-item__answer {
+  font-size: 0.95rem;
+  color: var(--slate-light);
+  line-height: 1.85;
+  padding-bottom: 28px;
+}
+.faq-item__answer a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.faq-item__answer a:hover { color: var(--gold-light); }
+
+@media (max-width: 767px) {
+  .faq-section { padding: 64px 0; }
+  .faq-item__trigger { padding: 20px 0; }
+}
+
+/* ── FOOTER — SERVICE AREAS + HOURS ─────────────────────── */
+.footer__service-areas {
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  margin-bottom: 0;
+}
+.footer__service-areas-label {
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.footer__service-areas-list {
+  font-size: 0.8rem;
+  color: var(--slate);
+  line-height: 1.75;
+  margin-bottom: 8px;
+}
+.footer__hours-item {
+  font-size: 0.8rem;
+  color: var(--slate);
+  line-height: 1.75;
+}
+.footer__hours-item strong {
+  color: var(--slate-light);
+  font-weight: 500;
+}
+
+/* ── PREFERS-REDUCED-MOTION — NEW SECTIONS ───────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .how-it-works__step,
+  .cis-service-card,
+  .cis-service-card::before,
+  .cis-service-card__arrow,
+  .faq-item__trigger,
+  .faq-item__icon,
+  .faq-item__panel,
+  .btn--hero-ghost { transition: none; }
+}

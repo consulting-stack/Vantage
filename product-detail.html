@@ -726,21 +726,28 @@ function renderDetail(product, allProducts) {
       </div>
 
       <div class="detail-actions">
-        <!--
-          SHOPIFY INTEGRATION: Replace the button below with the Shopify Buy Button embed.
-          The data-shopify-variant-id is populated from shop-data.json.
-        -->
-        <button
-          class="btn btn--gold btn--cart"
-          data-shopify-variant-id="${product.shopifyVariantId}"
-          aria-label="Add ${product.name} to cart"
-        >
-          Add to Cart
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
-          </svg>
-        </button>
-
+        ${product.shopifyVariantId
+          ? `<button
+               class="btn btn--gold btn--cart"
+               data-shopify-variant-id="${product.shopifyVariantId}"
+               aria-label="Add ${product.name} to cart"
+             >
+               Add to Cart
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
+               </svg>
+             </button>`
+          : `<a
+               href="quote.html?product=${product.id}"
+               class="btn btn--gold btn--cart"
+               aria-label="Request a quote for ${product.name}"
+             >
+               Request a Quote
+               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                 <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+               </svg>
+             </a>`
+        }
         <a
           href="quote.html"
           class="btn btn--staging"
