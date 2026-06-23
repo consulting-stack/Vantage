@@ -704,6 +704,11 @@
   </div>
 </section>
 
+<!-- RECENT WORK MARQUEE — ambient proof strip -->
+<div class="portfolio-marquee" id="portfolioMarquee" role="region" aria-label="Recent interior design work — scroll preview">
+  <div class="portfolio-marquee__track" id="portfolioMarqueeTrack"></div>
+</div>
+
 <!-- ROOM STYLE QUIZ -->
 <section class="style-quiz" id="style-quiz" aria-label="Find pieces suited to your style">
   <div class="style-quiz__inner">
@@ -1083,6 +1088,24 @@
       </div>
 
     </div>
+  </div>
+</section>
+
+<!-- OUR WORK GALLERY — 41 completed spaces -->
+<section class="portfolio-gallery" id="our-work" aria-labelledby="portfolioGalleryHeading">
+  <div class="portfolio-gallery__inner">
+    <div class="portfolio-gallery__header">
+      <span class="label">Our Work</span>
+      <h2 id="portfolioGalleryHeading">Real spaces.<br><em>Real clients.</em></h2>
+    </div>
+    <!-- 3D SPHERE SHOWCASE — progressive enhancement; #portfolioGrid below is the accessible baseline -->
+    <div class="pf-sphere" id="pfSphere" aria-hidden="true">
+      <div class="pf-sphere__scene" id="pfSphereScene">
+        <div class="pf-sphere__ring" id="pfSphereRing"></div>
+      </div>
+      <p class="pf-sphere__hint">Drag to explore &middot; Tap any photo to view it</p>
+    </div>
+    <div class="portfolio-gallery__grid" id="portfolioGrid" role="list"></div>
   </div>
 </section>
 
@@ -2165,6 +2188,416 @@ Rules:
       }
     });
   }());
+</script>
+<script src="assets/portfolio/files.js"></script>
+<script src="assets/portfolio/captions.js"></script>
+
+<!-- PORTFOLIO LIGHTBOX -->
+<div class="pf-lb" id="pfLightbox" role="dialog" aria-modal="true" aria-label="Portfolio image" hidden>
+  <div class="pf-lb__backdrop" id="pfLbBackdrop"></div>
+  <div class="pf-lb__stage">
+    <button class="pf-lb__close" id="pfLbClose" aria-label="Close portfolio">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button class="pf-lb__nav pf-lb__nav--prev" id="pfLbPrev" aria-label="Previous image">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M11 3.5L5 9l6 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="pf-lb__img-wrap">
+      <img class="pf-lb__img" id="pfLbImg" src="" alt="">
+    </div>
+    <button class="pf-lb__nav pf-lb__nav--next" id="pfLbNext" aria-label="Next image">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M7 3.5L13 9l-6 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="pf-lb__counter" id="pfLbCounter" aria-live="polite" aria-atomic="true"></div>
+    <p class="pf-lb__caption" id="pfLbCaption" hidden></p>
+  </div>
+</div>
+
+<script>
+// ── PORTFOLIO GALLERY + LIGHTBOX ───────────────────────────
+(function () {
+  var FILES    = window.CIS_PORTFOLIO_FILES    || [];
+  var CAPS     = window.CIS_PORTFOLIO_CAPTIONS || {};
+  var TOTAL    = FILES.length;
+  var MARQ_N   = Math.min(15, TOTAL); // 15 tiles ≈ 4350px — seamless on 4K
+  var noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (TOTAL === 0) return;
+
+  function imgSrc(n) { return 'assets/portfolio/' + FILES[n - 1]; }
+  function imgAlt(n) {
+    return CAPS[FILES[n - 1]] || ('Celebrity Interior Solutions — completed interior design work ' + n);
+  }
+
+  // ── Lightbox ─────────────────────────────────────────────
+  var cur    = 0;
+  var fromEl = null;
+  var lb      = document.getElementById('pfLightbox');
+  var lbImg   = document.getElementById('pfLbImg');
+  var lbCount = document.getElementById('pfLbCounter');
+  var lbCap   = document.getElementById('pfLbCaption');
+  var lbClose = document.getElementById('pfLbClose');
+  var lbPrev  = document.getElementById('pfLbPrev');
+  var lbNext  = document.getElementById('pfLbNext');
+  var lbBk    = document.getElementById('pfLbBackdrop');
+
+  if (!lb) return;
+
+  function setSlide() {
+    var n   = cur + 1;
+    var cap = CAPS[FILES[cur]] || '';
+    lbImg.src = imgSrc(n);
+    lbImg.alt = imgAlt(n);
+    lbCount.textContent = n + ' / ' + TOTAL;
+    lb.setAttribute('aria-label', 'Portfolio image ' + n + ' of ' + TOTAL);
+    if (lbCap) { lbCap.textContent = cap; lbCap.hidden = !cap; }
+  }
+
+  function openLb(index, trigger) {
+    cur    = ((index % TOTAL) + TOTAL) % TOTAL;
+    fromEl = trigger || null;
+    setSlide();
+    lb.hidden = false;
+    document.body.style.overflow = 'hidden';
+    lbClose.focus();
+  }
+
+  function closeLb() {
+    lb.hidden = true;
+    document.body.style.overflow = '';
+    if (fromEl) { try { fromEl.focus(); } catch (e) {} }
+    fromEl = null;
+  }
+
+  function goNext() { cur = (cur + 1) % TOTAL; setSlide(); }
+  function goPrev() { cur = (cur - 1 + TOTAL) % TOTAL; setSlide(); }
+
+  lbClose.addEventListener('click', closeLb);
+  lbNext.addEventListener('click', goNext);
+  lbPrev.addEventListener('click', goPrev);
+  lbBk.addEventListener('click', closeLb);
+
+  // Keyboard navigation + focus trap
+  document.addEventListener('keydown', function (e) {
+    if (lb.hidden) return;
+    switch (e.key) {
+      case 'Escape':     e.preventDefault(); closeLb(); break;
+      case 'ArrowRight': e.preventDefault(); goNext(); break;
+      case 'ArrowLeft':  e.preventDefault(); goPrev(); break;
+      case 'Tab': {
+        var nodes = [lbPrev, lbClose, lbNext];
+        var first = nodes[0], last = nodes[nodes.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+        }
+        break;
+      }
+    }
+  });
+
+  // Touch swipe
+  var touchX = 0;
+  lb.addEventListener('touchstart', function (e) {
+    touchX = e.touches[0].clientX;
+  }, { passive: true });
+  lb.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) { dx < 0 ? goNext() : goPrev(); }
+  }, { passive: true });
+
+  // ── Gallery grid ──────────────────────────────────────────
+  var grid = document.getElementById('portfolioGrid');
+  if (grid) {
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < TOTAL; i++) {
+      (function (idx) {
+        var n   = idx + 1;
+        var alt = imgAlt(n);
+        var btn = document.createElement('button');
+        btn.className = 'portfolio-thumb';
+        btn.setAttribute('role', 'listitem');
+        btn.setAttribute('aria-label', alt);
+        var img = document.createElement('img');
+        img.src     = imgSrc(n);
+        img.alt     = alt;
+        img.loading = 'lazy';
+        btn.appendChild(img);
+        btn.addEventListener('click', function () { openLb(idx, btn); });
+        frag.appendChild(btn);
+      })(i);
+    }
+    grid.appendChild(frag);
+
+    if (!noMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.create({
+        trigger: grid,
+        start: 'top 84%',
+        once: true,
+        onEnter: function () {
+          gsap.fromTo('.portfolio-thumb',
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out',
+              stagger: { amount: 0.8, from: 'start' } }
+          );
+        }
+      });
+    }
+  }
+
+  // ── Marquee strip ─────────────────────────────────────────
+  var track = document.getElementById('portfolioMarqueeTrack');
+  if (track) {
+    function makeTile(n, clone) {
+      var alt = imgAlt(n);
+      var btn = document.createElement('button');
+      btn.className = 'portfolio-marquee__tile';
+      if (clone) {
+        btn.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('tabindex', '-1');
+      } else {
+        btn.setAttribute('aria-label', alt);
+      }
+      var img = document.createElement('img');
+      img.src     = imgSrc(n);
+      img.alt     = clone ? '' : alt;
+      img.loading = 'lazy';
+      btn.appendChild(img);
+      btn.addEventListener('click', function () { openLb(n - 1, null); });
+      return btn;
+    }
+
+    // Two identical sets for seamless CSS loop
+    for (var j = 1; j <= MARQ_N; j++) track.appendChild(makeTile(j, false));
+    for (var k = 1; k <= MARQ_N; k++) track.appendChild(makeTile(k, true));
+
+    if (noMotion) track.style.animationPlayState = 'paused';
+  }
+
+  // Expose so the sphere showcase can open the same lightbox
+  window.__pfLbOpen = openLb;
+})();
+</script>
+
+<script>
+// ── 3D SPHERE SHOWCASE ─────────────────────────────────────
+(function () {
+  var FILES    = window.CIS_PORTFOLIO_FILES || [];
+  var TOTAL    = FILES.length;
+  if (TOTAL === 0) return;
+
+  var noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (noMotion) return;
+
+  var isMobile = window.matchMedia('(max-width: 640px)').matches;
+  var N  = isMobile ? 14 : 22;
+  var R  = isMobile ? 140 : 220;
+
+  var scene = document.getElementById('pfSphereScene');
+  var ring  = document.getElementById('pfSphereRing');
+  if (!ring || !scene) return;
+
+  // ── Fibonacci sphere positions ──────────────────────────
+  var GOLDEN = Math.PI * (3 - Math.sqrt(5));
+  var pos = [];
+  for (var i = 0; i < N; i++) {
+    var y2  = 1 - (i / (N - 1)) * 2;
+    var r2  = Math.sqrt(Math.max(0, 1 - y2 * y2));
+    var th  = GOLDEN * i;
+    var lon = Math.atan2(Math.cos(th) * r2, Math.sin(th) * r2) * 180 / Math.PI;
+    var lat = Math.asin(Math.max(-1, Math.min(1, y2))) * 180 / Math.PI;
+    pos.push({ lon: lon, lat: lat });
+  }
+
+  // ── Pick N random files for initial display ─────────────
+  var pool = [];
+  for (var pi = 0; pi < TOTAL; pi++) pool.push(pi);
+  for (var si = pool.length - 1; si > 0; si--) {
+    var sj = Math.floor(Math.random() * (si + 1));
+    var st = pool[si]; pool[si] = pool[sj]; pool[sj] = st;
+  }
+  var shown = pool.slice(0, N); // file-index per tile slot
+
+  // ── Build tiles ────────────────────────────────────────
+  var tiles = [];
+  var frag  = document.createDocumentFragment();
+  for (var t = 0; t < N; t++) {
+    (function (idx) {
+      var p  = pos[idx];
+      var el = document.createElement('div');
+      el.className = 'pf-sphere__tile';
+      el.style.transform = 'rotateY(' + p.lon + 'deg) rotateX(' + (-p.lat) + 'deg) translateZ(' + R + 'px)';
+      var img = document.createElement('img');
+      img.src     = 'assets/portfolio/thumb/' + FILES[shown[idx]];
+      img.alt     = '';
+      img.loading = 'lazy';
+      el.appendChild(img);
+      frag.appendChild(el);
+      tiles.push(el);
+    })(t);
+  }
+  ring.appendChild(frag);
+
+  // ── Rotation state ──────────────────────────────────────
+  var rotX = -12, rotY = 0;
+  function applyRot() {
+    ring.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+  }
+  applyRot();
+
+  // ── Auto-spin via GSAP ticker ───────────────────────────
+  var spinning  = false;
+  var spinTimer = null;
+
+  function spinTick() { rotY += 0.06; applyRot(); }
+
+  function startSpin() {
+    if (spinning) return;
+    spinning = true;
+    gsap.ticker.add(spinTick);
+    startSwap();
+  }
+  function stopSpin() {
+    spinning = false;
+    gsap.ticker.remove(spinTick);
+  }
+  function scheduleSpin() {
+    clearTimeout(spinTimer);
+    spinTimer = setTimeout(startSpin, 2500);
+  }
+
+  // ── Drag + momentum (GSAP ticker decay) ─────────────────
+  var dragging  = false;
+  var lastPX = 0, lastPY = 0, pdX = 0, pdY = 0;
+  var vel       = { x: 0, y: 0 };
+  var momActive = false;
+
+  function momentumTick(time, deltaTime) {
+    var f = Math.pow(0.92, (deltaTime || 16.67) / 16.67);
+    vel.x *= f; vel.y *= f;
+    rotX  += vel.x; rotY += vel.y;
+    rotX   = Math.max(-70, Math.min(70, rotX));
+    applyRot();
+    if (Math.abs(vel.x) < 0.005 && Math.abs(vel.y) < 0.005) {
+      gsap.ticker.remove(momentumTick);
+      momActive = false;
+      scheduleSpin();
+    }
+  }
+
+  scene.addEventListener('pointerdown', function (e) {
+    dragging = true;
+    lastPX = e.clientX; lastPY = e.clientY;
+    pdX    = e.clientX; pdY    = e.clientY;
+    vel.x  = 0; vel.y = 0;
+    stopSpin();
+    stopSwap();
+    clearTimeout(spinTimer);
+    if (momActive) { gsap.ticker.remove(momentumTick); momActive = false; }
+    scene.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  scene.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var dx = e.clientX - lastPX;
+    var dy = e.clientY - lastPY;
+    vel.x  = dy * 0.4; vel.y = dx * 0.4;
+    rotX  += vel.x; rotY += vel.y;
+    rotX   = Math.max(-70, Math.min(70, rotX));
+    applyRot();
+    lastPX = e.clientX; lastPY = e.clientY;
+  });
+
+  scene.addEventListener('pointerup', function (e) {
+    if (!dragging) return;
+    dragging = false;
+
+    // Tap (not drag) → open lightbox at that photo
+    var moved = Math.abs(e.clientX - pdX) + Math.abs(e.clientY - pdY);
+    if (moved < 6) {
+      var hit = document.elementFromPoint(e.clientX, e.clientY);
+      while (hit && hit !== scene) {
+        if (hit.classList && hit.classList.contains('pf-sphere__tile')) {
+          var tIdx = tiles.indexOf(hit);
+          if (tIdx >= 0 && window.__pfLbOpen) {
+            window.__pfLbOpen(shown[tIdx], hit);
+          }
+          vel.x = 0; vel.y = 0;
+          scheduleSpin();
+          return;
+        }
+        hit = hit.parentElement;
+      }
+      scheduleSpin();
+      return;
+    }
+
+    // Apply momentum decay via GSAP ticker
+    if (Math.abs(vel.x) > 0.02 || Math.abs(vel.y) > 0.02) {
+      momActive = true;
+      gsap.ticker.add(momentumTick);
+    } else {
+      scheduleSpin();
+    }
+  });
+
+  scene.addEventListener('pointercancel', function () {
+    dragging = false;
+    vel.x = 0; vel.y = 0;
+    stopSwap();
+    scheduleSpin();
+  });
+
+  // ── Random tile swap every 2.5s ─────────────────────────
+  var swapIv = null;
+
+  function startSwap() { clearInterval(swapIv); swapIv = setInterval(doSwap, 2500); }
+  function stopSwap()  { clearInterval(swapIv); }
+
+  function doSwap() {
+    if (dragging) return;
+    var shownSet = {};
+    shown.forEach(function (fi) { shownSet[fi] = true; });
+    var avail = [];
+    for (var fi = 0; fi < TOTAL; fi++) {
+      if (!shownSet[fi]) avail.push(fi);
+    }
+    if (!avail.length) return;
+
+    var tIdx   = Math.floor(Math.random() * N);
+    var newFi  = avail[Math.floor(Math.random() * avail.length)];
+    var img    = tiles[tIdx].querySelector('img');
+    var newSrc = 'assets/portfolio/thumb/' + FILES[newFi];
+
+    var pre   = new Image();
+    pre.src   = newSrc;
+    pre.onload = function () {
+      gsap.to(img, {
+        opacity: 0, duration: 0.5,
+        onComplete: function () {
+          img.src      = newSrc;
+          shown[tIdx]  = newFi;
+          gsap.to(img, { opacity: 1, duration: 0.5 });
+        }
+      });
+    };
+  }
+
+  // ── IntersectionObserver — pause when off-screen ─────────
+  var obs = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) {
+      scheduleSpin();
+    } else {
+      stopSpin();
+      stopSwap();
+      clearTimeout(spinTimer);
+    }
+  }, { threshold: 0.1 });
+
+  obs.observe(document.getElementById('pfSphere') || scene);
+})();
 </script>
 </body>
 </html>
