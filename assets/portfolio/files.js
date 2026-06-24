@@ -4,7 +4,6 @@ window.CIS_PORTFOLIO_FILES = [
   "work-03.jpg",
   "work-04.jpg",
   "work-05.jpg",
-  "work-06.jpg",
   "work-07.jpg",
   "work-08.jpg",
   "work-09.jpg",
@@ -39,5 +38,5 @@ window.CIS_PORTFOLIO_FILES = [
   "work-38.jpg",
   "work-39.jpg",
   "work-40.jpg",
-  "work-41.jpg"
+  "work-41.jpg",
 ];

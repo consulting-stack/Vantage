@@ -2585,10 +2585,25 @@ Rules:
     };
   }
 
+  // ── Warm-up: decode initial thumbnails before first spin ─
+  function warmUp(cb) {
+    var decodes = tiles.map(function (el) {
+      var probe = new Image();
+      probe.src = el.querySelector('img').src;
+      return probe.decode ? probe.decode().catch(function () {}) : Promise.resolve();
+    });
+    var settle = Promise.allSettled
+      ? Promise.allSettled(decodes)
+      : Promise.all(decodes.map(function (p) { return p.then(null, function () {}); }));
+    Promise.race([settle, new Promise(function (res) { setTimeout(res, 600); })]).then(cb);
+  }
+
   // ── IntersectionObserver — pause when off-screen ─────────
+  var hasSpun = false;
   var obs = new IntersectionObserver(function (entries) {
     if (entries[0].isIntersecting) {
-      scheduleSpin();
+      if (!hasSpun) { hasSpun = true; warmUp(startSpin); }
+      else { scheduleSpin(); }
     } else {
       stopSpin();
       stopSwap();
