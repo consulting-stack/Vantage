@@ -7,6 +7,12 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>HHC Invoice System — Heavenly Hands Contracting</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#B8973F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vantage">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -611,9 +617,20 @@ const S = { isReady: false, isPaid: false, discMode: 'amount', items: [], nid: 1
 let histFilter = 'all';
 
 // ─── PASSWORD GATE ────────────────────────────────────────────────────────────
-function checkPw() {
+const GATE_HASH = '77baf1780ab60524a0c936a35444e3c045b0b243d4107b912907ceb75f490e66';
+
+async function verifyPasscode(input, expectedHash) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex === expectedHash;
+}
+
+async function checkPw() {
   const v = document.getElementById('gate-pw').value;
-  if (v === 'HHC2025') {
+  if (await verifyPasscode(v, GATE_HASH)) {
     sessionStorage.setItem('hhc_auth','1');
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
@@ -1414,6 +1431,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.id === 'send-modal') closeSend();
   });
 });
+
+// ─── PWA ──────────────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>
