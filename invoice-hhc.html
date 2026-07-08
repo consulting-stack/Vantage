@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>HHC Invoice System — Heavenly Hands Contracting</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>emailjs.init("V45OHOCimNcRx61wK");</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--surface:#111111;--surface2:#1a1a1a;
+  --gold:#B8973F;--gold-light:#E8D48B;
+  --gold-border:rgba(201,168,76,0.25);--gold-border-h:rgba(201,168,76,0.5);
+  --text:#F5F5F0;--dim:#cccccc;--muted:#888888;--err:#ff5555;--r:4px;
+}
+html{font-family:'Inter',sans-serif;font-size:14px;color:var(--text);background:var(--bg)}
+body{min-height:100vh;overflow-x:hidden}
+
+/* ── GATE ── */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999}
+.gate-box{display:flex;flex-direction:column;align-items:center;gap:24px;padding:56px 48px;background:var(--surface);border:1px solid var(--gold-border);border-radius:8px;max-width:400px;width:90%}
+.gate-logo{width:120px;height:auto}
+.gate-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--gold-light);text-align:center;letter-spacing:0.04em}
+.gate-sub{font-size:11px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px;text-align:center}
+.gate-input-wrap{display:flex;flex-direction:column;gap:10px;width:100%}
+#gate-pw{width:100%;padding:14px 16px;background:#1c1c1c;border:1px solid var(--gold-border);color:var(--text);font-size:16px;border-radius:var(--r);outline:none;letter-spacing:0.3em;text-align:center;transition:border-color .2s}
+#gate-pw:focus{border-color:var(--gold)}
+#gate-pw.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+.gate-btn{width:100%;padding:14px;background:var(--gold);color:#1a1000;font-weight:700;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;border:none;border-radius:var(--r);cursor:pointer;transition:background .2s,transform .1s}
+.gate-btn:hover{background:var(--gold-light)}
+.gate-btn:active{transform:scale(.98)}
+.gate-err{font-size:12px;color:var(--err);text-align:center;min-height:18px}
+
+/* ── APP SHELL ── */
+#app{display:none;flex-direction:column;height:100vh;overflow:hidden}
+.app-header{padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--gold-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.app-brand{display:flex;align-items:center;gap:14px}
+.app-brand img{height:34px;width:auto}
+.brand-text h1{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--gold-light);letter-spacing:.04em}
+.brand-text p{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.header-info{font-size:11px;color:var(--muted);letter-spacing:.04em}
+
+/* ── TWO-COLUMN BODY ── */
+.app-body{display:grid;grid-template-columns:40% 60%;flex:1;overflow:hidden;min-height:0}
+@media(max-width:900px){.app-body{grid-template-columns:1fr;overflow:auto}#app{height:auto;overflow:visible}}
+
+/* ── FORM PANEL ── */
+.form-panel{background:var(--surface);border-right:1px solid var(--gold-border);overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:24px}
+.form-section{display:flex;flex-direction:column;gap:12px}
+.section-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold-border);padding-bottom:7px;margin-bottom:2px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+input[type=text],input[type=email],input[type=date],input[type=number],textarea,select{background:#1a1a1a;border:1px solid var(--gold-border);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:9px 11px;border-radius:var(--r);outline:none;width:100%;transition:border-color .2s}
+input:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:76px;line-height:1.6}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.6);cursor:pointer}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{opacity:.5}
+
+/* ── DOC TYPE TOGGLE ── */
+.doctype-toggle{display:flex;gap:4px;background:#1a1a1a;border:1px solid var(--gold-border);border-radius:8px;padding:4px;margin-bottom:2px}
+.dt-pill{flex:1;padding:13px;border:none;background:none;color:var(--muted);font-family:'Inter',sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;border-radius:6px;cursor:pointer;transition:all .2s}
+.dt-pill:hover:not(.active){color:var(--gold-light)}
+.dt-pill.active{background:var(--gold);color:#1a1000}
+
+/* ── LINE ITEMS ── */
+.li-header{display:grid;grid-template-columns:1fr 64px 96px 84px 30px;gap:6px;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:0 2px;margin-bottom:4px}
+.li-row{display:grid;grid-template-columns:1fr 64px 96px 84px 30px;gap:6px;align-items:center;padding:4px 2px;border-bottom:1px solid rgba(255,255,255,.04)}
+.li-total{font-size:13px;color:var(--dim);padding:9px 11px;background:#1a1a1a;border:1px solid var(--gold-border);border-radius:var(--r);text-align:right;white-space:nowrap}
+.btn-rm{width:28px;height:36px;background:none;border:1px solid rgba(255,60,60,.25);color:rgba(255,60,60,.6);border-radius:var(--r);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.btn-rm:hover{background:rgba(255,60,60,.08);color:#ff5555;border-color:#ff5555}
+.btn-add-line{background:none;border:1px dashed var(--gold-border);color:var(--gold);font-size:12px;padding:10px;border-radius:var(--r);cursor:pointer;width:100%;letter-spacing:.08em;transition:all .2s;margin-top:6px;font-family:'Inter',sans-serif}
+.btn-add-line:hover{border-color:var(--gold);background:rgba(201,168,76,.05)}
+
+/* ── DISCOUNT ── */
+.disc-wrap{display:flex;gap:6px;align-items:stretch}
+.disc-mode{background:#1a1a1a;border:1px solid var(--gold-border);color:var(--muted);padding:9px 12px;border-radius:var(--r);cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;font-weight:600;transition:all .2s;white-space:nowrap}
+.disc-mode.active{background:var(--gold);color:#1a1000;border-color:var(--gold)}
+
+/* ── ACTION BAR ── */
+.action-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:8px;border-top:1px solid var(--gold-border);margin-top:4px}
+.btn{padding:12px 14px;border:none;border-radius:var(--r);cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:11px;letter-spacing:.09em;text-transform:uppercase;transition:all .2s}
+.btn-gold{background:var(--gold);color:#1a1000}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:none;border:1px solid var(--gold-border);color:var(--gold)}
+.btn-outline:hover{border-color:var(--gold);background:rgba(201,168,76,.06)}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,.1);color:var(--dim)}
+.btn-ghost:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.04)}
+.btn-full{grid-column:1/-1}
+.btn:active{transform:scale(.97)}
+
+/* ── PREVIEW PANEL ── */
+.preview-panel{background:#d8d8d8;overflow-y:auto;padding:28px;display:flex;justify-content:center;align-items:flex-start}
+
+/* ── INVOICE DOCUMENT (white, printable) ── */
+#invoice-doc{background:#fff;width:100%;max-width:760px;min-height:900px;padding:48px;box-shadow:0 4px 24px rgba(0,0,0,.18);font-family:'Inter',sans-serif;color:#1a1a1a;position:relative;font-size:13px;line-height:1.5}
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.inv-logo{width:120px;height:auto;object-fit:contain}
+.inv-co{text-align:right}
+.inv-doctitle{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:#B8973F;margin-bottom:6px}
+.inv-co-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#111;letter-spacing:.03em;margin-bottom:4px}
+.inv-co p{font-size:12px;color:#666;line-height:1.8}
+.inv-divider{height:2px;background:linear-gradient(90deg,transparent 0%,#B8973F 20%,#B8973F 80%,transparent 100%);margin-bottom:28px}
+.inv-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}
+.inv-bill h3,.inv-info h3{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#aaa;margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px}
+.inv-bill p{font-size:13px;color:#333;line-height:1.8}
+.inv-info table{width:100%;border-collapse:collapse}
+.inv-info td{padding:3px 0;font-size:13px;vertical-align:top}
+.inv-info td:first-child{color:#888;width:120px;font-size:12px}
+.inv-info td:last-child{font-weight:500;color:#222}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+.inv-table thead tr{border-bottom:2px solid #B8973F}
+.inv-table th{padding:10px 12px;text-align:left;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#aaa;font-weight:600;background:#fafafa}
+.inv-table th:nth-child(2),.inv-table td:nth-child(2){text-align:center}
+.inv-table th:nth-child(3),.inv-table td:nth-child(3){text-align:center}
+.inv-table th:nth-child(4),.inv-table td:nth-child(4){text-align:right}
+.inv-table tbody tr{border-bottom:1px solid #f2f2f2}
+.inv-table tbody tr:nth-child(even){background:#fafafa}
+.inv-table td{padding:10px 12px;font-size:13px;color:#333}
+.inv-totals{display:flex;justify-content:flex-end;margin-bottom:28px}
+.inv-totals-box{width:280px}
+.t-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;color:#555;border-bottom:1px solid #f0f0f0}
+.t-row.grand{font-size:15px;font-weight:700;color:#111;border-top:2px solid #B8973F;border-bottom:2px solid #B8973F;padding:11px 0;margin-top:6px}
+.t-row.grand .t-amt{color:#B8973F}
+.inv-payment{background:#f9f9f9;border:1px solid #e8e8e8;border-radius:4px;padding:14px;margin-bottom:20px}
+.inv-payment h4{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#aaa;margin-bottom:6px}
+.inv-payment p{font-size:12px;color:#555;line-height:1.8}
+.inv-notes{margin-bottom:24px}
+.inv-notes h4{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#aaa;margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:5px}
+.inv-notes p{font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap}
+.inv-footer{border-top:1px solid #eee;padding-top:14px;font-size:11px;color:#bbb;text-align:center;letter-spacing:.05em}
+.draft-wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden}
+.draft-wm span{font-family:'Cormorant Garamond',serif;font-size:130px;font-weight:700;color:rgba(0,0,0,.05);transform:rotate(-35deg);letter-spacing:.2em;user-select:none;white-space:nowrap}
+
+/* ── HISTORY ── */
+#hist-wrap{border-top:1px solid var(--gold-border);background:var(--surface);flex-shrink:0;max-height:300px;display:flex;flex-direction:column}
+.hist-toggle{width:100%;padding:13px 24px;background:none;border:none;color:var(--gold);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:background .2s;flex-shrink:0}
+.hist-toggle:hover{background:rgba(201,168,76,.04)}
+.hist-icon{font-size:14px;transition:transform .2s;display:inline-block}
+.hist-icon.open{transform:rotate(180deg)}
+#hist-body{display:none;overflow-y:auto;padding:0 24px 16px;flex:1}
+#hist-body.open{display:block}
+.hist-table{width:100%;border-collapse:collapse;min-width:580px}
+.hist-table th{padding:9px 10px;text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--gold-border)}
+.hist-table td{padding:9px 10px;font-size:13px;color:var(--dim);border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.hist-table tbody tr:hover td{background:rgba(201,168,76,.03);cursor:pointer}
+.s-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;cursor:pointer;user-select:none;transition:opacity .15s}
+.s-badge:hover{opacity:.8}
+.s-draft{background:rgba(150,150,150,.15);color:#999}
+.s-sent{background:rgba(68,136,255,.15);color:#6699ff}
+.s-paid{background:rgba(68,187,68,.15);color:#66cc66}
+.s-overdue{background:rgba(255,68,68,.15);color:#ff6666}
+.s-converted{background:rgba(201,168,76,.15);color:var(--gold-light)}
+.dt-badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.08em}
+.dt-badge.inv{background:rgba(102,153,255,.12);color:#6699ff}
+.dt-badge.est{background:rgba(255,255,255,.08);color:#aaa}
+.hist-filter{display:flex;gap:6px;padding:12px 0 0}
+.hf-btn{background:none;border:1px solid var(--gold-border);color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:14px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;transition:all .2s}
+.hf-btn:hover:not(.active){border-color:var(--gold);color:var(--gold-light)}
+.hf-btn.active{background:var(--gold);color:#1a1000;border-color:var(--gold)}
+.btn-del{background:none;border:none;color:rgba(255,80,80,.45);cursor:pointer;font-size:15px;padding:4px 8px;transition:color .2s}
+.btn-del:hover{color:#ff5555}
+.hist-empty{text-align:center;padding:28px;color:var(--muted);font-size:13px}
+
+/* ── SEND MODAL ── */
+#send-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;align-items:center;justify-content:center}
+#send-modal.open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--gold-border);border-radius:8px;padding:32px;width:90%;max-width:480px}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--gold-light);margin-bottom:22px;letter-spacing:.03em}
+.modal-form{display:flex;flex-direction:column;gap:14px}
+.modal-actions{display:flex;gap:10px;margin-top:6px}
+.modal-err{font-size:12px;color:var(--err);min-height:16px}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:28px;right:28px;background:var(--surface);border:1px solid var(--gold-border);padding:14px 22px;border-radius:var(--r);font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(16px);opacity:0;transition:all .3s;pointer-events:none;z-index:2000}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.t-ok{border-color:rgba(68,187,68,.4);color:#66cc66}
+#toast.t-err{border-color:rgba(255,68,68,.4);color:#ff6666}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gold-border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .form-panel{padding:18px}
+  .action-bar{position:sticky;bottom:0;background:var(--surface);padding:14px;border-top:1px solid var(--gold-border);margin:0 -18px -18px;z-index:100}
+  .preview-panel{padding:14px}
+  #invoice-doc{padding:24px;font-size:12px}
+  .inv-header{flex-direction:column;gap:14px}
+  .inv-co{text-align:left}
+  .inv-meta-grid{grid-template-columns:1fr}
+  #hist-wrap{max-height:none}
+}
+
+/* ── NUMBER ROW + REGEN ── */
+.num-row{display:flex;gap:6px}
+.num-row input{flex:1;min-width:0}
+.btn-regen{background:none;border:none;color:var(--gold);font-size:1.2rem;cursor:pointer;transition:transform .2s;flex-shrink:0}
+.btn-regen:hover{transform:rotate(90deg)}
+
+/* ── SELECT (PAYMENT TERMS) ── */
+select{appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23B8973F' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:11px;padding-right:32px}
+select option{background:#1a1a1a;color:#fff}
+
+/* ── EXPIRY COUNTDOWN ── */
+.expiry-note{font-size:11px;font-weight:700;letter-spacing:.05em;margin-top:2px;min-height:14px}
+.expiry-gold{color:var(--gold)}
+.expiry-orange{color:#ff9d33}
+.expiry-red{color:#ff5555}
+.expiry-expired{display:inline-block;background:rgba(255,68,68,.15);color:#ff6666;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;letter-spacing:.1em}
+
+/* ── EXPIRED STAMP ── */
+.expired-wm span{color:rgba(220,30,30,.16) !important}
+
+/* ── PAID STAMP ── */
+.paid-stamp{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;z-index:6}
+.paid-stamp.show{display:flex}
+.paid-stamp span{font-family:'Cormorant Garamond',serif;font-size:150px;font-weight:700;color:rgba(201,168,76,.35);transform:rotate(-30deg);letter-spacing:.12em;user-select:none;white-space:nowrap}
+
+/* ── SIGNATURE BLOCK ── */
+.sig-divider{height:1px;background:linear-gradient(90deg,transparent,#B8973F,transparent);margin:26px 0 18px}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:8px}
+.sig-line{border-bottom:1px solid #aaa;height:30px}
+.sig-label{font-size:10px;color:#999;letter-spacing:.06em;margin-top:4px;display:block}
+
+/* ── TOGGLE ROW (LATE FEE) ── */
+.toggle-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);cursor:pointer;user-select:none}
+.toggle-row input{width:14px;height:14px;cursor:pointer;accent-color:var(--gold)}
+
+/* ── CLIENT QUICK ACTIONS ── */
+.client-actions{display:flex;gap:8px}
+.client-actions .btn{flex:1;padding:9px;font-size:11px}
+
+/* ── CLIENT MODAL ── */
+#client-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;align-items:center;justify-content:center}
+#client-modal.open{display:flex}
+.client-search{width:100%;padding:10px 12px;background:#1c1c1c;border:1px solid var(--gold-border);color:var(--text);border-radius:var(--r);margin-bottom:12px;font-size:13px}
+.client-search:focus{border-color:var(--gold)}
+.client-list{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.client-item{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;background:#1a1a1a;border:1px solid var(--gold-border);border-radius:var(--r);cursor:pointer;transition:all .15s}
+.client-item:hover{border-color:var(--gold);background:rgba(201,168,76,.05)}
+.client-item-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.client-item-name{font-size:13px;font-weight:600;color:var(--gold-light)}
+.client-item-meta{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.client-item-del{background:none;border:none;color:rgba(255,80,80,.45);cursor:pointer;font-size:16px;padding:2px 8px;flex-shrink:0}
+.client-item-del:hover{color:#ff5555}
+.client-empty{text-align:center;padding:28px;color:var(--muted);font-size:13px}
+
+/* ── AGING DASHBOARD ── */
+.aging-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 24px;border-bottom:1px solid var(--gold-border)}
+.aging-card{background:#1a1a1a;border:1px solid var(--gold-border);border-radius:var(--r);padding:12px 8px;text-align:center}
+.aging-val{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:700;color:var(--gold-light)}
+.aging-val.danger{color:#ff5555}
+.aging-lbl{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+@media(max-width:900px){.aging-bar{grid-template-columns:repeat(2,1fr)}}
+
+/* ── REVISION / SUPERSEDED BADGES ── */
+.rev-badge{display:inline-block;background:rgba(255,255,255,.08);color:#aaa;font-size:9px;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:700;letter-spacing:.05em}
+.s-superseded{background:rgba(150,150,150,.1);color:#777}
+
+/* ── HHC TEXT WORDMARK (temporary — see LOGO SWAP anchors in markup) ── */
+.hhc-monogram{display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--gold-light);border:1px solid var(--gold-border-h);border-radius:2px}
+.hhc-mono-gate{width:72px;height:72px;font-size:34px;letter-spacing:.06em;margin:0 auto}
+.hhc-mono-hdr{width:34px;height:34px;font-size:17px;letter-spacing:.04em}
+.hhc-wordmark{line-height:1}
+.hhc-wm-main{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#B8973F;white-space:nowrap}
+.hhc-wm-sub{font-size:9px;font-weight:600;letter-spacing:.5em;text-transform:uppercase;color:#555;margin-top:3px}
+</style>
+</head>
+<body>
+
+<!-- ░░ PASSWORD GATE ░░ -->
+<div id="gate">
+  <div class="gate-box">
+    <!-- LOGO SWAP: replace this monogram with the real HHC logo <img ... class="gate-logo"> when available -->
+    <div class="hhc-monogram hhc-mono-gate" aria-label="HHC">HH</div>
+    <div>
+      <div class="gate-title">Heavenly Hands Contracting</div>
+      <div class="gate-sub">Invoice Management System</div>
+    </div>
+    <div class="gate-input-wrap">
+      <input type="password" id="gate-pw" placeholder="Access Code" autocomplete="off">
+      <button class="gate-btn" onclick="checkPw()">Enter System</button>
+      <div id="gate-err" class="gate-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ░░ MAIN APP ░░ -->
+<div id="app">
+
+  <header class="app-header">
+    <div class="app-brand">
+      <!-- LOGO SWAP: replace this monogram with the real HHC logo <img ...> (height:34px) when available -->
+      <div class="hhc-monogram hhc-mono-hdr" aria-label="HHC">HH</div>
+      <div class="brand-text">
+        <h1>Heavenly Hands Contracting</h1>
+        <p>Invoice System</p>
+      </div>
+    </div>
+    <div class="header-info">Houston, TX &nbsp;&bull;&nbsp; 832-720-8165 &nbsp;&bull;&nbsp; marlowedesignscorp@gmail.com</div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- ── FORM PANEL ── -->
+    <div class="form-panel">
+
+      <div class="doctype-toggle">
+        <button class="dt-pill active" id="dt-invoice" onclick="setDocType('invoice')">Invoice</button>
+        <button class="dt-pill" id="dt-estimate" onclick="setDocType('estimate')">Estimate</button>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Bill To</div>
+        <div class="form-group">
+          <label>Company / Client Name *</label>
+          <input type="text" id="f-cname" placeholder="Client or Company Name" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Contact Name</label>
+          <input type="text" id="f-contact" placeholder="Attn: First Last" oninput="updatePreview()">
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <textarea id="f-addr" rows="3" placeholder="Street&#10;City, State ZIP" oninput="updatePreview()"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Client Email (used for Send)</label>
+          <input type="email" id="f-email" placeholder="client@example.com" oninput="updatePreview()">
+        </div>
+        <div class="client-actions">
+          <button class="btn btn-ghost" onclick="saveClient()">&#128190; Save Client</button>
+          <button class="btn btn-ghost" onclick="openClientModal()">&#128203; Load Client</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title" id="lbl-section-details">Invoice Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label id="lbl-num">Invoice Number</label>
+            <div class="num-row">
+              <input type="text" id="f-num" placeholder="HHC-2026-0001" oninput="updatePreview()">
+              <button type="button" class="btn-regen" id="btn-regen" style="display:none" onclick="regenEstNum()" title="Generate new estimate number">&#128260;</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label id="lbl-terms">Payment Terms</label>
+            <select id="f-terms" onchange="onTermsChange()">
+              <option value="Due on Receipt">Due on Receipt</option>
+              <option value="Net 7">Net 7</option>
+              <option value="Net 15">Net 15</option>
+              <option value="Net 30">Net 30</option>
+              <option value="Net 45">Net 45</option>
+              <option value="Net 60">Net 60</option>
+              <option value="50% Deposit, Balance on Completion">50% Deposit, Balance on Completion</option>
+              <option value="Custom">Custom</option>
+            </select>
+            <input type="text" id="f-terms-custom" placeholder="Enter custom terms" style="display:none;margin-top:6px" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label id="lbl-date">Invoice Date</label>
+            <input type="date" id="f-date" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label id="lbl-due">Due Date</label>
+            <input type="date" id="f-due" oninput="updatePreview()">
+            <div id="expiry-note" class="expiry-note" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Line Items</div>
+        <div class="li-header">
+          <span>Description</span><span>Qty</span><span>Unit Price</span><span>Total</span><span></span>
+        </div>
+        <div id="li-container"></div>
+        <button class="btn-add-line" onclick="addLI()">&#43; Add Line Item</button>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Financial</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Discount</label>
+            <div class="disc-wrap">
+              <input type="number" id="f-disc" placeholder="0" min="0" step="0.01" oninput="updatePreview()" style="flex:1">
+              <button class="disc-mode active" id="disc-btn" onclick="toggleDisc()">$</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Tax Rate (%)</label>
+            <input type="number" id="f-tax" value="8.25" min="0" max="100" step="0.01" oninput="updatePreview()">
+          </div>
+        </div>
+        <div id="totals-hint" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
+        <div class="form-group" id="latefee-row" style="margin-top:6px">
+          <label class="toggle-row"><input type="checkbox" id="f-latefee" onchange="updatePreview()"> Include late fee notice</label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Notes &amp; Terms</div>
+        <div class="form-group">
+          <textarea id="f-notes" rows="6" oninput="updatePreview()">Thank you for your business. All invoices are due by the specified due date. A 50% deposit is required before project commencement, with the remaining balance due upon completion or delivery. Heavenly Hands Contracting reserves the right to pause services on overdue accounts. All sales on furniture and decor items are final.</textarea>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-gold" id="btn-dl" onclick="dlPDF()">&#8595; Download Invoice PDF</button>
+        <button class="btn btn-outline" id="btn-send" onclick="openSend()">&#9993; Send Invoice</button>
+        <button class="btn btn-ghost" onclick="saveDraft()">&#9744; Save Draft</button>
+        <button class="btn btn-ghost" onclick="newInv()">&#43; New Invoice</button>
+        <button class="btn btn-outline btn-full" id="btn-ready" onclick="toggleReady()">&#10003; Mark Ready</button>
+        <button class="btn btn-outline btn-full" id="btn-paid" onclick="togglePaid()">&#36; Mark as Paid</button>
+        <button class="btn btn-outline btn-full" id="btn-deposit" onclick="genDeposit()">&#8853; Generate Deposit Invoice</button>
+        <button class="btn btn-gold btn-full" id="btn-convert" style="display:none" onclick="convertToInvoice()">&#8644; Convert to Invoice</button>
+        <button class="btn btn-gold btn-full" id="btn-text" onclick="textClient()">&#128241; Text Client</button>
+      </div>
+
+    </div><!-- /form-panel -->
+
+    <!-- ── PREVIEW PANEL ── -->
+    <div class="preview-panel">
+      <div id="invoice-doc">
+
+        <div class="draft-wm" id="draft-wm"><span>DRAFT</span></div>
+        <div class="draft-wm expired-wm" id="expired-wm" style="display:none"><span>EXPIRED</span></div>
+        <div class="paid-stamp" id="paid-stamp"><span>PAID</span></div>
+
+        <div class="inv-header">
+          <!-- LOGO SWAP: replace this text lockup with the real HHC logo <img ... class="inv-logo"> when available -->
+          <div class="hhc-wordmark">
+            <div class="hhc-wm-main">Heavenly Hands</div>
+            <div class="hhc-wm-sub">Contracting</div>
+          </div>
+          <div class="inv-co">
+            <div class="inv-doctitle" id="p-doctitle">INVOICE</div>
+            <div class="inv-co-name">Heavenly Hands Contracting</div>
+            <p>Houston, TX</p>
+            <p>832-720-8165</p>
+            <p>marlowedesignscorp@gmail.com</p>
+          </div>
+        </div>
+
+        <div class="inv-divider"></div>
+
+        <div class="inv-meta-grid">
+          <div class="inv-bill">
+            <h3>Bill To</h3>
+            <p id="p-cname" style="font-weight:600;font-size:15px;color:#111"></p>
+            <p id="p-contact" style="color:#555"></p>
+            <p id="p-addr" style="color:#555;white-space:pre-wrap"></p>
+            <p id="p-email" style="color:#999;font-size:12px"></p>
+          </div>
+          <div class="inv-info">
+            <h3 id="lbl-p-details">Invoice Details</h3>
+            <table>
+              <tr><td id="lbl-p-num">Invoice No.</td><td id="p-num">&#8212;</td></tr>
+              <tr><td id="lbl-p-date">Invoice Date</td><td id="p-date">&#8212;</td></tr>
+              <tr><td id="lbl-p-due">Due Date</td><td id="p-due">&#8212;</td></tr>
+              <tr><td id="lbl-p-terms">Payment Terms</td><td id="p-terms">&#8212;</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <table class="inv-table">
+          <thead>
+            <tr>
+              <th style="width:50%">Description</th>
+              <th style="width:10%">Qty</th>
+              <th style="width:20%">Unit Price</th>
+              <th style="width:20%">Total</th>
+            </tr>
+          </thead>
+          <tbody id="p-items"></tbody>
+        </table>
+
+        <div class="inv-totals">
+          <div class="inv-totals-box">
+            <div class="t-row"><span>Subtotal</span><span class="t-amt" id="p-sub">$0.00</span></div>
+            <div class="t-row" id="p-disc-row" style="display:none"><span id="p-disc-lbl">Discount</span><span class="t-amt" id="p-disc-amt">&#8212;</span></div>
+            <div class="t-row"><span id="p-tax-lbl">Tax (8.25%)</span><span class="t-amt" id="p-tax-amt">$0.00</span></div>
+            <div class="t-row grand"><span id="lbl-grand">TOTAL DUE</span><span class="t-amt" id="p-grand">$0.00</span></div>
+          </div>
+        </div>
+
+        <div id="p-latefee" style="display:none;font-size:11px;color:#888;margin:-18px 0 24px;text-align:right">Note: A 1.5% late fee will be applied to balances unpaid after the due date.</div>
+
+        <div class="inv-payment">
+          <h4>Payment Methods</h4>
+          <p>For ACH/Bank Transfer, Zelle, PayPal, Cash App, or other payment arrangements, please contact us at <strong>marlowedesignscorp@gmail.com</strong> or <strong>832-720-8165</strong>. Stripe payment link coming soon.</p>
+        </div>
+
+        <div class="inv-notes">
+          <h4>Notes &amp; Terms</h4>
+          <p id="p-notes"></p>
+        </div>
+
+        <div class="sig-divider"></div>
+        <div class="sig-grid">
+          <div><div class="sig-line"></div><span class="sig-label">Authorized By</span></div>
+          <div><div class="sig-line"></div><span class="sig-label">Accepted By</span></div>
+          <div><div class="sig-line"></div><span class="sig-label">Name</span></div>
+          <div><div class="sig-line"></div><span class="sig-label">Name</span></div>
+          <div><div class="sig-line"></div><span class="sig-label">Date</span></div>
+          <div><div class="sig-line"></div><span class="sig-label">Date</span></div>
+        </div>
+
+        <div class="inv-footer">
+          Heavenly Hands Contracting &nbsp;&bull;&nbsp; Houston, TX &nbsp;&bull;&nbsp; 832-720-8165 &nbsp;&bull;&nbsp; marlowedesignscorp@gmail.com
+          <div id="p-footer-est" style="display:none;margin-top:6px;font-style:italic">This is an estimate and subject to change based on final scope.</div>
+        </div>
+
+      </div><!-- /invoice-doc -->
+    </div><!-- /preview-panel -->
+
+  </div><!-- /app-body -->
+
+  <!-- ── HISTORY PANEL ── -->
+  <div id="hist-wrap">
+    <div class="aging-bar" id="aging-bar"></div>
+    <button class="hist-toggle" onclick="toggleHist()">
+      <span>&#128203; &nbsp;Client Invoice History</span>
+      <span class="hist-icon" id="hist-icon">&#9660;</span>
+    </button>
+    <div id="hist-body">
+      <div class="hist-filter">
+        <button class="hf-btn active" data-f="all" onclick="setHistFilter('all')">All</button>
+        <button class="hf-btn" data-f="invoice" onclick="setHistFilter('invoice')">Invoices</button>
+        <button class="hf-btn" data-f="estimate" onclick="setHistFilter('estimate')">Estimates</button>
+      </div>
+      <div id="hist-content"></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ░░ SEND MODAL ░░ -->
+<div id="send-modal">
+  <div class="modal-box">
+    <div class="modal-title">Send Invoice</div>
+    <div class="modal-form">
+      <div class="form-group">
+        <label>Recipient Email</label>
+        <input type="email" id="m-to" placeholder="client@example.com">
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="m-subj">
+      </div>
+      <div class="form-group">
+        <label>Message (optional)</label>
+        <textarea id="m-msg" rows="3" placeholder="Please find your invoice attached..."></textarea>
+      </div>
+      <div id="m-status" class="modal-err"></div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" id="send-btn" style="flex:1" onclick="doSend()">Send Invoice</button>
+        <button class="btn btn-ghost" onclick="closeSend()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ░░ CLIENT LOAD MODAL ░░ -->
+<div id="client-modal">
+  <div class="modal-box">
+    <div class="modal-title">Load Client</div>
+    <input type="text" id="client-search" class="client-search" placeholder="Search clients..." oninput="renderClientList(this.value)">
+    <div class="client-list" id="client-list"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeClientModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ░░ TOAST ░░ -->
+<div id="toast"></div>
+
+<script>
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const HIST_KEY     = 'cis_invoice_history';
+const CTR_KEY      = 'cis_invoice_counter';
+const CLIENTS_KEY  = 'cis_clients';
+
+// Cloudinary (unsigned upload)
+const CLOUDINARY_URL    = 'https://api.cloudinary.com/v1_1/djzwhvq8s/raw/upload';
+const CLOUDINARY_PRESET = 'zdiwudao';
+
+const INVOICE_NOTES  = 'Thank you for your business. All invoices are due by the specified due date. A 50% deposit is required before project commencement, with the remaining balance due upon completion or delivery. Heavenly Hands Contracting reserves the right to pause services on overdue accounts. All sales on furniture and decor items are final.';
+const ESTIMATE_NOTES = 'Thank you for the opportunity to earn your business. This estimate is valid for 30 days from the date of issue. Final pricing may vary based on scope changes, material availability, or site conditions. A 50% deposit is required to begin work. Please contact us with any questions.';
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const S = { isReady: false, isPaid: false, discMode: 'amount', items: [], nid: 1, docType: 'invoice' };
+let histFilter = 'all';
+
+// ─── PASSWORD GATE ────────────────────────────────────────────────────────────
+function checkPw() {
+  const v = document.getElementById('gate-pw').value;
+  if (v === 'CIS2025') {
+    sessionStorage.setItem('cis_auth','1');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    initApp();
+  } else {
+    document.getElementById('gate-err').textContent = 'Incorrect password. Please try again.';
+    const el = document.getElementById('gate-pw');
+    el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+    el.value = '';
+    setTimeout(() => document.getElementById('gate-err').textContent = '', 3000);
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function initApp() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value = today;
+  const due = new Date(); due.setDate(due.getDate() + 30);
+  document.getElementById('f-due').value = due.toISOString().split('T')[0];
+  document.getElementById('f-terms').value = 'Net 30';
+  document.getElementById('f-num').value = genNum();
+  addLI();
+  updatePreview();
+  renderHist();
+}
+
+// ─── INVOICE / ESTIMATE NUMBER ────────────────────────────────────────────────
+function genNum() {
+  if (S.docType === 'estimate') {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const seg = () => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    return `EST-${seg()}-${seg()}`;
+  }
+  let n = parseInt(localStorage.getItem(CTR_KEY) || '0') + 1;
+  localStorage.setItem(CTR_KEY, n);
+  return `HHC-${new Date().getFullYear()}-${String(n).padStart(4,'0')}`;
+}
+
+function regenEstNum() {
+  if (S.docType !== 'estimate') return;
+  if (!confirm('Generate a new estimate number? This will replace the current number.')) return;
+  document.getElementById('f-num').value = genNum();
+  updatePreview();
+  toast('New estimate number generated', 'ok');
+}
+
+// ─── PAYMENT TERMS ─────────────────────────────────────────────────────────────
+function onTermsChange() {
+  const isCustom = document.getElementById('f-terms').value === 'Custom';
+  document.getElementById('f-terms-custom').style.display = isCustom ? '' : 'none';
+  updatePreview();
+}
+
+// ─── DOC TYPE TOGGLE (INVOICE / ESTIMATE) ─────────────────────────────────────
+function applyDocTypeLabels(type) {
+  const isEst = type === 'estimate';
+  document.getElementById('dt-invoice').classList.toggle('active', !isEst);
+  document.getElementById('dt-estimate').classList.toggle('active', isEst);
+
+  document.getElementById('lbl-section-details').textContent = isEst ? 'Estimate Details' : 'Invoice Details';
+  document.getElementById('lbl-num').textContent   = isEst ? 'Estimate Number' : 'Invoice Number';
+  document.getElementById('lbl-date').textContent  = isEst ? 'Estimate Date'   : 'Invoice Date';
+  document.getElementById('lbl-due').textContent   = isEst ? 'Valid Until'     : 'Due Date';
+  document.getElementById('lbl-terms').textContent = isEst ? 'Estimate Terms' : 'Payment Terms';
+  document.getElementById('f-num').placeholder = isEst ? 'EST-K7X2-9QM4' : 'HHC-2026-0001';
+
+  document.getElementById('lbl-p-details').textContent = isEst ? 'Estimate Details' : 'Invoice Details';
+  document.getElementById('lbl-p-num').textContent   = isEst ? 'Estimate No.'  : 'Invoice No.';
+  document.getElementById('lbl-p-date').textContent  = isEst ? 'Estimate Date' : 'Invoice Date';
+  document.getElementById('lbl-p-due').textContent   = isEst ? 'Valid Until'   : 'Due Date';
+  document.getElementById('lbl-p-terms').textContent = isEst ? 'Estimate Terms' : 'Payment Terms';
+  document.getElementById('lbl-grand').textContent   = isEst ? 'ESTIMATE TOTAL' : 'TOTAL DUE';
+  document.getElementById('p-doctitle').textContent  = isEst ? 'ESTIMATE' : 'INVOICE';
+  document.getElementById('p-footer-est').style.display = isEst ? '' : 'none';
+
+  document.getElementById('btn-dl').textContent   = isEst ? '↓ Download Estimate PDF' : '↓ Download Invoice PDF';
+  document.getElementById('btn-send').textContent = isEst ? '✉ Send Estimate' : '✉ Send Invoice';
+  document.getElementById('btn-convert').style.display = isEst ? '' : 'none';
+  document.getElementById('btn-regen').style.display   = isEst ? '' : 'none';
+  document.getElementById('btn-paid').style.display    = isEst ? 'none' : '';
+  document.getElementById('btn-deposit').style.display = isEst ? 'none' : '';
+
+  document.title = (isEst ? 'Estimate' : 'Invoice') + ' — Heavenly Hands Contracting';
+}
+
+function setDocType(type) {
+  if (S.docType === type) return;
+  S.docType = type;
+  applyDocTypeLabels(type);
+
+  const isEst = type === 'estimate';
+
+  // Regenerate the document number if it's empty or auto-generated
+  const numEl = document.getElementById('f-num');
+  const cur = numEl.value.trim();
+  if (!cur || /^(HHC|EST)-\d{4}-\d{4}$/.test(cur)) {
+    numEl.value = genNum();
+  }
+
+  // Switch notes to the new mode's default (only if still on the previous default)
+  const notesEl = document.getElementById('f-notes');
+  const notesVal = notesEl.value.trim();
+  if (notesVal === '' || notesVal === (isEst ? INVOICE_NOTES : ESTIMATE_NOTES)) {
+    notesEl.value = isEst ? ESTIMATE_NOTES : INVOICE_NOTES;
+  }
+
+  updatePreview();
+}
+
+// ─── LINE ITEMS ───────────────────────────────────────────────────────────────
+function addLI() {
+  S.items.push({ id: S.nid++, desc: '', qty: 1, price: 0 });
+  renderLI();
+  updatePreview();
+}
+
+function removeLI(id) {
+  if (S.items.length <= 1) return;
+  S.items = S.items.filter(x => x.id !== id);
+  renderLI();
+  updatePreview();
+}
+
+function renderLI() {
+  const c = document.getElementById('li-container');
+  c.innerHTML = '';
+  S.items.forEach(li => {
+    const d = document.createElement('div');
+    d.className = 'li-row'; d.dataset.id = li.id;
+    d.innerHTML =
+      `<input type="text" value="${esc(li.desc)}" placeholder="Description" oninput="updItem(${li.id},'desc',this.value)">` +
+      `<input type="number" value="${li.qty}" min="0" step="1" oninput="updItem(${li.id},'qty',this.value)">` +
+      `<input type="number" value="${li.price}" min="0" step="0.01" oninput="updItem(${li.id},'price',this.value)">` +
+      `<div class="li-total" id="lt-${li.id}">${cur(li.qty*li.price)}</div>` +
+      `<button class="btn-rm" onclick="removeLI(${li.id})" title="Remove">&times;</button>`;
+    c.appendChild(d);
+  });
+}
+
+function updItem(id, f, v) {
+  const li = S.items.find(x => x.id === id);
+  if (!li) return;
+  if (f === 'desc') li.desc = v;
+  else if (f === 'qty') li.qty = parseFloat(v) || 0;
+  else if (f === 'price') li.price = parseFloat(v) || 0;
+  const t = document.getElementById('lt-' + id);
+  if (t) t.textContent = cur(li.qty * li.price);
+  updatePreview();
+}
+
+// ─── DISCOUNT TOGGLE ──────────────────────────────────────────────────────────
+function toggleDisc() {
+  S.discMode = S.discMode === 'amount' ? 'percent' : 'amount';
+  document.getElementById('disc-btn').textContent = S.discMode === 'amount' ? '$' : '%';
+  updatePreview();
+}
+
+// ─── CALCULATIONS ─────────────────────────────────────────────────────────────
+function calcTotals() {
+  const sub = S.items.reduce((s, li) => s + li.qty * li.price, 0);
+  const dv  = parseFloat(document.getElementById('f-disc').value) || 0;
+  const tr  = parseFloat(document.getElementById('f-tax').value)  || 0;
+  const da  = S.discMode === 'amount' ? Math.min(dv, sub) : sub * dv / 100;
+  const tax = (sub - da) * tr / 100;
+  return { sub, dv, da, tr, tax, grand: sub - da + tax };
+}
+
+// ─── PREVIEW UPDATE ───────────────────────────────────────────────────────────
+function updatePreview() {
+  const g = id => document.getElementById(id);
+  const s = (id, h) => { const e = g(id); if (e) e.innerHTML = h; };
+
+  // Bill To
+  s('p-cname',   esc(g('f-cname').value)   || '<span style="color:#ccc">Client Name</span>');
+  s('p-contact', esc(g('f-contact').value));
+  s('p-addr',    esc(g('f-addr').value));
+  s('p-email',   esc(g('f-email').value));
+
+  // Invoice meta
+  s('p-num',   esc(g('f-num').value)   || '&#8212;');
+  s('p-date',  g('f-date').value  ? fmtD(g('f-date').value)  : '&#8212;');
+  s('p-due',   g('f-due').value   ? fmtD(g('f-due').value)   : '&#8212;');
+  const termsVal = g('f-terms').value === 'Custom' ? g('f-terms-custom').value : g('f-terms').value;
+  s('p-terms', esc(termsVal) || '&#8212;');
+  s('p-notes', esc(g('f-notes').value));
+  g('p-latefee').style.display = g('f-latefee').checked ? '' : 'none';
+
+  // Line items in preview
+  const tbody = g('p-items');
+  if (tbody) tbody.innerHTML = S.items.map(li =>
+    `<tr>
+      <td>${esc(li.desc) || '<em style="color:#ccc">Item description</em>'}</td>
+      <td style="text-align:center">${li.qty}</td>
+      <td style="text-align:center">${cur(li.price)}</td>
+      <td style="text-align:right">${cur(li.qty*li.price)}</td>
+    </tr>`
+  ).join('');
+
+  // Totals
+  const t = calcTotals();
+  s('p-sub', cur(t.sub));
+  s('p-tax-lbl', `Tax (${t.tr}%)`);
+  s('p-tax-amt', cur(t.tax));
+  s('p-grand', cur(t.grand));
+
+  if (t.da > 0) {
+    s('p-disc-lbl', S.discMode === 'percent' ? `Discount (${t.dv}%)` : 'Discount');
+    s('p-disc-amt', `&minus;${cur(t.da)}`);
+    g('p-disc-row').style.display = 'flex';
+  } else {
+    g('p-disc-row').style.display = 'none';
+  }
+
+  g('totals-hint').innerHTML =
+    `Subtotal: ${cur(t.sub)} &nbsp;&bull;&nbsp; Tax: ${cur(t.tax)} &nbsp;&bull;&nbsp; <strong style="color:var(--gold-light)">Total: ${cur(t.grand)}</strong>`;
+
+  checkExpiry();
+}
+
+// ─── ESTIMATE EXPIRY ──────────────────────────────────────────────────────────
+function checkExpiry() {
+  const note      = document.getElementById('expiry-note');
+  const expiredWm = document.getElementById('expired-wm');
+  const draftWm   = document.getElementById('draft-wm');
+  const dueVal    = document.getElementById('f-due').value;
+
+  if (S.docType !== 'estimate' || !dueVal) {
+    note.style.display = 'none';
+    expiredWm.style.display = 'none';
+    draftWm.style.display = S.isReady ? 'none' : '';
+    return;
+  }
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due   = new Date(dueVal + 'T00:00:00');
+  const diffDays = Math.round((due - today) / 86400000);
+
+  note.style.display = '';
+  if (diffDays < 0) {
+    note.className = 'expiry-note';
+    note.innerHTML = '<span class="expiry-expired">EXPIRED</span>';
+    expiredWm.style.display = '';
+    draftWm.style.display = 'none';
+  } else {
+    expiredWm.style.display = 'none';
+    draftWm.style.display = S.isReady ? 'none' : '';
+    if (diffDays === 0) {
+      note.className = 'expiry-note expiry-red';
+      note.textContent = 'Expires today';
+    } else if (diffDays <= 7) {
+      note.className = 'expiry-note expiry-orange';
+      note.textContent = `Expires in ${diffDays} day${diffDays === 1 ? '' : 's'}`;
+    } else {
+      note.className = 'expiry-note expiry-gold';
+      note.textContent = `Valid for ${diffDays} more days`;
+    }
+  }
+}
+
+// ─── PDF DOWNLOAD ─────────────────────────────────────────────────────────────
+function dlPDF() {
+  const doc = document.getElementById('invoice-doc');
+  const wm  = document.getElementById('draft-wm');
+  const wasVis = wm.style.display !== 'none';
+  wm.style.display = 'none';
+
+  const cn  = (document.getElementById('f-cname').value || 'Client').replace(/[^a-zA-Z0-9]/g,'-');
+  const num = (document.getElementById('f-num').value   || 'Invoice').replace(/[^a-zA-Z0-9-]/g,'-');
+
+  html2pdf().set({
+    margin: 10,
+    filename: `HHC-Invoice-${cn}-${num}.pdf`,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+  }).from(doc).save().then(() => {
+    if (wasVis) wm.style.display = '';
+    saveHist('Draft');
+    toast('PDF downloaded', 'ok');
+  }).catch(e => {
+    if (wasVis) wm.style.display = '';
+    toast('PDF error: ' + e.message, 'err');
+  });
+}
+
+// ─── SEND MODAL ───────────────────────────────────────────────────────────────
+function openSend() {
+  const num = document.getElementById('f-num').value || 'Invoice';
+  document.getElementById('m-to').value   = document.getElementById('f-email').value;
+  document.getElementById('m-subj').value = `Invoice ${num} from Heavenly Hands Contracting`;
+  document.getElementById('m-msg').value  = '';
+  document.getElementById('m-status').textContent = '';
+  document.getElementById('send-modal').classList.add('open');
+}
+function closeSend() { document.getElementById('send-modal').classList.remove('open'); }
+
+function doSend() {
+  const to   = document.getElementById('m-to').value.trim();
+  const subj = document.getElementById('m-subj').value.trim();
+  const msg  = document.getElementById('m-msg').value.trim();
+  const st   = document.getElementById('m-status');
+  if (!to) { st.textContent = 'Please enter a recipient email.'; return; }
+
+  const btn = document.getElementById('send-btn');
+  btn.textContent = 'Sending...'; btn.disabled = true; st.textContent = '';
+
+  emailjs.send("service_zniql44", "template_kk2oi0u", {
+    email:          to,
+    invoice_number: document.getElementById('f-num').value || '',
+    invoice_html:   document.getElementById('invoice-doc').innerHTML,
+    subject:        subj,
+    message:        msg
+  }).then(() => {
+    btn.textContent = 'Send Invoice'; btn.disabled = false;
+    closeSend();
+    saveHist('Sent');
+    toast('Invoice sent successfully', 'ok');
+  }).catch(err => {
+    btn.textContent = 'Send Invoice'; btn.disabled = false;
+    st.style.color = '#ff5555';
+    st.textContent = 'Failed: ' + (err.text || err.message || 'Unknown error');
+  });
+}
+
+// ─── SAVED CLIENTS ──────────────────────────────────────────────────────────────
+function getClients() {
+  try { return JSON.parse(localStorage.getItem(CLIENTS_KEY) || '[]'); } catch { return []; }
+}
+
+function saveClient() {
+  const cname = document.getElementById('f-cname').value.trim();
+  if (!cname) { toast('Enter a client name first', 'err'); return; }
+
+  const client = {
+    cname,
+    contact: document.getElementById('f-contact').value,
+    addr:    document.getElementById('f-addr').value,
+    email:   document.getElementById('f-email').value
+  };
+
+  const clients = getClients();
+  const idx = clients.findIndex(c => c.cname.toLowerCase() === cname.toLowerCase());
+  if (idx >= 0) client.id = clients[idx].id, clients[idx] = client;
+  else { client.id = Date.now().toString(); clients.unshift(client); }
+
+  localStorage.setItem(CLIENTS_KEY, JSON.stringify(clients));
+  toast('Client saved', 'ok');
+}
+
+function openClientModal() {
+  document.getElementById('client-search').value = '';
+  renderClientList('');
+  document.getElementById('client-modal').classList.add('open');
+}
+
+function closeClientModal() {
+  document.getElementById('client-modal').classList.remove('open');
+}
+
+function renderClientList(filter) {
+  const q = (filter || '').toLowerCase();
+  const clients = getClients().filter(c => c.cname.toLowerCase().includes(q));
+  const el = document.getElementById('client-list');
+
+  if (!clients.length) {
+    el.innerHTML = '<div class="hist-empty">No saved clients.</div>';
+    return;
+  }
+
+  el.innerHTML = clients.map(c => `
+    <div class="client-item" onclick="loadClient('${c.id}')">
+      <div class="client-item-info">
+        <span class="client-item-name">${esc(c.cname)}</span>
+        <span class="client-item-meta">${esc(c.email || c.contact || c.addr || '')}</span>
+      </div>
+      <button class="client-item-del" onclick="event.stopPropagation();deleteClient('${c.id}')" title="Delete">&#x1F5D1;</button>
+    </div>`).join('');
+}
+
+function loadClient(id) {
+  const c = getClients().find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('f-cname').value   = c.cname   || '';
+  document.getElementById('f-contact').value = c.contact || '';
+  document.getElementById('f-addr').value    = c.addr    || '';
+  document.getElementById('f-email').value   = c.email   || '';
+  closeClientModal();
+  updatePreview();
+  toast('Client loaded', 'ok');
+}
+
+function deleteClient(id) {
+  if (!confirm('Delete this saved client?')) return;
+  localStorage.setItem(CLIENTS_KEY, JSON.stringify(getClients().filter(c => c.id !== id)));
+  renderClientList(document.getElementById('client-search').value);
+  toast('Client deleted', 'ok');
+}
+
+// ─── SAVE DRAFT ───────────────────────────────────────────────────────────────
+function saveDraft() {
+  const num = document.getElementById('f-num').value || 'draft';
+  localStorage.setItem('draft_' + num, JSON.stringify(getFormData()));
+  toast('Draft saved', 'ok');
+}
+
+// ─── NEW INVOICE ──────────────────────────────────────────────────────────────
+function newInv() {
+  if (!confirm('Start a new invoice? Unsaved changes will be lost.')) return;
+  ['f-cname','f-contact','f-addr','f-email','f-disc'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-terms').value = 'Net 30';
+  document.getElementById('f-terms-custom').value = '';
+  document.getElementById('f-terms-custom').style.display = 'none';
+  document.getElementById('f-tax').value   = '8.25';
+  document.getElementById('f-notes').value = S.docType === 'estimate' ? ESTIMATE_NOTES : INVOICE_NOTES;
+  document.getElementById('f-latefee').checked = false;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value = today;
+  const due = new Date(); due.setDate(due.getDate() + 30);
+  document.getElementById('f-due').value  = due.toISOString().split('T')[0];
+  document.getElementById('f-num').value  = genNum();
+  S.items = []; S.nid = 1; S.isReady = false; S.isPaid = false; S.discMode = 'amount';
+  document.getElementById('disc-btn').textContent = '$';
+  addLI();
+  document.getElementById('btn-ready').textContent  = '✓ Mark Ready';
+  document.getElementById('btn-paid').textContent   = '$ Mark as Paid';
+  document.getElementById('paid-stamp').classList.remove('show');
+  updatePreview();
+}
+
+// ─── MARK READY ───────────────────────────────────────────────────────────────
+function toggleReady() {
+  S.isReady = !S.isReady;
+  document.getElementById('btn-ready').textContent  = S.isReady ? '↩ Mark as Draft' : '✓ Mark Ready';
+  updatePreview();
+}
+
+// ─── MARK PAID ────────────────────────────────────────────────────────────────
+function togglePaid() {
+  S.isPaid = !S.isPaid;
+  document.getElementById('paid-stamp').classList.toggle('show', S.isPaid);
+  document.getElementById('btn-paid').textContent = S.isPaid ? '↩ Unmark Paid' : '$ Mark as Paid';
+}
+
+// ─── CONVERT ESTIMATE TO INVOICE ──────────────────────────────────────────────
+function convertToInvoice() {
+  if (S.docType !== 'estimate') return;
+  if (!confirm('Convert this estimate to an invoice? The estimate will be preserved in history.')) return;
+
+  const oldNum = document.getElementById('f-num').value || '';
+
+  // Preserve the original estimate in history
+  saveHist('Converted');
+
+  // Switch mode (regenerates the number with the HHC- counter, swaps labels/notes)
+  setDocType('invoice');
+  const newNum = document.getElementById('f-num').value;
+
+  // Reset dates for the new invoice
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-due').value  = '';
+  document.getElementById('f-notes').value = INVOICE_NOTES;
+  S.isReady = false;
+  document.getElementById('draft-wm').style.display = '';
+  document.getElementById('btn-ready').textContent  = '✓ Mark Ready';
+  updatePreview();
+
+  // Save new invoice as Draft
+  saveHist('Draft');
+
+  toast(`Estimate ${oldNum} converted to Invoice ${newNum}`, 'ok');
+}
+
+// ─── GENERATE DEPOSIT INVOICE ──────────────────────────────────────────────────
+function genDeposit() {
+  if (S.docType !== 'invoice') return;
+
+  const t = calcTotals();
+  if (t.grand <= 0) { toast('Add line items before generating a deposit', 'err'); return; }
+
+  const depositAmt = t.grand / 2;
+  const origNum = document.getElementById('f-num').value || '';
+  if (!confirm(`Generate a deposit invoice for ${cur(depositAmt)} (50% of ${cur(t.grand)})?`)) return;
+
+  S.items = [{ id: 1, desc: `50% Deposit — Invoice ${origNum}`, qty: 1, price: depositAmt }];
+  S.nid = 2;
+  document.getElementById('f-disc').value = '0';
+  S.discMode = 'amount';
+  document.getElementById('disc-btn').textContent = '$';
+  document.getElementById('f-tax').value = '0';
+  document.getElementById('f-num').value = genNum();
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+  S.isReady = false; S.isPaid = false;
+  document.getElementById('btn-ready').textContent = '✓ Mark Ready';
+  document.getElementById('btn-paid').textContent  = '$ Mark as Paid';
+  document.getElementById('paid-stamp').classList.remove('show');
+
+  renderLI();
+  updatePreview();
+  saveHist('Draft');
+  toast('Deposit invoice generated', 'ok');
+}
+
+// ─── TEXT CLIENT (CLOUDINARY PDF + SMS) ───────────────────────────────────────
+async function textClient() {
+  const isEst  = S.docType === 'estimate';
+  const cname  = document.getElementById('f-cname').value.trim();
+  const email  = document.getElementById('f-email').value.trim();
+  const num    = document.getElementById('f-num').value || '';
+
+  const doc = document.getElementById('invoice-doc');
+  const wm  = document.getElementById('draft-wm');
+  const wasVis = wm.style.display !== 'none';
+  wm.style.display = 'none';
+
+  const cn = (cname || 'Client').replace(/[^a-zA-Z0-9]/g,'-');
+  const numClean = (num || (isEst ? 'Estimate' : 'Invoice')).replace(/[^a-zA-Z0-9-]/g,'-');
+  const filename = `HHC-${isEst ? 'Estimate' : 'Invoice'}-${cn}-${numClean}.pdf`;
+
+  toast('Generating PDF...', null);
+
+  let pdfBlob;
+  try {
+    pdfBlob = await html2pdf().set({
+      margin: 10,
+      filename,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+    }).from(doc).outputPdf('blob');
+  } catch (e) {
+    if (wasVis) wm.style.display = '';
+    toast('PDF generation failed — try again', 'err');
+    return;
+  }
+  if (wasVis) wm.style.display = '';
+
+  toast('Uploading to cloud...', null);
+
+  const formData = new FormData();
+  formData.append('file', pdfBlob, filename);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  formData.append('resource_type', 'raw');
+  formData.append('public_id', filename);
+
+  let secureUrl;
+  try {
+    const res  = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+    const json = await res.json();
+    if (!json.secure_url) throw new Error('No secure_url in response');
+    secureUrl = json.secure_url;
+  } catch (e) {
+    toast('Upload failed — check connection', 'err');
+    return;
+  }
+
+  // Send via EmailJS with the PDF link included
+  // EMAIL TEMPLATE: Add {{pdf_link}} variable to your EmailJS template
+  // for clients to also access the PDF directly from the email
+  if (email) {
+    emailjs.send("service_zniql44", "template_kk2oi0u", {
+      email:          email,
+      invoice_number: num,
+      invoice_html:   doc.innerHTML,
+      subject:        `${isEst ? 'Estimate' : 'Invoice'} ${num} from Heavenly Hands Contracting`,
+      message:        '',
+      pdf_link:       secureUrl
+    }).catch(() => {});
+  } else {
+    toast('No client email — text only', null);
+  }
+
+  // Open native SMS app with the PDF link
+  const name = cname || 'there';
+  const message = isEst
+    ? `Hi ${name}, your estimate (${num}) from Heavenly Hands Contracting is ready. View or download it here: ${secureUrl} Valid for 30 days. Questions? Call 832-720-8165. — HHC Team`
+    : `Hi ${name}, your invoice (${num}) from Heavenly Hands Contracting is ready. View or download it here: ${secureUrl} Questions? Call 832-720-8165. — HHC Team`;
+  window.open('sms:?&body=' + encodeURIComponent(message), '_blank');
+
+  saveHist('Sent');
+  toast('PDF ready — opening Messages...', 'ok');
+}
+
+// ─── HISTORY ──────────────────────────────────────────────────────────────────
+function getHist() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch { return []; }
+}
+
+function saveHist(status) {
+  const hist = getHist();
+  const num  = document.getElementById('f-num').value || '';
+  const data = getFormData();
+  const { grand } = calcTotals();
+  const idx  = hist.findIndex(h => h.invNum === num);
+  const rec  = {
+    id: idx >= 0 ? hist[idx].id : Date.now().toString(),
+    invNum: num,
+    client: data.cname || '—',
+    date:   data.date  || new Date().toISOString().split('T')[0],
+    amount: grand,
+    status,
+    docType: S.docType,
+    data
+  };
+  if (idx >= 0) hist[idx] = { ...hist[idx], ...rec };
+  else hist.unshift(rec);
+  localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+  renderHist();
+}
+
+// ─── AGING DASHBOARD ────────────────────────────────────────────────────────────
+function renderAging() {
+  const hist  = getHist();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const curMonth = new Date().getMonth(), curYear = new Date().getFullYear();
+
+  let outstanding = 0, paidThisMonth = 0, overdue = 0, openEst = 0;
+
+  hist.forEach(h => {
+    const dt = h.docType || 'invoice';
+    if (dt === 'invoice') {
+      if (h.status === 'Paid') {
+        const d = h.date ? new Date(h.date + 'T00:00:00') : null;
+        if (d && d.getMonth() === curMonth && d.getFullYear() === curYear) paidThisMonth += h.amount;
+      } else if (h.status === 'Sent' || h.status === 'Overdue') {
+        outstanding += h.amount;
+        const due = h.data && h.data.due ? new Date(h.data.due + 'T00:00:00') : null;
+        if (due && due < today) overdue += h.amount;
+      }
+    } else if (h.status !== 'Converted') {
+      openEst++;
+    }
+  });
+
+  document.getElementById('aging-bar').innerHTML = `
+    <div class="aging-card"><div class="aging-val">${cur(outstanding)}</div><div class="aging-lbl">Outstanding</div></div>
+    <div class="aging-card"><div class="aging-val">${cur(paidThisMonth)}</div><div class="aging-lbl">Paid This Month</div></div>
+    <div class="aging-card"><div class="aging-val${overdue > 0 ? ' danger' : ''}">${cur(overdue)}</div><div class="aging-lbl">Overdue</div></div>
+    <div class="aging-card"><div class="aging-val">${openEst}</div><div class="aging-lbl">Open Estimates</div></div>
+  `;
+}
+
+function setHistFilter(f) {
+  histFilter = f;
+  document.querySelectorAll('.hf-btn').forEach(b => b.classList.toggle('active', b.dataset.f === f));
+  renderHist();
+}
+
+function renderHist() {
+  renderAging();
+  const hist = getHist().filter(h => histFilter === 'all' || (h.docType || 'invoice') === histFilter);
+  const el   = document.getElementById('hist-content');
+  if (!hist.length) {
+    el.innerHTML = '<div class="hist-empty">No history yet. Download or send an invoice to create a record.</div>';
+    return;
+  }
+  el.innerHTML =
+    `<table class="hist-table">
+      <thead><tr>
+        <th>Type</th><th>Client</th><th>Number</th><th>Date</th><th>Amount</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody>` +
+    hist.map(h => {
+      const dt = h.docType || 'invoice';
+      return `<tr onclick="loadInv('${h.id}')">
+        <td><span class="dt-badge ${dt === 'estimate' ? 'est' : 'inv'}">${dt === 'estimate' ? 'EST' : 'INV'}</span></td>
+        <td>${esc(h.client)}</td>
+        <td style="font-family:monospace;font-size:12px">${esc(h.invNum)}</td>
+        <td>${h.date ? fmtD(h.date) : '&#8212;'}</td>
+        <td style="font-weight:500">${cur(h.amount)}</td>
+        <td onclick="event.stopPropagation();cycleStatus('${h.id}')">
+          <span class="s-badge s-${h.status.toLowerCase()}">${h.status}</span>
+        </td>
+        <td onclick="event.stopPropagation()">
+          <button class="btn-del" onclick="delHist('${h.id}')" title="Delete">&#x1F5D1;</button>
+        </td>
+      </tr>`;
+    }).join('') +
+    `</tbody></table>`;
+}
+
+function loadInv(id) {
+  const rec = getHist().find(h => h.id === id);
+  if (!rec || !rec.data) return;
+  if (!confirm(`Load invoice ${rec.invNum}? Current form will be replaced.`)) return;
+  setFormData(rec.data);
+}
+
+function delHist(id) {
+  if (!confirm('Delete this record?')) return;
+  localStorage.setItem(HIST_KEY, JSON.stringify(getHist().filter(h => h.id !== id)));
+  renderHist();
+  toast('Record deleted', 'ok');
+}
+
+function cycleStatus(id) {
+  const all = ['Draft','Sent','Paid','Overdue'];
+  const hist = getHist();
+  const i = hist.findIndex(h => h.id === id);
+  if (i < 0) return;
+  hist[i].status = all[(all.indexOf(hist[i].status) + 1) % all.length];
+  localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+  renderHist();
+}
+
+function toggleHist() {
+  document.getElementById('hist-body').classList.toggle('open');
+  document.getElementById('hist-icon').classList.toggle('open');
+}
+
+// ─── FORM DATA ────────────────────────────────────────────────────────────────
+function getFormData() {
+  return {
+    cname:    document.getElementById('f-cname').value,
+    contact:  document.getElementById('f-contact').value,
+    addr:     document.getElementById('f-addr').value,
+    email:    document.getElementById('f-email').value,
+    num:      document.getElementById('f-num').value,
+    date:     document.getElementById('f-date').value,
+    due:      document.getElementById('f-due').value,
+    terms:    document.getElementById('f-terms').value,
+    termsCustom: document.getElementById('f-terms-custom').value,
+    disc:     document.getElementById('f-disc').value,
+    discMode: S.discMode,
+    tax:      document.getElementById('f-tax').value,
+    notes:    document.getElementById('f-notes').value,
+    lateFee:  document.getElementById('f-latefee').checked,
+    items:    JSON.parse(JSON.stringify(S.items)),
+    nid:      S.nid,
+    isReady:  S.isReady,
+    isPaid:   S.isPaid,
+    docType:  S.docType
+  };
+}
+
+function setFormData(d) {
+  document.getElementById('f-cname').value   = d.cname   || '';
+  document.getElementById('f-contact').value = d.contact || '';
+  document.getElementById('f-addr').value    = d.addr    || '';
+  document.getElementById('f-email').value   = d.email   || '';
+  document.getElementById('f-num').value     = d.num     || '';
+  document.getElementById('f-date').value    = d.date    || '';
+  document.getElementById('f-due').value     = d.due     || '';
+  document.getElementById('f-terms').value   = d.terms   || '';
+  document.getElementById('f-terms-custom').value = d.termsCustom || '';
+  document.getElementById('f-terms-custom').style.display = d.terms === 'Custom' ? '' : 'none';
+  document.getElementById('f-disc').value    = d.disc    || '';
+  document.getElementById('f-tax').value     = d.tax     || '8.25';
+  document.getElementById('f-notes').value   = d.notes   || '';
+  document.getElementById('f-latefee').checked = !!d.lateFee;
+  S.discMode = d.discMode || 'amount';
+  document.getElementById('disc-btn').textContent = S.discMode === 'amount' ? '$' : '%';
+  S.items = d.items || []; S.nid = d.nid || S.items.length + 1; S.isReady = !!d.isReady; S.isPaid = !!d.isPaid;
+  S.docType = d.docType || 'invoice';
+  applyDocTypeLabels(S.docType);
+  if (!S.items.length) addLI(); else renderLI();
+  document.getElementById('btn-ready').textContent  = S.isReady ? '↩ Mark as Draft' : '✓ Mark Ready';
+  document.getElementById('btn-paid').textContent   = S.isPaid  ? '↩ Unmark Paid'   : '$ Mark as Paid';
+  document.getElementById('paid-stamp').classList.toggle('show', S.isPaid);
+  updatePreview();
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function cur(n) {
+  return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n||0);
+}
+function fmtD(d) {
+  if (!d) return '&#8212;';
+  const [y,m,day] = d.split('-');
+  const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${mo[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+}
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' t-' + type : '');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('cis_auth') === '1') {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display  = 'flex';
+    initApp();
+  }
+  document.getElementById('gate-pw').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPw();
+  });
+  document.getElementById('send-modal').addEventListener('click', e => {
+    if (e.target.id === 'send-modal') closeSend();
+  });
+});
+</script>
+</body>
+</html>
