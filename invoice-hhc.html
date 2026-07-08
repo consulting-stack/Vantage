@@ -418,7 +418,7 @@ select option{background:#1a1a1a;color:#fff}
       <div class="form-section">
         <div class="section-title">Notes &amp; Terms</div>
         <div class="form-group">
-          <textarea id="f-notes" rows="6" oninput="updatePreview()">Thank you for your business. All invoices are due by the specified due date. A 50% deposit is required before project commencement, with the remaining balance due upon completion or delivery. Heavenly Hands Contracting reserves the right to pause services on overdue accounts. All sales on furniture and decor items are final.</textarea>
+          <textarea id="f-notes" rows="6" oninput="updatePreview()">Payment is due according to the schedule above. A deposit is required to begin scheduled work, with the remaining balance due upon completion unless otherwise agreed in writing. Any change to the agreed scope of work will be handled through a written change order and may adjust the total price. All labor is warranted against defects in workmanship for 90 days from the date of completion. Heavenly Hands Contracting is not liable for delays arising from permitting, material availability, or site conditions outside its control.</textarea>
         </div>
       </div>
 
@@ -595,15 +595,15 @@ select option{background:#1a1a1a;color:#fff}
 
 <script>
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const HIST_KEY     = 'cis_invoice_history';
-const CTR_KEY      = 'cis_invoice_counter';
-const CLIENTS_KEY  = 'cis_clients';
+const HIST_KEY     = 'hhc_invoice_history';
+const CTR_KEY      = 'hhc_invoice_counter';
+const CLIENTS_KEY  = 'hhc_clients';
 
 // Cloudinary (unsigned upload)
 const CLOUDINARY_URL    = 'https://api.cloudinary.com/v1_1/djzwhvq8s/raw/upload';
 const CLOUDINARY_PRESET = 'zdiwudao';
 
-const INVOICE_NOTES  = 'Thank you for your business. All invoices are due by the specified due date. A 50% deposit is required before project commencement, with the remaining balance due upon completion or delivery. Heavenly Hands Contracting reserves the right to pause services on overdue accounts. All sales on furniture and decor items are final.';
+const INVOICE_NOTES  = 'Payment is due according to the schedule above. A deposit is required to begin scheduled work, with the remaining balance due upon completion unless otherwise agreed in writing. Any change to the agreed scope of work will be handled through a written change order and may adjust the total price. All labor is warranted against defects in workmanship for 90 days from the date of completion. Heavenly Hands Contracting is not liable for delays arising from permitting, material availability, or site conditions outside its control.';
 const ESTIMATE_NOTES = 'Thank you for the opportunity to earn your business. This estimate is valid for 30 days from the date of issue. Final pricing may vary based on scope changes, material availability, or site conditions. A 50% deposit is required to begin work. Please contact us with any questions.';
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
@@ -613,8 +613,8 @@ let histFilter = 'all';
 // ─── PASSWORD GATE ────────────────────────────────────────────────────────────
 function checkPw() {
   const v = document.getElementById('gate-pw').value;
-  if (v === 'CIS2025') {
-    sessionStorage.setItem('cis_auth','1');
+  if (v === 'HHC2025') {
+    sessionStorage.setItem('hhc_auth','1');
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     initApp();
@@ -709,7 +709,7 @@ function setDocType(type) {
   // Regenerate the document number if it's empty or auto-generated
   const numEl = document.getElementById('f-num');
   const cur = numEl.value.trim();
-  if (!cur || /^(HHC|EST)-\d{4}-\d{4}$/.test(cur)) {
+  if (!cur || /^(HHC|EST)-[A-Z0-9]{4}-[A-Z0-9]{4,}$/.test(cur)) {
     numEl.value = genNum();
   }
 
@@ -1015,7 +1015,7 @@ function deleteClient(id) {
 // ─── SAVE DRAFT ───────────────────────────────────────────────────────────────
 function saveDraft() {
   const num = document.getElementById('f-num').value || 'draft';
-  localStorage.setItem('draft_' + num, JSON.stringify(getFormData()));
+  localStorage.setItem('hhc_draft_' + num, JSON.stringify(getFormData()));
   toast('Draft saved', 'ok');
 }
 
@@ -1402,7 +1402,7 @@ function toast(msg, type) {
 
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  if (sessionStorage.getItem('cis_auth') === '1') {
+  if (sessionStorage.getItem('hhc_auth') === '1') {
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display  = 'flex';
     initApp();
