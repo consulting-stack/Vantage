@@ -1,6 +1,6 @@
 // Vantage Business Suite — service worker
 // Bump the version string to bust the cache after deploying changes.
-const CACHE = 'vantage-v2';
+const CACHE = 'vantage-v3';
 
 // Only these URLs are cached and served cache-first. Everything else on the
 // origin (marketing site pages) and all third-party requests (EmailJS,
