@@ -438,6 +438,17 @@ select option{background:#1a1a1a;color:#fff}
         <button class="btn btn-outline btn-full" id="btn-deposit" onclick="genDeposit()">&#8853; Generate Deposit Invoice</button>
         <button class="btn btn-gold btn-full" id="btn-convert" style="display:none" onclick="convertToInvoice()">&#8644; Convert to Invoice</button>
         <button class="btn btn-gold btn-full" id="btn-text" onclick="textClient()">&#128241; Text Client</button>
+        <!-- Gated until HHC has its own Stripe account. Payment-link plumbing
+             (genPayLink, history storage, EmailJS/SMS append) is intact below —
+             re-enable by restoring onclick="genPayLink()" and removing disabled. -->
+        <button class="btn btn-outline btn-full" id="btn-paylink" disabled aria-disabled="true" title="Stripe account setup in progress" style="opacity:0.45;cursor:not-allowed">&#128179; Payment Link (Coming soon)</button>
+      </div>
+
+      <div id="paylink-row" style="display:none;align-items:center;gap:8px;margin-top:10px;font-size:12px;flex-wrap:wrap">
+        <span style="color:var(--muted);letter-spacing:0.08em;text-transform:uppercase">Pay link</span>
+        <a id="paylink-url" href="#" target="_blank" rel="noopener" style="color:var(--gold);word-break:break-all"></a>
+        <span id="paylink-mock" style="display:none;color:#f0b429;border:1px solid #f0b429;border-radius:3px;padding:1px 6px;font-size:11px">(test link)</span>
+        <button class="btn btn-ghost" type="button" onclick="copyPayLink()" style="padding:4px 10px;font-size:11px">Copy</button>
       </div>
 
     </div><!-- /form-panel -->
@@ -723,6 +734,10 @@ function setDocType(type) {
 
   const isEst = type === 'estimate';
 
+  // Payment links are invoice-only
+  const plBtn = document.getElementById('btn-paylink');
+  if (plBtn) plBtn.style.display = isEst ? 'none' : '';
+
   // Regenerate the document number if it's empty or auto-generated
   const numEl = document.getElementById('f-num');
   const cur = numEl.value.trim();
@@ -942,7 +957,8 @@ function doSend() {
     invoice_number: document.getElementById('f-num').value || '',
     invoice_html:   document.getElementById('invoice-doc').innerHTML,
     subject:        subj,
-    message:        msg
+    message:        msg + (payLink && S.docType !== 'estimate' ? '\n\nPay online: ' + payLink : ''),
+    pay_link:       (payLink && S.docType !== 'estimate') ? payLink : ''
   }).then(() => {
     btn.textContent = 'Send Invoice'; btn.disabled = false;
     closeSend();
@@ -953,6 +969,76 @@ function doSend() {
     st.style.color = '#ff5555';
     st.textContent = 'Failed: ' + (err.text || err.message || 'Unknown error');
   });
+}
+
+// ─── PAYMENT LINK (Stripe Checkout via Netlify function) ─────────────────────
+let payLink = null;
+let payLinkMock = false;
+
+async function genPayLink() {
+  if (S.docType === 'estimate') { toast('Payment links are for invoices only', 'err'); return; }
+  const num = document.getElementById('f-num').value.trim();
+  const { grand } = calcTotals();
+  if (!num) { toast('Add an invoice number first', 'err'); return; }
+  if (!(grand > 0)) { toast('Invoice total must be greater than zero', 'err'); return; }
+
+  const btn = document.getElementById('btn-paylink');
+  btn.disabled = true; btn.textContent = 'Generating link…';
+  try {
+    const res = await fetch('/.netlify/functions/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: grand,
+        invoiceNumber: num,
+        clientName: document.getElementById('f-cname').value.trim(),
+        clientEmail: document.getElementById('f-email').value.trim(),
+        entity: 'Heavenly Hands Contracting'
+      })
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.url) throw new Error(json.error || 'Could not create payment link');
+    payLink = json.url;
+    payLinkMock = !!json.mock;
+    renderPayLink();
+    persistPayLink();
+    toast(payLinkMock ? 'Test payment link generated' : 'Payment link generated', 'ok');
+  } catch (e) {
+    toast(e.message || 'Payment link failed', 'err');
+  } finally {
+    btn.disabled = false; btn.innerHTML = '&#128179; Payment Link';
+  }
+}
+
+function renderPayLink() {
+  const row = document.getElementById('paylink-row');
+  if (!payLink) { row.style.display = 'none'; return; }
+  row.style.display = 'flex';
+  const a = document.getElementById('paylink-url');
+  a.href = payLink;
+  a.textContent = payLink;
+  document.getElementById('paylink-mock').style.display = payLinkMock ? 'inline' : 'none';
+}
+
+function persistPayLink() {
+  const num = document.getElementById('f-num').value.trim();
+  const hist = getHist();
+  const idx = hist.findIndex(h => h.invNum === num);
+  if (idx >= 0) {
+    hist[idx].payLink = payLink;
+    hist[idx].payMock = payLinkMock;
+    localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+    renderHist();
+  } else {
+    saveHist('Draft');
+  }
+}
+
+function copyPayLink() {
+  if (!payLink) return;
+  navigator.clipboard.writeText(payLink)
+    .then(() => toast('Payment link copied', 'ok'))
+    .catch(() => toast('Copy failed — copy it manually', 'err'));
 }
 
 // ─── SAVED CLIENTS ──────────────────────────────────────────────────────────────
@@ -1054,6 +1140,7 @@ function newInv() {
   document.getElementById('f-due').value  = due.toISOString().split('T')[0];
   document.getElementById('f-num').value  = genNum();
   S.items = []; S.nid = 1; S.isReady = false; S.isPaid = false; S.discMode = 'amount';
+  payLink = null; payLinkMock = false; renderPayLink();
   document.getElementById('disc-btn').textContent = '$';
   addLI();
   document.getElementById('btn-ready').textContent  = '✓ Mark Ready';
@@ -1198,7 +1285,8 @@ async function textClient() {
       invoice_number: num,
       invoice_html:   doc.innerHTML,
       subject:        `${isEst ? 'Estimate' : 'Invoice'} ${num} from Heavenly Hands Contracting`,
-      message:        '',
+      message:        (!isEst && payLink) ? 'Pay online: ' + payLink : '',
+      pay_link:       (!isEst && payLink) ? payLink : '',
       pdf_link:       secureUrl
     }).catch(() => {});
   } else {
@@ -1209,7 +1297,7 @@ async function textClient() {
   const name = cname || 'there';
   const message = isEst
     ? `Hi ${name}, your estimate (${num}) from Heavenly Hands Contracting is ready. View or download it here: ${secureUrl} Valid for 30 days. Questions? Call 832-720-8165. — HHC Team`
-    : `Hi ${name}, your invoice (${num}) from Heavenly Hands Contracting is ready. View or download it here: ${secureUrl} Questions? Call 832-720-8165. — HHC Team`;
+    : `Hi ${name}, your invoice (${num}) from Heavenly Hands Contracting is ready. View or download it here: ${secureUrl} ${payLink ? `Pay online: ${payLink} ` : ''}Questions? Call 832-720-8165. — HHC Team`;
   window.open('sms:?&body=' + encodeURIComponent(message), '_blank');
 
   saveHist('Sent');
@@ -1235,6 +1323,8 @@ function saveHist(status) {
     amount: grand,
     status,
     docType: S.docType,
+    payLink: payLink || (idx >= 0 ? hist[idx].payLink : null) || null,
+    payMock: payLink ? payLinkMock : (idx >= 0 ? !!hist[idx].payMock : false),
     data
   };
   if (idx >= 0) hist[idx] = { ...hist[idx], ...rec };
@@ -1319,6 +1409,9 @@ function loadInv(id) {
   if (!rec || !rec.data) return;
   if (!confirm(`Load invoice ${rec.invNum}? Current form will be replaced.`)) return;
   setFormData(rec.data);
+  payLink = rec.payLink || null;
+  payLinkMock = !!rec.payMock;
+  renderPayLink();
 }
 
 function delHist(id) {

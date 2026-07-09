@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Cancelled — Vantage</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#1a1a1a;color:#F5F5F0;font-family:'Inter',system-ui,sans-serif;font-weight:300;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 24px;text-align:center;
+}
+.mark{
+  width:72px;height:72px;border-radius:50%;border:2px solid #888888;color:#888888;
+  display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:28px;
+}
+h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(30px,6vw,42px);color:#F5F5F0}
+.inv-line{display:none;margin-top:14px;font-size:14px;color:#cccccc;letter-spacing:0.06em}
+.inv-line span{color:#F5F5F0;font-weight:500}
+p.note{margin-top:18px;max-width:440px;font-size:14px;line-height:1.7;color:#888888}
+.contact{margin-top:30px;font-size:13px;color:#cccccc;line-height:1.9}
+.contact a{color:#C9A84C;text-decoration:none}
+.back{
+  display:inline-block;margin-top:34px;padding:12px 28px;border:1px solid rgba(201,168,76,0.5);
+  border-radius:4px;color:#C9A84C;text-decoration:none;font-size:13px;letter-spacing:0.14em;
+  text-transform:uppercase;transition:border-color .2s;
+}
+.back:hover{border-color:#C9A84C}
+</style>
+</head>
+<body>
+
+<div class="mark">&#10005;</div>
+<h1>Payment Cancelled</h1>
+<div class="inv-line" id="inv-line">Invoice <span id="inv-num"></span></div>
+<p class="note">No charge was made. You can reopen your payment link at any time, or contact us if you have questions about your invoice.</p>
+<div class="contact">
+  <a href="mailto:marlowedesignscorp@gmail.com">marlowedesignscorp@gmail.com</a><br>
+  832-720-8165 &middot; Houston, TX
+</div>
+<a class="back" href="suite.html">Back to Vantage</a>
+
+<script>
+const inv = new URLSearchParams(location.search).get('invoice');
+if (inv) {
+  document.getElementById('inv-num').textContent = inv;
+  document.getElementById('inv-line').style.display = 'block';
+}
+</script>
+
+</body>
+</html>

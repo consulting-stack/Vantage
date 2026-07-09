@@ -1,0 +1,15 @@
+{
+  "name": "vantage-suite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vantage business suite — static pages + Netlify functions",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "stripe": "^18.0.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^23.0.0"
+  }
+}
