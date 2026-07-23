@@ -165,6 +165,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
 .s-sent{background:rgba(68,136,255,.15);color:#6699ff}
 .s-paid{background:rgba(68,187,68,.15);color:#66cc66}
 .s-overdue{background:rgba(255,68,68,.15);color:#ff6666}
+.s-failed{background:rgba(255,68,68,.22);color:#ff8888}
 .s-converted{background:rgba(201,168,76,.15);color:var(--gold-light)}
 .dt-badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.08em}
 .dt-badge.inv{background:rgba(102,153,255,.12);color:#6699ff}
@@ -942,33 +943,99 @@ function openSend() {
 }
 function closeSend() { document.getElementById('send-modal').classList.remove('open'); }
 
-function doSend() {
+async function doSend() {
   const to   = document.getElementById('m-to').value.trim();
   const subj = document.getElementById('m-subj').value.trim();
   const msg  = document.getElementById('m-msg').value.trim();
   const st   = document.getElementById('m-status');
   if (!to) { st.textContent = 'Please enter a recipient email.'; return; }
 
-  const btn = document.getElementById('send-btn');
-  btn.textContent = 'Sending...'; btn.disabled = true; st.textContent = '';
+  const isEst = S.docType === 'estimate';
+  const num   = document.getElementById('f-num').value || '';
+  const cname = document.getElementById('f-cname').value.trim();
 
-  emailjs.send("service_zniql44", "template_kk2oi0u", {
-    email:          to,
-    invoice_number: document.getElementById('f-num').value || '',
-    invoice_html:   document.getElementById('invoice-doc').innerHTML,
-    subject:        subj,
-    message:        msg + (payLink && S.docType !== 'estimate' ? '\n\nPay online: ' + payLink : ''),
-    pay_link:       (payLink && S.docType !== 'estimate') ? payLink : ''
-  }).then(() => {
-    btn.textContent = 'Send Invoice'; btn.disabled = false;
+  const btn  = document.getElementById('send-btn');
+  const orig = btn.textContent;
+  btn.disabled = true; st.style.color = ''; st.textContent = '';
+
+  const fail = (stepMsg) => {
+    btn.textContent = orig; btn.disabled = false;
+    st.style.color = '#ff5555';
+    st.textContent = stepMsg;
+    saveHist('Failed');
+  };
+
+  // Step 1 — render the PDF (same output as Download / Text Client)
+  btn.textContent = 'Generating PDF…';
+  const doc = document.getElementById('invoice-doc');
+  const wm  = document.getElementById('draft-wm');
+  const wasVis = wm.style.display !== 'none';
+  wm.style.display = 'none';
+
+  const cn = (cname || 'Client').replace(/[^a-zA-Z0-9]/g,'-');
+  const numClean = (num || (isEst ? 'Estimate' : 'Invoice')).replace(/[^a-zA-Z0-9-]/g,'-');
+  const filename = `HHC-${isEst ? 'Estimate' : 'Invoice'}-${cn}-${numClean}.pdf`;
+
+  let pdfBlob;
+  try {
+    pdfBlob = await html2pdf().set({
+      margin: 10,
+      filename,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+    }).from(doc).outputPdf('blob');
+  } catch (e) {
+    if (wasVis) wm.style.display = '';
+    fail('PDF generation failed — nothing was sent. Please try again.');
+    return;
+  }
+  if (wasVis) wm.style.display = '';
+
+  // Step 2 — upload the PDF to Cloudinary, email links to it instead of
+  // embedding the invoice HTML (EmailJS caps variables at 50KB)
+  btn.textContent = 'Uploading PDF…';
+  const formData = new FormData();
+  formData.append('file', pdfBlob, filename);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  formData.append('resource_type', 'raw');
+  formData.append('public_id', filename);
+
+  let pdfUrl;
+  try {
+    const res  = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+    const json = await res.json();
+    if (!json.secure_url) throw new Error('No secure_url in response');
+    pdfUrl = json.secure_url;
+  } catch (e) {
+    fail('PDF upload failed — nothing was sent. Check your connection and try again.');
+    return;
+  }
+
+  // Step 3 — slim payload: links + summary fields only, never invoice HTML.
+  // pay_link stays empty for HHC (payment links still gated).
+  btn.textContent = 'Sending…';
+  try {
+    await emailjs.send("service_zniql44", "template_kk2oi0u", {
+      to_email:       to,
+      subject:        subj,
+      message:        msg,
+      entity_name:    'Heavenly Hands Contracting',
+      invoice_number: num,
+      invoice_total:  cur(calcTotals().grand),
+      due_date:       fmtD(document.getElementById('f-due').value),
+      pdf_link:       pdfUrl,
+      pay_link:       '',
+      support_email:  'marlowedesignscorp@gmail.com',
+      support_phone:  '832-720-8165'
+    });
+    btn.textContent = orig; btn.disabled = false;
     closeSend();
     saveHist('Sent');
-    toast('Invoice sent successfully', 'ok');
-  }).catch(err => {
-    btn.textContent = 'Send Invoice'; btn.disabled = false;
-    st.style.color = '#ff5555';
-    st.textContent = 'Failed: ' + (err.text || err.message || 'Unknown error');
-  });
+    toast(isEst ? 'Estimate sent successfully' : 'Invoice sent successfully', 'ok');
+  } catch (err) {
+    fail('Email send failed: ' + ((err && (err.text || err.message)) || 'Unknown error') + ' — the PDF uploaded, but no email was sent.');
+  }
 }
 
 // ─── PAYMENT LINK (Stripe Checkout via Netlify function) ─────────────────────
