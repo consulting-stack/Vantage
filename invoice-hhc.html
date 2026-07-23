@@ -675,8 +675,9 @@ async function checkPw() {
 const VO_BLOCKED = ['openSend','doSend','textClient','genPayLink','saveClient','saveDraft',
   'dlPDF','newInv','toggleReady','togglePaid','genDeposit','convertToInvoice','regenEstNum',
   'delHist','cycleStatus','deleteClient','addLI','removeLI','toggleDisc'];
-// All form inputs lock too (gate passcode field excluded so the gate keeps working)
-const VO_SELECTOR = VO_BLOCKED.map(fn => `[onclick*="${fn}("]`).join(',') + ',input:not(#gate-pw),select,textarea';
+// All form inputs lock too (gate passcode excluded so the gate keeps working;
+// client-search excluded — it's a read-only filter, no writes)
+const VO_SELECTOR = VO_BLOCKED.map(fn => `[onclick*="${fn}("]`).join(',') + ',input:not(#gate-pw):not(#client-search),select,textarea';
 
 function voDisableAll() {
   document.querySelectorAll(VO_SELECTOR).forEach(el => {
