@@ -46,6 +46,9 @@ body{min-height:100vh;overflow-x:hidden}
 
 /* ── APP SHELL ── */
 #app{display:none;flex-direction:column;height:100vh;overflow:hidden}
+/* view-only mode */
+#vo-banner{position:fixed;top:0;left:0;right:0;height:40px;line-height:20px;padding:10px 16px;box-sizing:border-box;background:#B8973F;color:#1a1a1a;text-align:center;font-weight:700;letter-spacing:2px;font-size:12px;z-index:10000}
+body.view-only #app{height:calc(100vh - 40px);margin-top:40px}
 .app-header{padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--gold-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .app-brand{display:flex;align-items:center;gap:14px}
 .app-brand img{height:34px;width:auto}
@@ -629,7 +632,8 @@ const S = { isReady: false, isPaid: false, discMode: 'amount', items: [], nid: 1
 let histFilter = 'all';
 
 // ─── PASSWORD GATE ────────────────────────────────────────────────────────────
-const GATE_HASH = '77baf1780ab60524a0c936a35444e3c045b0b243d4107b912907ceb75f490e66';
+const GATE_HASH      = '77baf1780ab60524a0c936a35444e3c045b0b243d4107b912907ceb75f490e66';
+const GATE_HASH_VIEW = 'b5306d1e9df3368bcdb5a14eedc8456e87cfd26995c483d7cf2d22e8ccb66686';
 
 async function verifyPasscode(input, expectedHash) {
   const encoder = new TextEncoder();
@@ -642,11 +646,17 @@ async function verifyPasscode(input, expectedHash) {
 
 async function checkPw() {
   const v = document.getElementById('gate-pw').value;
-  if (await verifyPasscode(v, GATE_HASH)) {
+  let mode = null;
+  if (await verifyPasscode(v, GATE_HASH)) mode = 'admin';
+  else if (await verifyPasscode(v, GATE_HASH_VIEW)) mode = 'view';
+  if (mode) {
+    window.viewOnly = mode === 'view';
     sessionStorage.setItem('hhc_auth','1');
+    sessionStorage.setItem('hhc_auth_mode', mode);
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     initApp();
+    if (window.viewOnly) applyViewOnly();
   } else {
     document.getElementById('gate-err').textContent = 'Incorrect password. Please try again.';
     const el = document.getElementById('gate-pw');
@@ -654,6 +664,38 @@ async function checkPw() {
     el.value = '';
     setTimeout(() => document.getElementById('gate-err').textContent = '', 3000);
   }
+}
+
+// ─── VIEW-ONLY MODE ───────────────────────────────────────────────────────────
+// Buttons whose handlers write to storage, fire network requests, or mutate the
+// working document. Matched via onclick attribute so dynamically rendered rows
+// (history, clients, line items) are covered on every re-render. The guards
+// inside each handler are the actual gate; this layer is visual. window.viewOnly
+// is DevTools-overridable by design — this is UX, not security.
+const VO_BLOCKED = ['openSend','doSend','textClient','genPayLink','saveClient','saveDraft',
+  'dlPDF','newInv','toggleReady','togglePaid','genDeposit','convertToInvoice','regenEstNum',
+  'delHist','cycleStatus','deleteClient','addLI','removeLI','toggleDisc'];
+// All form inputs lock too (gate passcode field excluded so the gate keeps working)
+const VO_SELECTOR = VO_BLOCKED.map(fn => `[onclick*="${fn}("]`).join(',') + ',input:not(#gate-pw),select,textarea';
+
+function voDisableAll() {
+  document.querySelectorAll(VO_SELECTOR).forEach(el => {
+    if ('disabled' in el) el.disabled = true;
+    el.setAttribute('title', 'Disabled in view-only mode');
+    el.style.opacity = '.4';
+    el.style.cursor = 'not-allowed';
+  });
+}
+
+function applyViewOnly() {
+  if (document.getElementById('vo-banner')) return;
+  const b = document.createElement('div');
+  b.id = 'vo-banner';
+  b.textContent = 'VIEW-ONLY MODE — ACTIONS ARE DISABLED';
+  document.body.prepend(b);
+  document.body.classList.add('view-only');
+  voDisableAll();
+  new MutationObserver(voDisableAll).observe(document.body, { childList: true, subtree: true });
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
@@ -677,11 +719,12 @@ function genNum() {
     return `EST-${seg()}-${seg()}`;
   }
   let n = parseInt(localStorage.getItem(CTR_KEY) || '0') + 1;
-  localStorage.setItem(CTR_KEY, n);
+  if (!window.viewOnly) localStorage.setItem(CTR_KEY, n); // view-only: preview the number, never advance the counter
   return `HHC-${new Date().getFullYear()}-${String(n).padStart(4,'0')}`;
 }
 
 function regenEstNum() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   if (S.docType !== 'estimate') return;
   if (!confirm('Generate a new estimate number? This will replace the current number.')) return;
   document.getElementById('f-num').value = genNum();
@@ -908,6 +951,7 @@ function checkExpiry() {
 
 // ─── PDF DOWNLOAD ─────────────────────────────────────────────────────────────
 function dlPDF() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const doc = document.getElementById('invoice-doc');
   const wm  = document.getElementById('draft-wm');
   const wasVis = wm.style.display !== 'none';
@@ -934,6 +978,7 @@ function dlPDF() {
 
 // ─── SEND MODAL ───────────────────────────────────────────────────────────────
 function openSend() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const num = document.getElementById('f-num').value || 'Invoice';
   document.getElementById('m-to').value   = document.getElementById('f-email').value;
   document.getElementById('m-subj').value = `Invoice ${num} from Heavenly Hands Contracting`;
@@ -944,6 +989,7 @@ function openSend() {
 function closeSend() { document.getElementById('send-modal').classList.remove('open'); }
 
 async function doSend() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const to   = document.getElementById('m-to').value.trim();
   const subj = document.getElementById('m-subj').value.trim();
   const msg  = document.getElementById('m-msg').value.trim();
@@ -1043,6 +1089,7 @@ let payLink = null;
 let payLinkMock = false;
 
 async function genPayLink() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   if (S.docType === 'estimate') { toast('Payment links are for invoices only', 'err'); return; }
   const num = document.getElementById('f-num').value.trim();
   const { grand } = calcTotals();
@@ -1088,6 +1135,7 @@ function renderPayLink() {
 }
 
 function persistPayLink() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const num = document.getElementById('f-num').value.trim();
   const hist = getHist();
   const idx = hist.findIndex(h => h.invNum === num);
@@ -1114,6 +1162,7 @@ function getClients() {
 }
 
 function saveClient() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const cname = document.getElementById('f-cname').value.trim();
   if (!cname) { toast('Enter a client name first', 'err'); return; }
 
@@ -1176,6 +1225,7 @@ function loadClient(id) {
 }
 
 function deleteClient(id) {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   if (!confirm('Delete this saved client?')) return;
   localStorage.setItem(CLIENTS_KEY, JSON.stringify(getClients().filter(c => c.id !== id)));
   renderClientList(document.getElementById('client-search').value);
@@ -1184,6 +1234,7 @@ function deleteClient(id) {
 
 // ─── SAVE DRAFT ───────────────────────────────────────────────────────────────
 function saveDraft() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const num = document.getElementById('f-num').value || 'draft';
   localStorage.setItem('hhc_draft_' + num, JSON.stringify(getFormData()));
   toast('Draft saved', 'ok');
@@ -1191,6 +1242,7 @@ function saveDraft() {
 
 // ─── NEW INVOICE ──────────────────────────────────────────────────────────────
 function newInv() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   if (!confirm('Start a new invoice? Unsaved changes will be lost.')) return;
   ['f-cname','f-contact','f-addr','f-email','f-disc'].forEach(id => {
     document.getElementById(id).value = '';
@@ -1218,6 +1270,7 @@ function newInv() {
 
 // ─── MARK READY ───────────────────────────────────────────────────────────────
 function toggleReady() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   S.isReady = !S.isReady;
   document.getElementById('btn-ready').textContent  = S.isReady ? '↩ Mark as Draft' : '✓ Mark Ready';
   updatePreview();
@@ -1225,6 +1278,7 @@ function toggleReady() {
 
 // ─── MARK PAID ────────────────────────────────────────────────────────────────
 function togglePaid() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   S.isPaid = !S.isPaid;
   document.getElementById('paid-stamp').classList.toggle('show', S.isPaid);
   document.getElementById('btn-paid').textContent = S.isPaid ? '↩ Unmark Paid' : '$ Mark as Paid';
@@ -1232,6 +1286,7 @@ function togglePaid() {
 
 // ─── CONVERT ESTIMATE TO INVOICE ──────────────────────────────────────────────
 function convertToInvoice() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   if (S.docType !== 'estimate') return;
   if (!confirm('Convert this estimate to an invoice? The estimate will be preserved in history.')) return;
 
@@ -1261,6 +1316,7 @@ function convertToInvoice() {
 
 // ─── GENERATE DEPOSIT INVOICE ──────────────────────────────────────────────────
 function genDeposit() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   if (S.docType !== 'invoice') return;
 
   const t = calcTotals();
@@ -1292,6 +1348,7 @@ function genDeposit() {
 
 // ─── TEXT CLIENT (CLOUDINARY PDF + SMS) ───────────────────────────────────────
 async function textClient() {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const isEst  = S.docType === 'estimate';
   const cname  = document.getElementById('f-cname').value.trim();
   const email  = document.getElementById('f-email').value.trim();
@@ -1377,6 +1434,7 @@ function getHist() {
 }
 
 function saveHist(status) {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const hist = getHist();
   const num  = document.getElementById('f-num').value || '';
   const data = getFormData();
@@ -1482,6 +1540,7 @@ function loadInv(id) {
 }
 
 function delHist(id) {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   if (!confirm('Delete this record?')) return;
   localStorage.setItem(HIST_KEY, JSON.stringify(getHist().filter(h => h.id !== id)));
   renderHist();
@@ -1489,6 +1548,7 @@ function delHist(id) {
 }
 
 function cycleStatus(id) {
+  if (window.viewOnly) { console.warn('Blocked: view-only mode'); return; }
   const all = ['Draft','Sent','Paid','Overdue'];
   const hist = getHist();
   const i = hist.findIndex(h => h.id === id);
@@ -1580,9 +1640,11 @@ function toast(msg, type) {
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('hhc_auth') === '1') {
+    window.viewOnly = sessionStorage.getItem('hhc_auth_mode') === 'view';
     document.getElementById('gate').style.display = 'none';
     document.getElementById('app').style.display  = 'flex';
     initApp();
+    if (window.viewOnly) applyViewOnly();
   }
   document.getElementById('gate-pw').addEventListener('keydown', e => {
     if (e.key === 'Enter') checkPw();
